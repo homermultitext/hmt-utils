@@ -1,0 +1,88 @@
+
+apply plugin: "base"
+apply plugin:  "groovy"
+apply plugin:  "maven"
+
+
+apply from: "versions.gradle"
+
+
+if (hasProperty('conf')) {
+    System.err.println "Using configuration data from ${conf}"
+    File confFile = new File(conf)
+    if (! confFile.exists()) {
+        throw new Exception("No configuration file ${conf} found.")
+    }
+    apply from: conf
+
+} else {
+    File confFile = new File("conf.gradle")
+    if (! confFile.exists()) {
+        throw new Exception("No configuration file ${conf} found.")
+    }
+    System.err.println "Using conf.gradle for configuration"
+    apply from: "conf.gradle"
+    
+}
+
+
+group = "org.homermultitext"
+version = '0.1.0'
+
+if (project.hasProperty('pub')) {
+    System.err.print "Using configuration data from ${pub}"
+    File confFile = new File(pub)
+    if (! confFile.exists()) {
+        throw new Exception("No publication configuration file ${pub} found.")
+    } else {
+        apply from: pub
+    }
+
+} else {
+    File confFile = new File("pub.gradle")
+    if (! confFile.exists()) {
+        throw new Exception("No publication configuration file ${confFile} found.")
+    } else {
+        println "Using default configuration in 'pub.gradle'"
+        apply from: "pub.gradle"
+    }
+}
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://beta.hpcc.uh.edu/nexus/content/groups/public"
+    }
+}
+
+dependencies {
+  compile group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
+  compile group: 'org.homermultitext', name : 'citemgr' , version: '0.4.4'
+
+  compile group: 'edu.harvard.chs', name : 'cite' , version: citeversion
+
+  /*
+    compile group: 'org.homermultitext', name : 'dse' , version: dseversion
+
+
+    compile group: "edu.holycross.shot", name: "hocuspocus", version: hocuspocusversion
+    compile group: 'edu.harvard.chs', name : 'greekutils' , version: greekutilsversion
+  */
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+  /*
+    compile group: 'com.thaiopensource', name:'jing', version: '20091111'
+    compile group: 'net.sf.saxon', name: 'saxon-dom', version: '8.7'
+    compile group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.5.2'	
+  */
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: nexusRepo) {                   
+            authentication (userName: nexusUser, password: nexusPassword)
+        }
+    }
+}
+
