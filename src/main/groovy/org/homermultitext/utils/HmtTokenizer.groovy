@@ -97,11 +97,11 @@ class HmtTokenizer {
 	    
 
 	      if (collection != "tokentypes") {
-		System.err.println "FROM ${collection} appending " + analysis
+		if (debug > 0) { System.err.println "FROM ${collection} appending " + analysis }
 		tokensFile.append("${analysis}\t${ctsval}\n")
 		
 	      } else {
-		System.err.println "FROM ${collection}, analyzing: " + tokenPair[1]
+		if (debug > 0) { System.err.println "FROM ${collection}, analyzing: " + tokenPair[1] }
 		switch (tokenPair[1]) {
 		case "urn:cite:hmt:tokentypes.lexical":
 		tokensFile.append("${lexurnbase}.${trimmed}\t${ctsval}\n", "UTF-8")
