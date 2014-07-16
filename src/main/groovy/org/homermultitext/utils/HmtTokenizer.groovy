@@ -9,7 +9,7 @@ import edu.holycross.shot.hocuspocus.Corpus
  */
 class HmtTokenizer {
 
-    def debug = 2
+    def debug = 0
 
        
     File tabulatedDir
