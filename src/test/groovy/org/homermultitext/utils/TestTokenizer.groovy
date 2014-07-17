@@ -21,7 +21,6 @@ class TestTokenizer extends GroovyTestCase {
   }
 
 
-
   void testBadInit() {
     HmtTokenizer tokenizer = new HmtTokenizer()
     // settings not intialized:
