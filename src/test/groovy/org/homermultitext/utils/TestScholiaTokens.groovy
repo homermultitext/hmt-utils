@@ -14,6 +14,7 @@ class TestScholiaTokens extends GroovyTestCase {
   void testFullCorpusTokenizer() {
     HmtTokenizer tokenizer = new HmtTokenizer(tabsDir, outputFile, separatorStr)
     tokenizer.tokenizeTabs()
+    // Now add tests on content of outputFile...
   }
   
 }
