@@ -3,12 +3,8 @@
 
 Utility library for editorial work specific to the standards of the Homer Multitext project.
 
-This should incorporate and replace HMT-specific material previously developed as part of generic
-CITE architecture libraries, such as hocuspocus, or generically HMT functions developed in specific apps
-like HMT-MOM.
 
-It should certainly include:
 
-- HmtGreekTokenization
-- HmtTokenizer
-- HmtDefs
+It includes utilities for:
+
+- from source data in the CITE architecture's tabular format (either as File or String objects), tokenizing text according to HMT project conventions
