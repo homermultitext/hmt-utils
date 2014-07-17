@@ -18,12 +18,5 @@ class TestTokenSystem extends GroovyTestCase {
   }
 
 
-  /*
-  void testBadInit() {
-    HmtGreekTokenization toker = new HmtGreekTokenization()
-    shouldFail {
-      ArrayList results = toker.tokenize( inputFile,  separatorStr) 
-    } 
-  }
-  */
+
 }
