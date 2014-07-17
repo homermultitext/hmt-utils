@@ -179,8 +179,57 @@ class HmtGreekTokenization {
   ArrayList tokenize(File inputFile, String separatorStr) 
   throws Exception {
     System.err.println "Tokenizing input file " + inputFile
+
     def replyList = []
     inputFile.eachLine { l ->
+      def cols = l.split(/${separatorStr}/)
+      def urnBase = cols[0]
+      if (cols.size() > 5) {
+	try {
+	  String str = cols[5]
+	  def root = new XmlParser().parseText(str)
+	  tokenizeElement(root, urnBase, "").each { t ->
+	    replyList.add(t)
+	  }
+
+	} catch (Exception e) {
+	  System.err.println "HmtGreekTokenization:tokenize: exception"
+	  System.err.println "FAILED TO PARSE LINE: ${l}"
+	  throw e
+	}
+
+      } else {
+	System.err.println "HmtGreekTokenization: omit input line ${l}"
+      }
+    }
+    return replyList
+
+  }
+
+
+
+
+  /** Tokenizes following HMT project editorial conventions a String of data in 
+   * the CITE architecture tabular format.
+   * Tokenization considers both markup and type of characters.
+   * @param tabData A String of data in CITE tabular format..
+   * @param separatorStr The String value used to separate columns of
+   * the tabular file.  Default value is "#".
+   * @returns A List of URN pairs.  Each pairing is an ArrayList containing two
+   * identifiers.  The first is the String value of a CTS URN including subreference, 
+   * identifying the token; the second is a CITE URN from one of the following
+   * collections:
+   * urn:cite:hmt:tokenclasses
+   * urn:cite:hmt:place
+   * urn:cite:hmt:pers
+   * @throws Exception if last column of each row of the tabular file cannot be 
+   * parsed as a well-formed XML fragment.
+   */
+  ArrayList tokenize(String tabData, String separatorStr) 
+  throws Exception {
+
+    def replyList = []
+    tabData.readLines().each { l ->
       def cols = l.split(/${separatorStr}/)
       def urnBase = cols[0]
       if (cols.size() > 5) {

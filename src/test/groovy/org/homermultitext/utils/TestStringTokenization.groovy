@@ -6,15 +6,17 @@ import org.junit.Test
 
 class TestStringTokenization extends GroovyTestCase {
 
-  File tabSrc = new File("testdata/tabs/Iliad-6k.txt")
   String separatorStr = "#"
 
-  
+  File tabSrc = new File("testdata/tabs/Iliad-6k.txt")
+  Integer expectedSize = 6026
+
   void testString() {
     String tabData = tabSrc.getText()
 
-    HmtTokenizer tokenizer = new HmtTokenizer()
-    //tokenizer.tokenizeTabs()
+    HmtGreekTokenization tokenizer = new HmtGreekTokenization()
+    ArrayList tokens = tokenizer.tokenize(tabData, separatorStr)
+    assert tokens.size() == expectedSize
   }
   
 }
