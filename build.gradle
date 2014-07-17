@@ -27,7 +27,7 @@ if (hasProperty('conf')) {
 
 
 group = "org.homermultitext"
-version = '0.1.2'
+version = '0.2.0'
 
 if (project.hasProperty('pub')) {
     System.err.print "Using configuration data from ${pub}"
@@ -58,23 +58,11 @@ repositories {
 
 dependencies {
   compile group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
-  compile group: 'org.homermultitext', name : 'citemgr' , version: '0.4.4'
 
-  compile group: 'edu.harvard.chs', name : 'cite' , version: citeversion
+  compile group: 'edu.harvard.chs', name : 'cite' , version: citeVersion
+  compile group: 'org.homermultitext', name : 'citemgr' , version: citemgrVersion
 
-  /*
-    compile group: 'org.homermultitext', name : 'dse' , version: dseversion
-
-
-    compile group: "edu.holycross.shot", name: "hocuspocus", version: hocuspocusversion
-    compile group: 'edu.harvard.chs', name : 'greekutils' , version: greekutilsversion
-  */
-    testCompile group: 'junit', name: 'junit', version: '4.8.2'
-  /*
-    compile group: 'com.thaiopensource', name:'jing', version: '20091111'
-    compile group: 'net.sf.saxon', name: 'saxon-dom', version: '8.7'
-    compile group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.5.2'	
-  */
+  testCompile group: 'junit', name: 'junit', version: junitVersion
 }
 
 
