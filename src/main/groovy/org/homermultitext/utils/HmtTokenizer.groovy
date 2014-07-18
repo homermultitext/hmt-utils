@@ -96,7 +96,7 @@ class HmtTokenizer {
 	  def checkVal = "${urn.getUrnWithoutPassage()}:${urn.getRef()}"
 	  String subref
 	  try { 
-	    subref  =  urn.getSubref1()
+	    subref  =  urn.getSubref()
 	  } catch (Exception e) {
 	  }
 
