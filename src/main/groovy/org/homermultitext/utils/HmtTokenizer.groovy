@@ -87,14 +87,18 @@ class HmtTokenizer {
 	try {
 	  urn = new CtsUrn(ctsval)
 	} catch (Exception e) {
-	  System.err.println "HmtTokenzier, tokenizeTabs:  unable to make URN from ${ctsval} in pair ${tokenPair}"
+	  System.err.println "HmtTokenizer, tokenizeTabs:  unable to make URN from ${ctsval} in pair ${tokenPair}"
 	  }
 
 
 	if (urn) {
-
+	  String subref  = null
 	  def checkVal = "${urn.getUrnWithoutPassage()}:${urn.getRef()}"
-	  String subref = urn.getSubref1()
+	  try {
+	    subref = urn.getSubref1()
+	  } catch (Exception e) {
+	    System.err.println "HmtTokenizer, tokenizeTabs:  null subref in pair ${tokenPair}"
+	  }
 
 	  //  HmtGreekTokenization is a white-space tokenizer that 
 	  //  keeps punctuation.  For analysis, we will throw out punctuation 
