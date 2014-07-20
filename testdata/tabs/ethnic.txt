@@ -1,0 +1,2 @@
+namespace#tei#http://www.tei-c.org/ns/1.0#
+urn:cts:greekLit:tlg0012.tlg001.msA:11.3#3#2#4#/tei:TEI/tei:text/tei:body/tei:div[@n = '11']#<l xmlns="http://www.tei-c.org/ns/1.0" n="3"><persName n="urn:cite:hmt:pers.pers8">Ζεὺς</persName> δ' <persName n="urn:cite:hmt:pers.pers156">Ἔριδα</persName> προΐαλλε θοὰς ἐπι νῆας <rs n="urn:cite:hmt:place.place96" type="ethnic">Ἀχαιῶν</rs></l>#/tei:TEI/tei:text/tei:body/tei:div[@n = '?']/tei:l[@n = '?']

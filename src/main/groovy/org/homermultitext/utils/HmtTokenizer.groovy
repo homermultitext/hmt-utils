@@ -5,7 +5,8 @@ import edu.harvard.chs.cite.CtsUrn
 import edu.holycross.shot.hocuspocus.Corpus
 
 
-/**
+/** A class for tokenizing, according to HMT project conventions, texts
+ * citable texts represented in the CITE architecture's tabular format.
  */
 class HmtTokenizer {
 

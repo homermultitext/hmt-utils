@@ -14,9 +14,6 @@ not the analysis of tokenization.
 /** Class to tokenize text following Homer Multitext project conventions for
 *   definition of character set and markup.
 */
-//class HmtGreekTokenization implements TokenizationSystem {
-
-
 class HmtGreekTokenization {
 
   /** Empty constructor.
@@ -98,7 +95,6 @@ class HmtGreekTokenization {
       }
       break
 
-
       case "sic":
       GreekNode n = new GreekNode(node)
       String wd = n.collectText()
@@ -141,6 +137,15 @@ class HmtGreekTokenization {
 	    returnVal.add(tokenList)
 	  }
 	} 
+      } else if (node.'@type' == "ethnic") {
+	//tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.waw").each { tokenList ->
+	//returnVal.add(tokenList)
+	//}
+	GreekNode n = new GreekNode(node)
+	String wd = n.collectText()
+	String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
+	returnVal.add(["${urnBase}@${wd}", urn])
+
       }
       break
 
