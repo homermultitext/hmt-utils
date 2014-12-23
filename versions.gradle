@@ -1,7 +1,8 @@
 ext {
     groovyVersion = "2.0.6"
 
-    citeVersion = "0.14.2"
+    //citeVersion = "0.14.2"
+    citeVersion = "0.80.0"
     citemgrVersion = "0.4.6"
 
     junitVersion = "4.10"
