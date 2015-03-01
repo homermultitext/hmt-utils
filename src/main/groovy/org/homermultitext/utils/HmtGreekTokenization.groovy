@@ -87,6 +87,19 @@ class HmtGreekTokenization {
       // Completely ignore contents.
       break
 
+
+      case "div":
+      if (node.'@type' == "ref") { 	
+	// omit
+      } else {
+	node.children().each { child ->
+	  tokenizeElement(child, urnBase, "").each { tokenList ->
+	    returnVal.add(tokenList)
+	  }
+	}
+      }
+      break
+
       case "num" :
       node.children().each { child ->
 	tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.numeric").each { tokenList ->

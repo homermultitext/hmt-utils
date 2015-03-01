@@ -144,12 +144,12 @@ class HmtTokenizer {
 		  break
 		*/
                         
-	      case ":cite:hmt:tokentypes.waw":
+	      case "urn:cite:hmt:tokentypes.waw":
 	      tokensFile.append("${literalurnbase}.${trimmed}\t${ctsval}\n", "UTF-8")
 	      break
               
 	      default : 
-	      System.err.println "Unrecognized token type: ${tokenPair[1]} of class ${tokenPair[1].getClass()}"
+	      System.err.println "HmtTokenizer: Unrecognized token type: ${tokenPair[1]} of class ${tokenPair[1].getClass()}"
 	      break
 	      }
 	    } 

@@ -1,4 +1,6 @@
 import com.github.rjeschke.txtmark.*
+import org.apache.tools.ant.filters.*
+
 
 apply plugin: "base"
 apply plugin:  "groovy"
@@ -156,3 +158,20 @@ test {
     systemProperties 'concordion.output.dir': file("${buildDir}/concordion-results")
 
 }
+
+task addVersion(){
+}
+addVersion.doLast {
+  tokenMap["version"] = version
+  tokenMap["deps"] = """
+    <tr><td>cite</td><td>${citeVersion}</td></tr>
+    <tr><td>citemgr</td><td>${citemgrVersion}</td></tr>""".toString() 
+}
+
+task conc(type: Copy, dependsOn: [test, addVersion]) {
+//task conc(type: Copy) {
+  from "${buildDir}/concordion-results"
+  into "${buildDir}/concordion-formatted"
+  filter(ReplaceTokens, tokens: tokenMap)
+}
+
