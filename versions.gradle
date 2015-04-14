@@ -4,8 +4,8 @@ ext {
     junitVersion = "4.10"
 
     // catalog these:
-    citeVersion = "0.92.1"
-    citemgrVersion = "0.5.10"
-
+    citeVersion = "0.92.2"
+    citemgrVersion = "0.5.15"
+    greeklangVersion = "0.0.1"
 
 }
