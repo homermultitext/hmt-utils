@@ -3,6 +3,8 @@ package org.homermultitext.utils
 import org.apache.commons.io.FilenameUtils
 import edu.harvard.chs.f1k.GreekNode
 
+import edu.holycross.shot.greekutils.GreekWord
+
 /*
 Do we want to check for?
  <unclear>, <supplied>
@@ -16,6 +18,9 @@ not the analysis of tokenization.
 */
 class HmtGreekTokenization {
 
+  Integer debug = 0
+
+  
   /** Empty constructor.
    */
   HmtGreekTokenization() {
@@ -30,13 +35,18 @@ class HmtGreekTokenization {
     return "Tokenization of Greek editions following the HMT project's editorial conventions, and taking into consideration both TEI markup and Unicode character values."
   }
 
-  /** Closure tokenizes a String on white space.
+  /** Closure splits a String on white space, without
+   * performing any analysis of token type.
    * @param str The String to tokenize.
    * @returns An ArrayList of Strings.
    */
-  def tokenizeString = { str ->
-    def tokes = str.split(/[\s]+/)
-    tokes
+  ArrayList splitString (str) {
+    ArrayList tokes = str.split(/[\s]+/)
+    if (debug > 1) {
+      System.err.println ("Input str " + str)
+      System.err.println ("Split is " + tokes)
+    }
+    return tokes
   }    
 
 
@@ -55,16 +65,25 @@ class HmtGreekTokenization {
    * urn:cite:hmt:place
    * urn:cite:hmt:pers
    */
-  ArrayList tokenizeElement(Object node, String urnBase, String tokenType) {
-
+  ArrayList tokenizeElement(Object node, String urnBase, String tokenType)
+  throws Exception {
+    // ADD TEST USING greeklang LIB
     def returnVal = []
     if (node instanceof java.lang.String) {
       tokenizeString(node).each { t ->
-	def pairing
+	ArrayList pairing
 	if (tokenType.size() > 0) {
+	  // switch on tokenType and apply appropirate
+	  // greekLang type.
+	  
 	  pairing = ["${urnBase}@${t}", tokenType]
 	} else {
-	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
+	  try {
+	    GreekWord gw = new GreekWord(t)
+	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
+	  } catch (Exception e) {
+	    System.err.println "HmtGreekTokenization: could not form GreekWord from string ${t}"
+	  }
 	}
 	returnVal.add(pairing)
       }
@@ -194,9 +213,11 @@ class HmtGreekTokenization {
    * @throws Exception if last column of each row of the tabular file cannot be 
    * parsed as a well-formed XML fragment.
    */
-  ArrayList tokenize(File inputFile, String separatorStr) 
+  ArrayList tokenizeTabFile(File inputFile, String separatorStr) 
   throws Exception {
-    System.err.println "Tokenizing input file " + inputFile
+    if (debug > 0) {
+      System.err.println "Tokenizing input file " + inputFile
+    }
 
     def replyList = []
     inputFile.eachLine { l ->
@@ -243,7 +264,7 @@ class HmtGreekTokenization {
    * @throws Exception if last column of each row of the tabular file cannot be 
    * parsed as a well-formed XML fragment.
    */
-  ArrayList tokenize(String tabData, String separatorStr) 
+  ArrayList tokenizeTabFile(String tabData, String separatorStr) 
   throws Exception {
 
     def replyList = []

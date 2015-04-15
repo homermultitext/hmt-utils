@@ -1,14 +1,9 @@
 # Tokenization #
 
-The HMT utilities support the following methods of tokenizing editions that follow HMT editorial conventions:
+The HMT utilities support the following methods of analyzing the lexical tokens in editions that follow HMT editorial conventions:
 
-1. pure diplomatic
-2. edited
-
-
-@openex@
-
-### Examples ###
+1. tokenization of pure diplomatic text
+2. tokenization of <a concordion:run="concordion" href="Editorial.html">editorial text</a>
 
 
-@closeex@
+
