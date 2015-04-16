@@ -3,7 +3,7 @@ layout: page
 title: "HMT utilities library"
 ---
 
-hmtutils
+A utility library for analyzing editions of texts following the standards of the Homer Multitext project.
 
-- API docs
+- [API docs](api)
 - [live specs](specs/HmtUtils.html)
