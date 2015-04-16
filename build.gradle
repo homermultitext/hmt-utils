@@ -166,9 +166,8 @@ task addVersion(){
 addVersion.doLast {
   tokenMap["version"] = version
   tokenMap["deps"] = """
-    <tr><td>cite</td><td>${citeVersion}</td></tr>
-    <tr><td>citemgr</td><td>${citemgrVersion}</td></tr>
-    <tr><td>greeklang</td><td>${greeklangVersion}</td></tr>""".toString() 
+    <tr><td><a href="http://cite-architecture.github.io/cite/">cite</a></td><td>${citeVersion}</td></tr>
+    <tr><td><a href="http://neelsmith.github.io/greeklang/">greeklang</a></td><td>${greeklangVersion}</td></tr>""".toString() 
 }
 
 task conc(type: Copy, dependsOn: [test, addVersion]) {
