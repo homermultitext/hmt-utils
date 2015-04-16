@@ -5,13 +5,6 @@ import edu.harvard.chs.f1k.GreekNode
 
 import edu.holycross.shot.greekutils.GreekString
 
-/*
-Do we want to check for?
- <unclear>, <supplied>
-No.  Those should be used to determine content of the edition,
-not the analysis of tokenization.
-*/
-
 
 /** Class to tokenize text following Homer Multitext project conventions for
 *   definition of character set and markup.
