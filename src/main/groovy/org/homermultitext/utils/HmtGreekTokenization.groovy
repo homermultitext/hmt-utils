@@ -3,7 +3,7 @@ package org.homermultitext.utils
 import org.apache.commons.io.FilenameUtils
 import edu.harvard.chs.f1k.GreekNode
 
-import edu.holycross.shot.greekutils.GreekWord
+import edu.holycross.shot.greekutils.GreekString
 
 /*
 Do we want to check for?
@@ -70,7 +70,7 @@ class HmtGreekTokenization {
     // ADD TEST USING greeklang LIB
     def returnVal = []
     if (node instanceof java.lang.String) {
-      tokenizeString(node).each { t ->
+      splitString(node).each { t ->
 	ArrayList pairing
 	if (tokenType.size() > 0) {
 	  // switch on tokenType and apply appropirate
@@ -79,7 +79,7 @@ class HmtGreekTokenization {
 	  pairing = ["${urnBase}@${t}", tokenType]
 	} else {
 	  try {
-	    GreekWord gw = new GreekWord(t)
+	    GreekString gw = new GreekString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
 	  } catch (Exception e) {
 	    System.err.println "HmtGreekTokenization: could not form GreekWord from string ${t}"
@@ -224,18 +224,24 @@ class HmtGreekTokenization {
       def cols = l.split(/${separatorStr}/)
       def urnBase = cols[0]
       if (cols.size() > 5) {
+	String str = cols[5]
+	def root = null
 	try {
-	  String str = cols[5]
-	  def root = new XmlParser().parseText(str)
-	  tokenizeElement(root, urnBase, "").each { t ->
-	    replyList.add(t)
-	  }
+	  root = new XmlParser().parseText(str)
 
 	} catch (Exception e) {
 	  System.err.println "HmtGreekTokenization:tokenize: exception"
-	  System.err.println "FAILED TO PARSE LINE: ${l}"
+	  System.err.println "FAILED TO PARSE LINE: ${l} with ${cols.size()} columns"
+	  System.err.println "str was " + str
 	  throw e
 	}
+
+	if (root != null) {
+	  tokenizeElement(root, urnBase, "").each { t ->
+	    replyList.add(t)
+	  }
+	}
+
 
       } else {
 	System.err.println "HmtGreekTokenization: omit input line ${l}"
