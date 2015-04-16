@@ -63,12 +63,12 @@ class HmtTokenizer {
 
 
   /** Cycles through all .txt files in tabulatedDir, applies 
-   * an HmtGreekTokenization to them, and writes results to
+   * an HmtEditorialTokenization to them, and writes results to
    * 
    */
   void tokenizeTabs() 
   throws Exception {
-    HmtGreekTokenization tokenSystem = new HmtGreekTokenization()
+    HmtEditorialTokenization tokenSystem = new HmtEditorialTokenization()
     if ((tokensFile == null) || (tabulatedDir == null)) {
       throw new Exception("HmtTokenize:tokenizeTabs: input and output settings not defined.")
     }
@@ -102,7 +102,7 @@ class HmtTokenizer {
 	  }
 
 
-	  //  HmtGreekTokenization is a white-space tokenizer that 
+	  //  HmtEditorialTokenization is a white-space tokenizer that 
 	  //  keeps punctuation.  For analysis, we will throw out punctuation 
 	  //  characters.  ·
 	  if (!subref)  {

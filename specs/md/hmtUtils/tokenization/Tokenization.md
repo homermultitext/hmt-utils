@@ -1,13 +1,13 @@
-# Tokenization #
+# Tokenization of Greek texts #
 
 
 ## Overview ##
 
-The HMT utilities include multiple ways of analyzing the lexical content of texts in the HMT project's archival editions.
+The `hmt-utils` library includes multiple ways of analyzing the lexical content of editions and translations in the HMT project's archival collection.
 
-The HMT project archives its editions as XML documents complying with version [P5 of the TEI guidelines](http://www.tei-c.org/Guidelines/).   (For details about the format of these archival editions, see the HMT project's [guide for editors](http://homermultitext.github.io/hmt-editors-guide/).)   In contrast to earlier versions of the TEI guidelines, version P5 does not permit editors to organize the text nodes of an XML edition to represent a single coherent version of a text:  the TEI `choice` element is the only way to capture alternate views (such as abbreviated vs. expanded forms, or editorial additions and deletions), and places mutually incompatible readings in the XML document's text nodes.  
+The HMT project archives its texts as XML documents complying with version [P5 of the TEI guidelines](http://www.tei-c.org/Guidelines/).   (For details about the format of these archival editions, see the HMT project's [guide for editors](http://homermultitext.github.io/hmt-editors-guide/).)   In contrast to earlier versions of the TEI guidelines, version P5 does not permit editors to organize the text nodes of an XML edition to represent a single coherent version of a text:  the TEI `choice` element is the only way to capture alternate views (such as abbreviated vs. expanded forms, or editorial additions and deletions), and places mutually incompatible readings in the XML document's text nodes.  
 
-The tokenization options of the `hmt-utils` address this by analyzing only the text content that is relevant for one of two perspectives on the XML source edition:  
+For editions of Greek texts, the tokenization options of the `hmt-utils` address this by analyzing only the text content that is relevant for one of two perspectives on the XML source edition:  
 
 - a *pure diplomatic view* representing exactly what is read in the manuscript  (e.g., abbreviations unexpanded, and Byzantine orthographic conventions recorded)
 - an *editorial view* representing a diplomatic edition as presented to modern readers (e.g., abbreviations expanded, and orthography regularized to modern conventions)
@@ -21,17 +21,28 @@ Based on the text's category and token type, each substring identified by the to
 
 ## Specification of character set and markup ##
 
+ Legal characters for input and output are the limited set of Unicode defined in the `greeklang` library (see [its specification](http://neelsmith.github.io/greeklang/specs/greek/tokens/Tokens.html)).  All output is in Unicode NFC form.  TEI markup is restricted to usage defined in the HMT project editorial guidelines, which defines allowed characters and XML markup for each category of text.   As of version `@version@` of `hmt-utils`, the two recognized categories of HMT texts are "Homeric epic" and "secondary" texts.
 
- Legal characters are the limited set of Unicode defined in the `greeklang` library (see [its specification](http://neelsmith.github.io/greeklang/specs/greek/tokens/Tokens.html)).  TEI markup is restricted to usage defined in the HMT project editorial guidelines, which defines allowed characters and XML markup for each category of text.   As of version `@version@` of `hmt-utils`, the two recognized categories of HMT texts are "Homeric epic" and "secondary" texts.
+## Classification of tokens ##
 
+
+The following types or classes of tokens are recognized:
+
+- *lexical* tokens
+- *numeric* tokens
+- *personal names*
+- *geographic names*
+- *literal string of characters* ("word as word")
+- *unintelligible* tokens ("*sic*")
 
 
 ## Tokenization systems
 
+See detailed specification of:
 
-1. Features [common to <a concordion:run="concordion" href="Common.html">all HMT tokenization systems</a>
-1. Tokenization of <a concordion:run="concordion" href="Diplomatic.html">pure diplomatic text</a>
-2. Tokenization of <a concordion:run="concordion" href="Editorial.html">editorial text</a>
+1. features common to <a concordion:run="concordion" href="Common.html">all HMT tokenization systems</a>
+1. tokenization of <a concordion:run="concordion" href="Diplomatic.html">pure diplomatic text</a>
+2. tokenization of <a concordion:run="concordion" href="Editorial.html">editorial text</a>
 
 
 

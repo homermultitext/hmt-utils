@@ -4,19 +4,20 @@ import org.apache.commons.io.FilenameUtils
 import edu.harvard.chs.f1k.GreekNode
 
 import edu.holycross.shot.greekutils.GreekString
+import edu.holycross.shot.greekutils.MilesianString
 
 
 /** Class to tokenize text following Homer Multitext project conventions for
 *   definition of character set and markup.
 */
-class HmtGreekTokenization {
+class HmtEditorialTokenization {
 
   Integer debug = 0
 
   
   /** Empty constructor.
    */
-  HmtGreekTokenization() {
+  HmtEditorialTokenization() {
   }
 
 
@@ -42,6 +43,68 @@ class HmtGreekTokenization {
     return tokes
   }    
 
+  
+  /** Tokenizes a string of text taking account of the context given by tokenType.
+   * @str String to tokenize
+   * @urnBase The CTS URN value, as a String, of the citable node this string
+   * belongs to.
+   * @tokenType A String, possibly empty, classifying the tokens belonging to this 
+   * node.
+   * @returns A List of URN pairs.  Each pairing is an ArrayList containing two
+   * identifiers.  The first is the String value of a CTS URN including subreference, 
+   * identifying the token; the second is a CITE URN from one of the following
+   * collections:
+   * urn:cite:hmt:tokenclasses
+   * urn:cite:hmt:place
+   * urn:cite:hmt:pers
+   */
+  ArrayList tokenizeString (String str, String urnBase, String tokenType)
+  throws Exception {
+    println "Tokenize ${str} as ${tokenType}"
+    ArrayList classifiedTokens = []
+    splitString(str).each { t ->
+      ArrayList pairing
+      switch(tokenType) {
+
+      case "urn:cite:hmt:tokentypes.waw":
+      case "urn:cite:hmt:tokentypes.sic":
+      pairing = ["${urnBase}@${t}", tokenType]
+      break
+	    
+      case "urn:cite:hmt:tokentypes.numeric":
+      try {
+      } catch (Exception e) {
+	MilesianString ms = new MilesianString(t, "Unicode")
+	System.err.println "HmtEditorialTokenization: could not form MilesianString from string ${t}"
+      }
+      pairing = ["${urnBase}@${t}", tokenType]
+      break
+
+      default:
+      if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
+	try {
+	  GreekString gs = new GreekString(t, "Unicode")
+	  pairing = ["${urnBase}@${t}", tokenType]
+	} catch (Exception e) {
+	  System.err.println "HmtEditorialTokenization: could not form GreekString from string ${t}"
+	}
+	
+      } else {
+	
+	try {
+	  GreekString gs = new GreekString(t, "Unicode")
+	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
+	} catch (Exception e) {
+	  System.err.println "HmtEditorialTokenization: could not form GreekString from string ${t}"
+	}
+      }
+      break
+      }
+      classifiedTokens.add(pairing)
+    }
+    return(classifiedTokens)
+  }
+  
 
   /** Recursively tokenizes a well-formed fragment of a document following HMT project
    * editorial conventions.  Tokenization considers both markup and type of characters.
@@ -60,26 +123,11 @@ class HmtGreekTokenization {
    */
   ArrayList tokenizeElement(Object node, String urnBase, String tokenType)
   throws Exception {
-    // ADD TEST USING greeklang LIB
-    def returnVal = []
+    ArrayList classifiedTokens = []
+    
     if (node instanceof java.lang.String) {
-      splitString(node).each { t ->
-	ArrayList pairing
-	if (tokenType.size() > 0) {
-	  // switch on tokenType and apply appropirate
-	  // greekLang type.
-	  
-	  pairing = ["${urnBase}@${t}", tokenType]
-	} else {
-	  try {
-	    GreekString gw = new GreekString(t, "Unicode")
-	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
-	  } catch (Exception e) {
-	    System.err.println "HmtGreekTokenization: could not form GreekWord from string ${t}"
-	  }
-	}
-	returnVal.add(pairing)
-      }
+      classifiedTokens = classifiedTokens +  tokenizeString(node, urnBase, tokenType)
+
 
     } else {
       String nodeName
@@ -106,7 +154,7 @@ class HmtGreekTokenization {
       } else {
 	node.children().each { child ->
 	  tokenizeElement(child, urnBase, "").each { tokenList ->
-	    returnVal.add(tokenList)
+	    classifiedTokens.add(tokenList)
 	  }
 	}
       }
@@ -115,7 +163,7 @@ class HmtGreekTokenization {
       case "num" :
       node.children().each { child ->
 	tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.numeric").each { tokenList ->
-	  returnVal.add(tokenList)
+	  classifiedTokens.add(tokenList)
 	}
       }
       break
@@ -125,7 +173,7 @@ class HmtGreekTokenization {
       String wd = n.collectText()
       wd = wd.replaceAll(~/\s/, "") // generalize to all white space
       if (tokenType.size() > 0) {
-	returnVal.add(["${urnBase}@${wd}", "urn:cite:hmt:tokentypes.sic"])
+	classifiedTokens.add(["${urnBase}@${wd}", "urn:cite:hmt:tokentypes.sic"])
       } 
       break
 
@@ -135,41 +183,45 @@ class HmtGreekTokenization {
       String wd = n.collectText()
       wd = wd.replaceAll(~/\s/, "") // generalize to all white space
       if (tokenType.size() > 0) {
-	returnVal.add(["${urnBase}@${wd}", tokenType])
+	classifiedTokens.add(["${urnBase}@${wd}", tokenType])
       } else {
-	returnVal.add(["${urnBase}@${wd}", "urn:cite:hmt:tokentypes.lexical"])
+	classifiedTokens.add(["${urnBase}@${wd}", "urn:cite:hmt:tokentypes.lexical"])
       }
       break
 
       case "persName":
       GreekNode n = new GreekNode(node)
-      String wd = n.collectText()
-      //returnVal.add(["${urnBase}@${wd}", "urn:cite:hmt:pers.{node.'@n'}"])
-      returnVal.add(["${urnBase}@${wd}", "${node.'@n'}"])
+      //String wd = n.collectText()
+      GreekString gs = new GreekString(n.collectText(), "Unicode")
+
+      //classifiedTokens.add(["${urnBase}@${wd}", "urn:cite:hmt:pers.{node.'@n'}"])
+      classifiedTokens.add(["${urnBase}@${gs}", "${node.'@n'}"])
+      System.err.println "Added " + gs.toString() + " as  " + node.'@n'
+      System.err.println "cts now number " + classifiedTokens.size()
       break
 
       case "placeName":
       GreekNode n = new GreekNode(node)
       String wd = n.collectText()
-      //returnVal.add(["${urnBase}@${wd}", "urn:cite:hmt:place.{node.'@n'}"])
-      returnVal.add(["${urnBase}@${wd}", "${node.'@n'}"])
+      //classifiedTokens.add(["${urnBase}@${wd}", "urn:cite:hmt:place.{node.'@n'}"])
+      classifiedTokens.add(["${urnBase}@${wd}", "${node.'@n'}"])
       break
 
       case "rs":
       if (node.'@type' == "waw") {
 	node.children().each { child ->
 	  tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.waw").each { tokenList ->
-	    returnVal.add(tokenList)
+	    classifiedTokens.add(tokenList)
 	  }
 	} 
       } else if (node.'@type' == "ethnic") {
 	//tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.waw").each { tokenList ->
-	//returnVal.add(tokenList)
+	//classifiedTokens.add(tokenList)
 	//}
 	GreekNode n = new GreekNode(node)
 	String wd = n.collectText()
 	String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
-	returnVal.add(["${urnBase}@${wd}", urn])
+	classifiedTokens.add(["${urnBase}@${wd}", urn])
 
       }
       break
@@ -179,14 +231,14 @@ class HmtGreekTokenization {
       default:
       node.children().each { child ->
 	tokenizeElement(child, urnBase, "").each { tokenList ->
-	  returnVal.add(tokenList)
+	  classifiedTokens.add(tokenList)
 	}
       }
       break
       }
       
     }
-    return returnVal
+    return classifiedTokens
   }
 
   
@@ -223,7 +275,7 @@ class HmtGreekTokenization {
 	  root = new XmlParser().parseText(str)
 
 	} catch (Exception e) {
-	  System.err.println "HmtGreekTokenization:tokenize: exception"
+	  System.err.println "HmtEditorialTokenization:tokenize: exception"
 	  System.err.println "FAILED TO PARSE LINE: ${l} with ${cols.size()} columns"
 	  System.err.println "str was " + str
 	  throw e
@@ -237,7 +289,7 @@ class HmtGreekTokenization {
 
 
       } else {
-	System.err.println "HmtGreekTokenization: omit input line ${l}"
+	System.err.println "HmtEditorialTokenization: omit input line ${l}"
       }
     }
     return replyList
@@ -279,13 +331,13 @@ class HmtGreekTokenization {
 	  }
 
 	} catch (Exception e) {
-	  System.err.println "HmtGreekTokenization:tokenize: exception"
+	  System.err.println "HmtEditorialTokenization:tokenize: exception"
 	  System.err.println "FAILED TO PARSE LINE: ${l}"
 	  throw e
 	}
 
       } else {
-	System.err.println "HmtGreekTokenization: omit input line ${l}"
+	System.err.println "HmtEditorialTokenization: omit input line ${l}"
       }
     }
     return replyList
