@@ -45,18 +45,62 @@ public class CommonTest extends ConcordionTestCase {
 	return total;
     }
 
+
+
+    public Iterable<String> getTokensInTab(String src) 
+	throws Exception {
+	ArrayList tokens = new ArrayList();
+	HmtEditorialTokenization toker = new HmtEditorialTokenization();
+	String buildPath = new java.io.File( "." ).getCanonicalPath() + docPath;
+	File f = new File(buildPath + src);
+	if (f.exists()) {
+	    try {
+		ArrayList analyses = toker.tokenizeTabFile( f,  separatorStr);
+		for (int i = 0; i < analyses.size(); i++ ) {
+		    ArrayList analysis = ((ArrayList)analyses.get(i));
+		    tokens.add(analysis.get(0));
+		}
+		
+	    } catch (Exception e) {
+		System.err.println("TokenizationTest: catastrophe " + e.toString());		
+	    }
+	} else {
+	    throw new Exception("TokenizationTest: no such file " + f);
+	}
+	return tokens;
+    }
+
+
+
+
+
+
+    public Iterable<String> getTypesInTab(String src) 
+	throws Exception {
+	ArrayList tokens = new ArrayList();
+	HmtEditorialTokenization toker = new HmtEditorialTokenization();
+	String buildPath = new java.io.File( "." ).getCanonicalPath() + docPath;
+	File f = new File(buildPath + src);
+	if (f.exists()) {
+	    try {
+		ArrayList analyses = toker.tokenizeTabFile( f,  separatorStr);
+		for (int i = 0; i < analyses.size(); i++ ) {
+		    ArrayList analysis = ((ArrayList)analyses.get(i));
+		    tokens.add(analysis.get(1));
+		}
+		
+	    } catch (Exception e) {
+		System.err.println("TokenizationTest: catastrophe " + e.toString());		
+	    }
+	} else {
+	    throw new Exception("TokenizationTest: no such file " + f);
+	}
+	return tokens;
+    }
+
+    
     
 
-    /** Gets an ordered list of tokens from a raw string.
-     *  Working on a raw string only does white-space tokenization:
-     * no contextual analysis.
-     * @param raw String to tokenize.
-     * @returns ArrayList of Strings.
-     */
-    public Iterable<String>  splitString(String raw) {
-	HmtEditorialTokenization toker = new HmtEditorialTokenization();
-	return toker.splitString(raw);
-    }
 
     public Iterable<String>  getTokens(String str, String urn)
     throws Exception {
@@ -116,7 +160,19 @@ public class CommonTest extends ConcordionTestCase {
 	return toker.tokenizeString(str, urn, "").size();
     }
 
+
     
+    /** Gets an ordered list of tokens from a raw string.
+     *  Working on a raw string only does white-space tokenization:
+     * no contextual analysis.
+     * @param raw String to tokenize.
+     * @returns ArrayList of Strings.
+     */
+    public Iterable<String>  splitString(String raw) {
+	HmtEditorialTokenization toker = new HmtEditorialTokenization();
+	return toker.splitString(raw);
+    }
+
     
 }
 

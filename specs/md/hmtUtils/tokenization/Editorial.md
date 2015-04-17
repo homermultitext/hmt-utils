@@ -18,13 +18,3 @@ Within `choice` elements:
 
 
 
-
--
-
-To find lexical entities within a raw string:
-
-- verify that characters are valid
-- split on white space
--  strip punctuation
-
-

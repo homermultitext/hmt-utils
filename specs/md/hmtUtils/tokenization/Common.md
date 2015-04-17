@@ -7,8 +7,7 @@ The tokenization process applies to passages of texts identified by a CTS URN.  
 1.  a *string of text*  to parse, accompanied by the passage's URN, and optionally by a CITE URN identifying the kind of context
 2.  a *delimited text file* representing the full OHCO2 model of a text as defined in the `hocuspocus` library (<http://cite-architecture.github.io/hocuspocus/>)
 
-
-
+In both cases, the output is an ordered list of token analyses. Each token analysis has two parts, a CTS URN for the substring, and a CITE URN analyzing the type of the token.
 
 
 
@@ -57,20 +56,73 @@ If we parse the string <em concordion:set="#zeus">Ζεὺς</em> using the same 
 
 @closeex@
 
+
+By default, requests to tokenize a string do not include explicit index values on the CTS URN substrings, since the most common use may not necessarily be to analyze an entire citable node of text, but explicit subreference indexing can optionally be included.
+
+
+
+@openex@
+
+tis t'ar sfwe qewn eridi cunehke maxesqai;
+
+@closeex@
+
+
 ## Parsing delimited text files ##
 
 
-The tabular representation of the HMT project editions preserves the full XML markup of the archival TEI documents, so the HMT tokenizers  can identify the appropriate context from the HMT project's markup conventions.   They can therefore formulate requests with both the CTS URN for the text passage, and a CITE URN classifying the context.
+The tabular representation of the HMT project editions preserves the full XML markup of the archival TEI documents, so the HMT tokenizers  can identify the appropriate context from the HMT project's markup conventions.   They can therefore formulate requests with both the CTS URN for the text passage, and a CITE URN classifying the context.  Analyses of delimited text files always include explicit indexes on CTS URN subreferences.
+
+@openex@
+
+### Examples ###
+
+
+Tokenizing <a href="../../../specs/data/ethnic.txt"  concordion:set="#ethnics = setHref(#HREF)">this data file</a> parses Its XML text node into a list of <strong  concordion:assertEquals="countTokensInTab(#ethnics)">8</strong> tokens.
+
+
+
+<table concordion:verifyRows="#token : getTokensInTab(#ethnics)">
+<tr><th concordion:assertEquals="#token">Token string</th></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@Ζεὺς[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@δ'[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@Ἔριδα[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@προΐαλλε[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@θοὰς[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@ἐπι[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@νῆας[1]</td></tr>
+<tr><td>urn:cts:greekLit:tlg0012.tlg001.msA:11.3@Ἀχαιῶν[1]</td></tr>
+</table>
+
+Their types are: 
+
+<table concordion:verifyRows="#token : getTypesInTab(#ethnics)">
+<tr><th concordion:assertEquals="#token">Types</th></tr>
+<tr><td>urn:cite:hmt:pers.pers8</td></tr>
+<tr><td>urn:cite:hmt:tokentypes.lexical</td></tr>
+<tr><td>urn:cite:hmt:pers.pers156</td></tr>
+<tr><td>urn:cite:hmt:tokentypes.lexical</td></tr>
+<tr><td>urn:cite:hmt:tokentypes.lexical</td></tr>
+<tr><td>urn:cite:hmt:tokentypes.lexical</td></tr>
+<tr><td>urn:cite:hmt:tokentypes.lexical</td></tr>
+<tr><td>urn:cite:hmt:peoples.place96</td></tr>
+</table>
+
+@closeex@
 
 
 
 
 ## Universally allowed elements and their mapping to token types ##
 
+Elements to test:
+
+- `w`
+
+Illustrated above:
 
 - `persName`
 -  `placeName`
-- `w`
 - `rs` (@type = 'ethnic')
 
 
@@ -91,18 +143,7 @@ The tabular representation of the HMT project editions preserves the full XML ma
 
 
 
-@openex@
 
-### Examples: tabulated files ###
-
-The tokenizer can operate on tabular files in the HMT project format.
-Tokenizing <a href="../../../specs/data/ethnic.txt"  concordion:set="#ethnics = setHref(#HREF)">this data file</a> parses Its XML text node into a list of <strong  concordion:assertEquals="countTokensInTab(#ethnics)">8</strong> tokens.
-
-
-
-
-
-@closeex@
 
 
 
