@@ -3,9 +3,10 @@ ext {
 
     junitVersion = "4.10"
 
-    // catalog these:
-    citeVersion = "0.92.2"
-    citemgrVersion = "0.5.15"
-    greeklangVersion = "0.0.8"
 
+    versionMap = [
+      "cite" : "0.94.1",
+      "citemgr" : "0.5.9",
+      "greeklang" : "0.0.9"
+    ]
 }
