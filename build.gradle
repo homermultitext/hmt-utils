@@ -30,7 +30,7 @@ if (hasProperty('conf')) {
 
 
 group = "org.homermultitext"
-version = '0.3.1'
+version = '0.3.2'
 
 if (project.hasProperty('pub')) {
     System.err.print "Using configuration data from ${pub}"
@@ -76,7 +76,10 @@ dependencies {
   compile group: 'edu.harvard.chs', name : 'cite' , version: versionMap["cite"]
   compile group: 'org.homermultitext', name : 'citemgr' , version: versionMap["citemgr"]
   compile group: 'edu.holycross.shot', name : 'greeklang' , version: versionMap["greeklang"]
+  compile group: "commons-io", name: "commons-io", version: "2.4"
+  compile group: 'edu.holycross.shot', name : 'hocuspocus' , version: versionMap['hocuspocus']
 
+  
   //testCompile group: 'junit', name: 'junit', version: junitVersion
   testCompile 'junit:junit:4.11'
   testCompile 'org.concordion:concordion:1.4.4'

@@ -6,7 +6,8 @@ ext {
 
     versionMap = [
       "cite" : "0.94.1",
-      "citemgr" : "0.5.9",
-      "greeklang" : "0.0.9"
+      "citemgr" : "0.6.1",
+      "greeklang" : "0.0.10",
+      "hocuspocus": "0.12.5"
     ]
 }
