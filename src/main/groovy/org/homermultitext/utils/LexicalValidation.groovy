@@ -5,7 +5,7 @@ import edu.unc.epidoc.transcoder.TransCoder
 
 class LexicalValidation implements HmtValidation {
 
-  Integer debug = 1
+  Integer debug = 0
 
 
   // map of token URNs to CTS URNs w subref (occurrences)
@@ -24,7 +24,7 @@ class LexicalValidation implements HmtValidation {
   LexicalValidation(File tokensFile, File authListFile, String morphCmd) {
     tokensMap = populateTokensMap(tokensFile)
     authList = populateAuthorityList(authListFile)
-    computeScores(tokensFile, morphCmd)
+    computeScores2(tokensFile, morphCmd)
   }
 
 
@@ -158,7 +158,7 @@ class LexicalValidation implements HmtValidation {
 	failures = failures + 1
 
 	
-      } else if (authList.contains(betaToken)) {
+      } else if (authList.contains(token)) {
 	System.err.println "${lexCount}: Byzantine orthography ok: " + token
 	validationMap[tokenUrn] = "byz"
 	successes = successes + 1
@@ -190,7 +190,7 @@ class LexicalValidation implements HmtValidation {
     ArrayList validList = []
     srcFile.eachLine {
       def cols = it.split(/,/)
-      validList.add(cols[0])
+      validList.add(cols[1])
     }
     return validList
   }
@@ -202,7 +202,7 @@ class LexicalValidation implements HmtValidation {
     
      tokens.each { t ->
       def cols = t.split(/,/)
-      if (debug > 0) {   System.err.println "Token column : " + cols }
+      if (debug > 1) {   System.err.println "Token column : " + cols }
       String psg = cols[0]
       
       CtsUrn urn

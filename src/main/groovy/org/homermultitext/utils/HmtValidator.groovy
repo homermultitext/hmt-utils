@@ -10,7 +10,10 @@ import groovy.xml.StreamingMarkupBuilder
 
 
 
-/**
+/**  A class for assessing compliance of text contents with
+ * HMT project conventions.  The methods further analyze the output of
+ * a HMT project classified tokenization, depending on the class
+ * assigned to each token.
 */
 class HmtValidator  {
 
@@ -21,15 +24,27 @@ class HmtValidator  {
   String check = "http://www.homermultitext.org/check.png"
 
 
-
+  // Classes implementation the HmtValidation interface
+  /** Validation of personal names. */
   PersNameValidation persv
+  /** Validation of place names. */
   PlaceNameValidation placev
+  /** Validation of names of ethnic groups. */
   EthnicNameValidation ethnicv
+  /** Validation of lexical tokens. */
   LexicalValidation lexv
 
   /** Map of output file names to Validation objects. */
   LinkedHashMap validations = [:]  
 
+  /** Constructor requiring data sources for complete validation.
+   * @param tokens File with output of a HMT project tokenization.
+   * @param authListsDir "data" subdirectory of a clone of the hmt-authlists
+   * repository. This is the source for valid identifiers for all named entities.
+   * @param byzOrtho "orthoequivs.csv" file in the byzortho repository.
+   * @param morphCmd String name of a parser to execute with "command.execute()"
+   * (in the LexicalValidation class).
+   */
   HmtValidator(File tokens, File authListsDir, File byzOrtho, String morphCmd) {
 
     persv = new PersNameValidation(tokens, new File(authListsDir, "hmtnames.csv"))
@@ -43,7 +58,15 @@ class HmtValidator  {
   }
 
 
-
+  /** Writes a coordinated suite of HTML reports.
+   * @param reportsDir A writable directory where the output
+   * will be written.
+   * @param label A String to use as the base of a file name for the
+   * summary report, and in constructing labels within the HTML
+   * reports.  Conventionally, this should identify the physical 
+   * text-bearing surface or surfaces whose tokenized content is
+   * being analyzed by HmtValidator methods.
+   */
   void writeReports(File reportsDir, String label) {
     if (! reportsDir.exists()) {
       reportsDir.mkdir()
@@ -69,7 +92,13 @@ class HmtValidator  {
 
   
 
-
+  /** Constructs a String of HTML for a page summarizing results
+   * of all validations.
+   * @param label A String to use as the base of a file name for the
+   * summary report.  Conventionally, this should identify the physical 
+   * text-bearing surface or surfaces whose tokenized content is
+   * being analyzed by HmtValidator methods.
+   */
   String getSummaryReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
@@ -115,7 +144,14 @@ class HmtValidator  {
     return reportXml.toString()
   }
 
+
   
+  /** Constructs a String of HTML for a page detailing results of
+   * validation of personal names.
+   * @param label A String used within the report to identify
+   * the physical text-bearing surface or surfaces whose tokenized content is
+   * being analyzed.
+   */
   String getPersonalNamesReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
@@ -180,7 +216,12 @@ class HmtValidator  {
 
 
 
-
+  /** Constructs a String of HTML for a page detailing results of
+   * validation of place names.
+   * @param label A String used within the report to identify
+   * the physical text-bearing surface or surfaces whose tokenized content is
+   * being analyzed.
+   */
   String getPlaceNamesReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
@@ -251,8 +292,13 @@ class HmtValidator  {
 
 
 
-
-    String getEthnicNamesReport(String label) {
+  /** Constructs a String of HTML for a page detailing results of
+   * validation of names of ethnic groups.
+   * @param label A String used within the report to identify
+   * the physical text-bearing surface or surfaces whose tokenized content is
+   * being analyzed.
+   */
+  String getEthnicNamesReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
 	head {
@@ -320,8 +366,13 @@ class HmtValidator  {
 
 
 
-
-      String getLexicalTokensReport(String label) {
+  /** Constructs a String of HTML for a page detailing results of
+   * validation of names of lexical tokens.
+   * @param label A String used within the report to identify
+   * the physical text-bearing surface or surfaces whose tokenized content is
+   * being analyzed.
+   */
+  String getLexicalTokensReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
 	head {

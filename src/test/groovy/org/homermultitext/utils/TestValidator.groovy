@@ -9,6 +9,7 @@ import org.homermultitext.citemanager.DseManager
 class TestValidator extends GroovyTestCase {
 
   File tokens = new File("testdata/tokens/tokens-small-sample.csv")
+  //File tokens = new File("testdata/tokens/tokens.csv")
   File authSrc = new File("testdata/authlists")
   File byz = new File("testdata/authlists/orthoequivs.csv")
   String morphCmd = "../morpheus/bin/morpheus"
