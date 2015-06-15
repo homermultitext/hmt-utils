@@ -60,7 +60,7 @@ class HmtEditorialTokenization {
    */
   ArrayList tokenizeString (String str, String urnBase, String tokenType)
   throws Exception {
-    println "Tokenize ${str} as ${tokenType}"
+    //println "tokenizeString: type ${tokenType} for ${str} "
     ArrayList classifiedTokens = []
     splitString(str).each { t ->
       ArrayList pairing
@@ -120,8 +120,9 @@ class HmtEditorialTokenization {
    * urn:cite:hmt:tokenclasses
    * urn:cite:hmt:place
    * urn:cite:hmt:pers
+   * urn:cite:hmt:error
    */
-  ArrayList tokenizeElement(Object node, String urnBase, String tokenType)
+  ArrayList tokenizeElement(Object node, String urnBase, String tokenType, boolean continueOnException)
   throws Exception {
     ArrayList classifiedTokens = []
     
@@ -153,7 +154,7 @@ class HmtEditorialTokenization {
 	// omit
       } else {
 	node.children().each { child ->
-	  tokenizeElement(child, urnBase, "").each { tokenList ->
+	  tokenizeElement(child, urnBase, "", continueOnException).each { tokenList ->
 	    classifiedTokens.add(tokenList)
 	  }
 	}
@@ -162,7 +163,7 @@ class HmtEditorialTokenization {
 
       case "num" :
       node.children().each { child ->
-	tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.numeric").each { tokenList ->
+	tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.numeric", continueOnException).each { tokenList ->
 	  classifiedTokens.add(tokenList)
 	}
       }
@@ -191,8 +192,28 @@ class HmtEditorialTokenization {
 
       case "persName":
       GreekNode n = new GreekNode(node)
-      GreekString gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
-      classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
+      println "PERSNAME NODE: "  + node.text()
+      GreekString gs
+      try {
+	gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
+	println "Classified ${gs} as " + node.'@n'
+	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
+	
+      } catch (Exception e) {
+	println "FAILED to classify " + node
+	
+	if (continueOnException) {
+	  println " So pair as error"
+	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	  
+	  classifiedTokens.add(pairing)
+	} else {
+	  println "QUITTING on exception"
+	}
+      }
+
+
+
       break
 
       
@@ -205,7 +226,7 @@ class HmtEditorialTokenization {
       case "rs":
       if (node.'@type' == "waw") {
 	node.children().each { child ->
-	  tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.waw").each { tokenList ->
+	  tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.waw",continueOnException).each { tokenList ->
 	    classifiedTokens.add(tokenList)
 	  }
 	} 
@@ -222,7 +243,7 @@ class HmtEditorialTokenization {
 
       default:
       node.children().each { child ->
-	tokenizeElement(child, urnBase, "").each { tokenList ->
+	tokenizeElement(child, urnBase, "", continueOnException).each { tokenList ->
 	  classifiedTokens.add(tokenList)
 	}
       }
@@ -252,13 +273,18 @@ class HmtEditorialTokenization {
    */
   ArrayList tokenizeTabFile(File inputFile, String separatorStr) 
   throws Exception {
-    return tokenizeTabString(inputFile.getText("UTF-8"), separatorStr)
+    return tokenizeTabString(inputFile.getText("UTF-8"), separatorStr, true)
+  }
+
+  ArrayList tokenizeTabFile(File inputFile, String separatorStr, boolean continueOnException)
+  throws Exception {
+    return tokenizeTabString(inputFile.getText("UTF-8"), separatorStr, continueOnException)
   }
 
   ArrayList indexSubReff(ArrayList tokens) {
     ArrayList indexedTokens = []
     def reffCount = [:]
-    System.err.println "Indexing "+ tokens.size() + " pairings"
+    System.err.println "indexSubReff: Indexing "+ tokens.size() + " pairings, ${tokens}"
     tokens.each { t ->
       String subref = t[0]
       String tokenType = t[1]
@@ -268,7 +294,7 @@ class HmtEditorialTokenization {
 	reffCount[subref] = 1
       }
       ArrayList pair = ["${subref}[${reffCount[subref]}]",  tokenType]
-      System.err.println "New pair is  " +  pair
+      System.err.println "indexSubReff: New pair is  " +  pair
       indexedTokens.add(pair)
     }
     return indexedTokens
@@ -291,32 +317,34 @@ class HmtEditorialTokenization {
    * @throws Exception if last column of each row of the tabular file cannot be 
    * parsed as a well-formed XML fragment.
    */
-  ArrayList tokenizeTabString(String tabData, String separatorStr) 
+  ArrayList tokenizeTabString(String tabData, String separatorStr) {
+    return tokenizeTabString(tabData, separatorStr, true)
+  }
+  ArrayList tokenizeTabString(String tabData, String separatorStr, boolean continueOnException) 
   throws Exception {
     def replyList = []
     tabData.readLines().each { l ->
       def cols = l.split(/${separatorStr}/)
       def urnBase = cols[0]
       if (cols.size() > 5) {
+	String str = cols[5]
+
+	// check for bad XML here!
+	def root = new XmlParser().parseText(str)
+
 	try {
-	  String str = cols[5]
-	  def root = new XmlParser().parseText(str)
-	  def rawTokens =  	  tokenizeElement(root, urnBase, "")
-	  println "RAW TOKESN " + rawTokens
+	  def rawTokens =  tokenizeElement(root, urnBase, "", continueOnException)
+	  println "tokenizeTabString: RAW TOKENS " + rawTokens
 	  replyList = replyList + indexSubReff(rawTokens)
-	  /*
-	  tokenizeElement(root, urnBase, "").each { t ->
-	    System.err.println "t is " + t + " of class " + t.getClass()
-	    ArrayList nodeTokens = indexSubReff(t)
-	    System.err.println "NODE TOKENS " +  nodeTokens
-	    replyList.add(nodeTokens)
-	  }
-	  */
 
 	} catch (Exception e) {
-	  System.err.println "HmtEditorialTokenization:tokenize: exception"
+	  System.err.println "HmtEditorialTokenization:tokenize: exception ${e}"
 	  System.err.println "FAILED TO PROCESS LINE: ${l}"
-	  throw e
+	  if (continueOnException) {
+	    System.err.println "Need to find a way to continue!"
+	  } else {
+	    throw e
+	  }
 	}
 
       } else {
