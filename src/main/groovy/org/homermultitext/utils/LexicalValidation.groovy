@@ -29,6 +29,10 @@ class LexicalValidation implements HmtValidation {
 
 
   /// methods required to implement interface
+
+  String label() {
+    return "Validation of lexical tokens"
+  }
   
   boolean validates() {
     return (total == successes)
@@ -50,6 +54,9 @@ class LexicalValidation implements HmtValidation {
     return validationMap
   }
 
+  LinkedHashMap getOccurrences() {
+    return tokensMap
+  }
 
   /// methods doing the validation work:
 

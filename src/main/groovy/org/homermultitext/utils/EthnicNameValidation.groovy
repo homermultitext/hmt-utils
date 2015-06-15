@@ -26,6 +26,10 @@ class EthnicNameValidation implements HmtValidation {
 
 
   /// methods required to implement interface
+
+  String label() {
+   return "Validation of identifiers for ethnic names"
+  }
   
   boolean validates() {
     return (total == successes)
@@ -45,6 +49,11 @@ class EthnicNameValidation implements HmtValidation {
 
   LinkedHashMap getValidationResults() {
     return validationMap
+  }
+
+
+  LinkedHashMap getOccurrences() {
+    return tokensMap
   }
 
 

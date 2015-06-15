@@ -26,6 +26,10 @@ class PlaceNameValidation implements HmtValidation {
 
 
   /// methods required to implement interface
+
+  String label() {
+    return "Validation of place name identifiers"
+  }
   
   boolean validates() {
     return (total == successes)
@@ -48,6 +52,10 @@ class PlaceNameValidation implements HmtValidation {
   }
 
 
+  LinkedHashMap getOccurrences() {
+    return tokensMap
+  }
+  
   /// methods doing the validation work:
   
   void computeScores() {

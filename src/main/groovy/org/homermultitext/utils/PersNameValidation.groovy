@@ -26,6 +26,10 @@ class PersNameValidation implements HmtValidation {
 
 
   /// methods required to implement interface
+
+  String label () {
+    return "Validation of personal name identifiers"
+  }
   
   boolean validates() {
     return (total == successes)
@@ -45,6 +49,10 @@ class PersNameValidation implements HmtValidation {
 
   LinkedHashMap getValidationResults() {
     return validationMap
+  }
+
+  LinkedHashMap getOccurrences() {
+    return tokensMap
   }
 
 
