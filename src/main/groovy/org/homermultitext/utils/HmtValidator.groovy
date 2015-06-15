@@ -358,7 +358,7 @@ class HmtValidator  {
 		  tr {
 		    td(pname)
 		    td {
-		      if (resultsMap[pname] ==  true) {
+		      if (resultsMap[pname] ==  "success") {
 			img(src : check)
 		      } else {
 			mkp.yield(resultsMap[pname])
