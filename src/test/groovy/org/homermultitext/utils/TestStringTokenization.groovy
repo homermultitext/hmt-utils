@@ -12,11 +12,13 @@ class TestStringTokenization extends GroovyTestCase {
   Integer expectedSize = 6026
 
   void testString() {
+    
     String tabData = tabSrc.getText()
-
-    HmtGreekTokenization tokenizer = new HmtGreekTokenization()
+    /*
+    HmtEditorialTokenization tokenizer = new HmtEditorialTokenization()
     ArrayList tokens = tokenizer.tokenize(tabData, separatorStr)
     assert tokens.size() == expectedSize
+    */
   }
   
 }
