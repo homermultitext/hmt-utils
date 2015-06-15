@@ -8,7 +8,7 @@ import org.homermultitext.citemanager.DseManager
 
 class TestValidator extends GroovyTestCase {
 
-  File tokens = new File("testdata/tokens/tokens.csv")
+  File tokens = new File("testdata/tokens/tokens-small-sample.csv")
   File authSrc = new File("testdata/authlists")
   File byz = new File("testdata/authlists/orthoequivs.csv")
   String morphCmd = "../morpheus/bin/morpheus"
@@ -21,15 +21,7 @@ class TestValidator extends GroovyTestCase {
     assert v.placev.validates()
     assert v.ethnicv.validates()
 
-    /*
-    assertFalse v.lexv.validates()
-
-    Integer expectedSuccesses = 390
-    Integer expectedFailures = 111
-    assert v.lexv.successCount() == expectedSuccesses
-    assert v.lexv.failureCount() == expectedFailures
-    */
-    v.writeReports(new File("testdata/reportsoutput"), "a bunch of content")
+    v.writeReports(new File("testdata/reportsoutput"), "239r")
     
 		   
 
