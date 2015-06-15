@@ -8,8 +8,8 @@ A utility library for analyzing editions of texts following the standards of the
 
 It includes classes for:
 
-- tokenizing text according to HMT project conventions.  From source data in the CITE architecture's tabular format (either as File or String objects), it produces tokenizations of coherent editions that eliminate ambiguities required by TEI P5's `choice` element.
-- further analyzing the tokenization, depending on the type assigned to each token.
+1. tokenizing text according to HMT project conventions.  From source data in the CITE architecture's tabular format (either as File or String objects), it produces tokenizations of coherent editions that eliminate ambiguities required by TEI P5's `choice` element.
+2. further analyzing the tokenization and validating both the XML text contents and the referential integrity of attribute values according to HMT project conventions, and depending on the type assigned to each token.
 
 
 ## NB:  current status ##
