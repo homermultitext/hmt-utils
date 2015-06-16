@@ -67,33 +67,21 @@ class HmtEditorialTokenization {
   throws Exception {
     ArrayList classifiedTokens = []
     splitString(str).each { t ->
+
       ArrayList pairing
-      switch(tokenType) {
 
-      case "urn:cite:hmt:tokentypes.waw":
-      case "urn:cite:hmt:tokentypes.sic":
-      pairing = ["${urnBase}@${t}", tokenType]
-      break
-	    
-      case "urn:cite:hmt:tokentypes.numeric":
-      MilesianString ms
-      try {
-	ms = new MilesianString(t, "Unicode")
+      if (t.size() > 0) {
+	switch(tokenType) {
+
+	case "urn:cite:hmt:tokentypes.waw":
+	case "urn:cite:hmt:tokentypes.sic":
 	pairing = ["${urnBase}@${t}", tokenType]
-      } catch (Exception e) {
-	if (continueOnException) {
-	  pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
-	} else {
-	  throw e
-	}
-      } 
-      break
-
-      default:
-      GreekString gs
-      if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
+	break
+	    
+	case "urn:cite:hmt:tokentypes.numeric":
+	MilesianString ms
 	try {
-	  gs = new GreekString(t, "Unicode")
+	  ms = new MilesianString(t, "Unicode")
 	  pairing = ["${urnBase}@${t}", tokenType]
 	} catch (Exception e) {
 	  if (continueOnException) {
@@ -101,24 +89,41 @@ class HmtEditorialTokenization {
 	  } else {
 	    throw e
 	  }
+	} 
+	break
+
+	default:
+	GreekString gs
+	if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
+	  try {
+	    gs = new GreekString(t, "Unicode")
+	    pairing = ["${urnBase}@${t}", tokenType]
+	  } catch (Exception e) {
+	    if (continueOnException) {
+	      pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	    } else {
+	      throw e
+	    }
 	}
 
-      } else {
-	println "tokenizeString: assuming lexical type for "  + t
-	try {
-	  gs = new GreekString(t, "Unicode")	
-	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
-	  classifiedTokens.add(pairing)
-	} catch (Exception e) {
-	  if (continueOnException) {
-	    pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+
+	} else {
+	  println "tokenizeString: assuming lexical type for "  + t
+	  try {
+	    gs = new GreekString(t, "Unicode")	
+	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
 	    classifiedTokens.add(pairing)
-	  } else {
-	    throw e
+	  } catch (Exception e) {
+	    if (continueOnException) {
+	      pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	      classifiedTokens.add(pairing)
+	    } else {
+	      throw e
+	    }
 	  }
 	}
-      }
-      break
+	break
+	}
       }
     }
     return(classifiedTokens)
