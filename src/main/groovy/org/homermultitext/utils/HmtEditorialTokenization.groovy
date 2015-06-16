@@ -104,9 +104,11 @@ class HmtEditorialTokenization {
 	}
 
       } else {
+	println "tokenizeString: assuming lexical type for "  + t
 	try {
 	  gs = new GreekString(t, "Unicode")	
 	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
+	  classifiedTokens.add(pairing)
 	} catch (Exception e) {
 	  if (continueOnException) {
 	    pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
