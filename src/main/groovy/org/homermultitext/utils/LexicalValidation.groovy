@@ -74,13 +74,17 @@ class LexicalValidation implements HmtValidation {
       if (k == "error") {
 	failures = failures + 1
 	
-      } else  if ((k.size() < 1) || (k == "⁑")) {
+      } else  if (k.size() < 1)  {
 	System.err.println "${lexCount}: need to create punctuation token ${k}"
-	// NO: make this an punctuation token!
 	validationMap[k]  = "fail"
 	failures = failures + 1
+
 	
-      } else if (authList.contains(betaToken)) {
+      } else if 	(k == "⁑") {
+	validationMap[k] = "punct"
+
+	
+    } else if (authList.contains(betaToken)) {
 	System.err.println "${lexCount}: Byzantine orthography ok: " + token
 	validationMap[k] = "byz"
 	successes = successes + 1
@@ -130,14 +134,20 @@ class LexicalValidation implements HmtValidation {
       CtsUrn tokenUrn
       String token
       String betaToken
+      // try hasSubref()
       try {
 	tokenUrn = new CtsUrn(cols[0])
-	token = tokenUrn.getSubref()
-	betaToken = tobeta.getString(token.toLowerCase())
-	urnOk = true
+	if (tokenUrn.hasSubref()) {
+	  token = tokenUrn.getSubref()
+	  betaToken = tobeta.getString(token.toLowerCase())
+	  urnOk = true
+	} else {
+	  System.err.println "No subref on URN " + tokenUrn
+	}
 	
       } catch (Exception e) {
 	System.err.println ("LexicalValidation: failed to make CtsUrn: " + e)
+       System.err.println "So deal with it."
       }
 
 
@@ -146,7 +156,7 @@ class LexicalValidation implements HmtValidation {
 
       // report chain:
       if (! urnOk) {
-	System.err.println "${lexCount}: invalid URN value " + tokenUrn
+	System.err.println "${lexCount}: invalid URN value " + tokenUrn + " from token " + lex
 	validationMap[tokenUrn]  = "fail"
 	failures = failures + 1
 	

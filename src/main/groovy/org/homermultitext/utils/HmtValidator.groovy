@@ -83,10 +83,8 @@ class HmtValidator  {
     File ethnicnames = new File(reportsDir, "ethnicnames.html")
     ethnicnames.setText(getEthnicNamesReport(label), "UTF-8")
 
-
     File lexicaltokens = new File(reportsDir, "lexicaltokens.html")
     lexicaltokens.setText(getLexicalTokensReport(label), "UTF-8")
-
 
   }
 
@@ -406,7 +404,10 @@ class HmtValidator  {
 		}
 
 		resultsMap.keySet().each { fullRef ->
-		  String lex = fullRef.getSubref()
+
+		  if ((fullRef != null) && (fullRef.hasSubref())) {
+
+		    String lex = fullRef.getSubref()
 		  
 		  tr {
 		    td(lex)
@@ -430,14 +431,16 @@ class HmtValidator  {
 		      }
 		    }
 		  }
+		  }
 		}
-	      }
+
+		}
 	    } else {
 	      p("No lexical tokens found. (???)")
+	      }
 	    }
 	  }
 	}
-      }
     }
     return reportXml.toString()
   }
