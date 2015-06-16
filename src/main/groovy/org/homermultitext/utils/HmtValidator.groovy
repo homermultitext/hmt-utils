@@ -405,19 +405,24 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().each { pname ->
+		resultsMap.keySet().each { fullRef ->
+		  String lex = fullRef.getSubref()
+		  
 		  tr {
-		    td(pname)
+		    td(lex)
 		    td {
-		      if (resultsMap[pname] ==  "success") {
+		      if (resultsMap[fullRef] ==  "success") {
 			img(src : check)
+		      } else if (resultsMap[fullRef] ==  "byz") {
+			img(src : check)
+			mkp.yield("(byzantine orthography)")
 		      } else {
-			mkp.yield(resultsMap[pname])
+			mkp.yield(resultsMap[fullRef])
 			img(src : del)
 		      }
 		    }
 		    td {
-		      ArrayList occurrences = occurrencesMap[pname]
+		      ArrayList occurrences = occurrencesMap[lex]
 		      ul {
 			occurrences.each {
 			  li(it)

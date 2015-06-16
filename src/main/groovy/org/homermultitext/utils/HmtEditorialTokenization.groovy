@@ -60,7 +60,11 @@ class HmtEditorialTokenization {
    */
   ArrayList tokenizeString (String str, String urnBase, String tokenType)
   throws Exception {
-    //println "tokenizeString: type ${tokenType} for ${str} "
+    return tokenizeString(str,urnBase,tokenType,true)
+  }
+
+  ArrayList tokenizeString (String str, String urnBase, String tokenType, boolean continueOnException)
+  throws Exception {
     ArrayList classifiedTokens = []
     splitString(str).each { t ->
       ArrayList pairing
@@ -72,40 +76,53 @@ class HmtEditorialTokenization {
       break
 	    
       case "urn:cite:hmt:tokentypes.numeric":
+      MilesianString ms
       try {
+	ms = new MilesianString(t, "Unicode")
+	pairing = ["${urnBase}@${t}", tokenType]
       } catch (Exception e) {
-	MilesianString ms = new MilesianString(t, "Unicode")
-	System.err.println "HmtEditorialTokenization: could not form MilesianString from string ${t}"
-      }
-      pairing = ["${urnBase}@${t}", tokenType]
+	if (continueOnException) {
+	  pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	} else {
+	  throw e
+	}
+      } 
       break
 
       default:
+      GreekString gs
       if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
 	try {
-	  GreekString gs = new GreekString(t, "Unicode")
+	  gs = new GreekString(t, "Unicode")
 	  pairing = ["${urnBase}@${t}", tokenType]
 	} catch (Exception e) {
-	  System.err.println "HmtEditorialTokenization: could not form GreekString from string ${t}"
+	  if (continueOnException) {
+	    pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	  } else {
+	    throw e
+	  }
 	}
-	
+
       } else {
-	
 	try {
-	  GreekString gs = new GreekString(t, "Unicode")
+	  gs = new GreekString(t, "Unicode")	
 	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
 	} catch (Exception e) {
-	  System.err.println "HmtEditorialTokenization: could not form GreekString from string ${t}"
+	  if (continueOnException) {
+	    pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	    classifiedTokens.add(pairing)
+	  } else {
+	    throw e
+	  }
 	}
       }
       break
       }
-      classifiedTokens.add(pairing)
     }
     return(classifiedTokens)
   }
   
-
+  
   /** Recursively tokenizes a well-formed fragment of a document following HMT project
    * editorial conventions.  Tokenization considers both markup and type of characters.
    * @param node The root node of the fragment to tokenize.
@@ -209,6 +226,7 @@ class HmtEditorialTokenization {
 	  classifiedTokens.add(pairing)
 	} else {
 	  println "QUITTING on exception"
+	  throw e
 	}
       }
 
@@ -219,8 +237,26 @@ class HmtEditorialTokenization {
       
       case "placeName":
       GreekNode n = new GreekNode(node)
-      GreekString gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
-      classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
+      GreekString gs
+
+      try {
+	gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
+	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
+
+      } catch (Exception e) {
+	println "FAILED to classify " + node
+	
+	if (continueOnException) {
+	  println " So pair as error"
+	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	  
+	  classifiedTokens.add(pairing)
+	} else {
+	  println "QUITTING on exception"
+	  throw e
+	}
+      }
+
       break
 
       case "rs":
@@ -232,10 +268,23 @@ class HmtEditorialTokenization {
 	} 
       } else if (node.'@type' == "ethnic") {
 	GreekNode n = new GreekNode(node)
-	GreekString gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
-	String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
-	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", urn])
+	GreekString gs
+	try {
+	  gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
+	  String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
+	  classifiedTokens.add(["${urnBase}@${gs.toString(true)}", urn])
 
+	} catch (Exception e) {
+	  println "FAILED to classify " + node
+	  if (continueOnException) {
+	    println " So pair as error"
+	    def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	    classifiedTokens.add(pairing)
+	  } else {
+	    println "QUITTING on exception"
+	    throw e
+	  }
+	}
       }
       break
 
