@@ -18,3 +18,9 @@ The library is being extensively revised in preparation for the HMT project's su
 
 - [API docs](api)
 - [live specs](specs/HmtUtils.html)
+
+## Prerequisites for running unit tests ##
+
+The repository includes a suite of unit and acceptance tests.  Some unit tests of the LexicalValidation class require an installation of `morpheus`, the Greek morphological parser from the Perseus project. 
+
+The Homer Multitext project virtual machine for editors automatically  builds `morpheus`.  If you clone this repository adjacent to the `morpheus` directory in the VM's `/vagrant` directory, the unit tests will find and run `morpheus` by default in unit tests.  The 2015 HMT VM for editors is available from <https://github.com/homermultitext/vm2015>.
