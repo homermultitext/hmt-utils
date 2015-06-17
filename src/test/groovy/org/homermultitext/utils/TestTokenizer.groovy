@@ -16,7 +16,7 @@ class TestTokenizer extends GroovyTestCase {
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     def tokenizationResults = toker.tokenizeTabFile(tabSrc,separatorStr)
     // test size of output:
-    Integer expectedTokens = 62
+    Integer expectedTokens = 65
     assert tokenizationResults.size() == expectedTokens
   }
   

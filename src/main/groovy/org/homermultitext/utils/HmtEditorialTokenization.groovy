@@ -14,6 +14,7 @@ class HmtEditorialTokenization {
 
   Integer debug = 0
 
+  static ArrayList punct = [".", ",", "·", "⁑" , "⁚" ]
   
   /** Empty constructor.
    */
@@ -29,19 +30,56 @@ class HmtEditorialTokenization {
     return "Tokenization of Greek editions following the HMT project's editorial conventions, and taking into consideration both TEI markup and Unicode character values."
   }
 
-  /** Closure splits a String on white space, without
-   * performing any analysis of token type.
+
+
+  // Actually need to look at last code point.  Sigh.
+  
+  /** Closure splits a String on white space, 
+   * and checks for trailing punctuation.
    * @param str The String to tokenize.
    * @returns An ArrayList of Strings.
    */
   ArrayList splitString (str) {
-    ArrayList tokes = str.split(/[\s]+/)
-    if (debug > 1) {
-      System.err.println ("Input str " + str)
-      System.err.println ("Split is " + tokes)
-    }
+    // results:
+    ArrayList tokes = []
+
+    // first split on white space:
+    ArrayList splits = str.split(/[\s]+/)
+    splits.each { s ->
+      // then check for trailing punctuation
+      int max = s.codePointCount(0, s.length() - 1)
+      if (max == 0)  {
+	tokes.add(s)
+	
+      } else {
+	int codePoint = s.codePointAt(max)
+	//println "Last code point in ${s} is " + codePoint
+	String cpStr =  new String(Character.toChars(codePoint))
+	
+	if (punct.contains(cpStr)) {
+	  //println "== punctuation"
+	  String lexPart = ""
+
+	  int limit = max - 1
+	  //println "Num code points: " + max + " so cycle from 0 to " + limit
+	  (0..limit).each { idx ->
+	    int cp = s.codePointAt(idx)
+	    String charAsStr =  new String(Character.toChars(cp))
+	    //println "at ${idx}, cp " + cp + " = " + charAsStr
+	    lexPart = lexPart + charAsStr
+	    //println "\t(lexpart now ${lexPart})"
+	  }	    
+	  tokes.add(lexPart)
+	  tokes.add(new String(Character.toChars(codePoint)))
+	} else {
+	  tokes.add(s)
+	}
+      }
+
+    }    
     return tokes
-  }    
+  }
+
 
   
   /** Tokenizes a string of text taking account of the context given by tokenType.
@@ -67,9 +105,9 @@ class HmtEditorialTokenization {
   throws Exception {
     ArrayList classifiedTokens = []
 
-    println "tokenizeString: Tokenizing " + str
+    //println "tokenizeString: Tokenizing " + str
     splitString(str).each { t ->
-      println "Look at " + t
+      //println "Look at " + t
       ArrayList pairing
 
       if (t.size() > 0) {
@@ -96,8 +134,12 @@ class HmtEditorialTokenization {
 
 	default:
 	GreekString gs
-	if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
-	  println "Analyzing named entity..."
+
+	if (punct.contains(t)) {
+	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.punctuation"]
+	  classifiedTokens.add(pairing)
+	
+	} else if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
 	  try {
 	    gs = new GreekString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", tokenType]
@@ -111,7 +153,6 @@ class HmtEditorialTokenization {
 	  classifiedTokens.add(pairing)
 
 	} else {
-	  println "tokenizeString: assuming lexical type for "  + t
 	  try {
 	    gs = new GreekString(t, "Unicode")	
 	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
@@ -222,19 +263,19 @@ class HmtEditorialTokenization {
       GreekString gs
       try {
 	gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
-	println "Classified ${gs} as " + node.'@n'
+	//println "Classified ${gs} as " + node.'@n'
 	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
 	
       } catch (Exception e) {
-	println "FAILED to classify " + node
+	//println "FAILED to classify " + node
 	
 	if (continueOnException) {
-	  println " So pair as error"
+	  //println " So pair as error"
 	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
 	  
 	  classifiedTokens.add(pairing)
 	} else {
-	  println "QUITTING on exception"
+	  //println "QUITTING on exception"
 	  throw e
 	}
       }
@@ -253,15 +294,15 @@ class HmtEditorialTokenization {
 	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
 
       } catch (Exception e) {
-	println "FAILED to classify " + node
+	//println "FAILED to classify " + node
 	
 	if (continueOnException) {
-	  println " So pair as error"
+	  //println " So pair as error"
 	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
 	  
 	  classifiedTokens.add(pairing)
 	} else {
-	  println "QUITTING on exception"
+	  //println "QUITTING on exception"
 	  throw e
 	}
       }
@@ -284,13 +325,13 @@ class HmtEditorialTokenization {
 	  classifiedTokens.add(["${urnBase}@${gs.toString(true)}", urn])
 
 	} catch (Exception e) {
-	  println "FAILED to classify " + node
+	  //println "FAILED to classify " + node
 	  if (continueOnException) {
-	    println " So pair as error"
+	    //println " So pair as error"
 	    def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
 	    classifiedTokens.add(pairing)
 	  } else {
-	    println "QUITTING on exception"
+	    //println "QUITTING on exception"
 	    throw e
 	  }
 	}
@@ -414,3 +455,5 @@ class HmtEditorialTokenization {
 
 
 }
+
+  
