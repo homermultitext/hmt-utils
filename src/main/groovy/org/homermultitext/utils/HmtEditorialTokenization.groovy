@@ -66,8 +66,10 @@ class HmtEditorialTokenization {
   ArrayList tokenizeString (String str, String urnBase, String tokenType, boolean continueOnException)
   throws Exception {
     ArrayList classifiedTokens = []
-    splitString(str).each { t ->
 
+    println "tokenizeString: Tokenizing " + str
+    splitString(str).each { t ->
+      println "Look at " + t
       ArrayList pairing
 
       if (t.size() > 0) {
@@ -95,6 +97,7 @@ class HmtEditorialTokenization {
 	default:
 	GreekString gs
 	if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
+	  println "Analyzing named entity..."
 	  try {
 	    gs = new GreekString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", tokenType]
@@ -104,23 +107,22 @@ class HmtEditorialTokenization {
 	    } else {
 	      throw e
 	    }
-	}
-
+	  }
+	  classifiedTokens.add(pairing)
 
 	} else {
 	  println "tokenizeString: assuming lexical type for "  + t
 	  try {
 	    gs = new GreekString(t, "Unicode")	
 	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
-	    classifiedTokens.add(pairing)
 	  } catch (Exception e) {
 	    if (continueOnException) {
 	      pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
-	      classifiedTokens.add(pairing)
 	    } else {
 	      throw e
 	    }
 	  }
+	  classifiedTokens.add(pairing)
 	}
 	break
 	}

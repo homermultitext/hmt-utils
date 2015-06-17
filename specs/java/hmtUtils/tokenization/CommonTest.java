@@ -145,8 +145,12 @@ public class CommonTest extends ConcordionTestCase {
 	HmtEditorialTokenization toker = new HmtEditorialTokenization();
 	ArrayList analyses = toker.tokenizeString(str, urn, tokenType);
 	String token = "";
+	//System.err.println("Analysis of " + str + " in context " + tokenType);
 	for (int i = 0; i < analyses.size(); i++ ) {
 	    ArrayList analysis = ((ArrayList)analyses.get(i));
+	    //System.err.println("single analysis " + analysis + " comprised of ");
+	    //System.err.println("0. " + analysis.get(0).toString());
+	    //System.err.println("1. " +   analysis.get(1).toString());
 	    token = analysis.get(0).toString();
 	}
 	return token;
