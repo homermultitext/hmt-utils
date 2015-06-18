@@ -18,7 +18,7 @@ class TestValidator extends GroovyTestCase {
   
   
   void testValidator() {
-    HmtValidator v = new HmtValidator(tokens,authSrc, byz, morphCmd)
+    HmtValidator v = new HmtValidator(tokens,authSrc, byz,lexMap, morphCmd)
     assert v.persv.validates()
     assert v.placev.validates()
     assert v.ethnicv.validates()
