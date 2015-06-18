@@ -33,7 +33,9 @@ class HmtEditorialTokenization {
 
 
   // Actually need to look at last code point.  Sigh.
-  
+  // Still a problem here with/without white space following markup such
+  // as named entities??
+  //
   /** Closure splits a String on white space, 
    * and checks for trailing punctuation.
    * @param str The String to tokenize.
@@ -185,6 +187,7 @@ class HmtEditorialTokenization {
    * identifying the token; the second is a CITE URN from one of the following
    * collections:
    * urn:cite:hmt:tokenclasses
+   * urn:cite:hmt:punctuation
    * urn:cite:hmt:place
    * urn:cite:hmt:pers
    * urn:cite:hmt:error
@@ -337,8 +340,6 @@ class HmtEditorialTokenization {
 	}
       }
       break
-
-      
 
       default:
       node.children().each { child ->

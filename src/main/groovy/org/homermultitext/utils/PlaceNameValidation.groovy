@@ -1,57 +1,104 @@
 package org.homermultitext.utils
 
 
+import edu.harvard.chs.cite.CiteUrn
+
+
+/**
+ * Implementation of the Validation interface to
+ * validate the referential integrity of tokens referring
+ * to place names.
+ */
 class PlaceNameValidation implements HmtValidation {
 
   Integer debug = 0
 
 
-  // map of token URNs to CTS URNs w subref (occurrences)
+  /** Map of tokens (Cite URNs) to passges where they occur (CTS URNs with subreference). */
   LinkedHashMap tokensMap = [:]
-  // map of the same token URNs to boolean (t = valid)
+
+  /** Map of the same token URNs to a boolean value, true if the URN value is valid. */
   LinkedHashMap validationMap = [:]
+
+  /** Number of validly identified tokens. */
   Integer successes = 0
+  /** Number of tokens not identified by valid tokens. */
   Integer failures = 0
+  /** Total number of tokens analyzed. */
   Integer total = 0
 
+  /** List of valid values. */
+  ArrayList authorityList = []
 
-  ArrayList authList = []
-
+  PlaceNameValidation(File tokensFile, File authListFile, Integer debugLevel) {
+    debug = debugLevel
+    tokensMap = populateTokensMap(tokensFile)
+    System.err.println  "constructor set toeknsMap to " + tokensMap
+    authorityList = populateAuthorityList(authListFile)
+    computeScores()
+  }
   
   PlaceNameValidation(File tokensFile, File authListFile) {
     tokensMap = populateTokensMap(tokensFile)
-    authList = populateAuthorityList(authListFile)
+    authorityList = populateAuthorityList(authListFile)
     computeScores()
   }
 
 
   /// methods required to implement interface
 
+  /** 
+   * @returns A label for the validation class. 
+   */
   String label() {
     return "Validation of place name identifiers"
   }
-  
+
+  /** 
+   * @returns True is all tokens have valid identifiers. 
+   */
   boolean validates() {
     return (total == successes)
   }
 
+
+  /** 
+   * @returns Number of tokens that have valid identifiers.
+   */
   Integer successCount() {
     return successes
   }
 
+
+  /** 
+   * @returns Number of tokens that do not have valid identifiers.
+   */
   Integer failureCount() {
     return failures
   }
 
-  Integer tokensCount() {
+
+  /** 
+   * @returns Total number of tokens analyzed.
+   */
+    Integer tokensCount() {
     return total
   }
 
-  LinkedHashMap getValidationResults() {
+
+  /** Gets a mapping of all tokens to a boolean value,
+   * true if the token has a valid identifier.
+   * @returns A map keyed by token URNs, mapping to boolean
+   * values.
+   */
+    LinkedHashMap getValidationResults() {
     return validationMap
   }
 
-
+  /** Gets a mapping of all tokens to a CTS URN 
+   * identifying the occurrence of this token.
+   * @returns A map keyed by token URNs, mapping to text passages.
+   */
   LinkedHashMap getOccurrences() {
     return tokensMap
   }
@@ -65,8 +112,16 @@ class PlaceNameValidation implements HmtValidation {
     Integer good = 0
     Integer bad = 0
     def scoreMap = [:]
+
+
+    if (debug > 0) {System.err.println "analyze against list " + tokensMap.keySet()}
     tokensMap.keySet().each { k ->
-      if (authList.contains(k)) {
+
+      if (debug > 0) {
+	System.err.println "PlaceNameValidation: ${k} in list? ${authorityList.contains(k)}"
+      }
+	
+      if (authorityList.contains(k)) {
 	this.successes++;
 	validationMap[k] = true
       } else {
@@ -77,12 +132,26 @@ class PlaceNameValidation implements HmtValidation {
   }
 
 
-  // add error checking...
+  // add error checking: file must exist, be nonempty,
+  // keys must be valid urns
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
-    srcFile.eachLine {
-      def cols = it.split(/,/)
-      validList.add(cols[0])
+    Integer count = 0
+    srcFile.eachLine { l ->
+      if (count > 0)  {
+	def cols = l.split(/,/)
+	CiteUrn urn
+	String authValue = cols[0]
+	try {
+	  if (debug > 1) { System.err.println "Loading URN string " + authValue}
+	  urn = new CiteUrn(authValue)
+	  validList.add(cols[0])
+	} catch (Exception e) {
+	  System.err.println "PlaceNameValidation: bad value in authority list. ${e}"
+	  throw e
+	}
+      }
+      count++;
     }
     return validList
   }

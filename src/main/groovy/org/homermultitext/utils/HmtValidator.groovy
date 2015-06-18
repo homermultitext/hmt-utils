@@ -45,7 +45,7 @@ class HmtValidator  {
    * @param morphCmd String name of a parser to execute with "command.execute()"
    * (in the LexicalValidation class).
    */
-  HmtValidator(File tokens, File authListsDir, File byzOrtho, String morphCmd) {
+  HmtValidator(File tokens, File authListsDir, File byzOrtho, File lexMapping, String morphCmd) {
 
     persv = new PersNameValidation(tokens, new File(authListsDir, "hmtnames.csv"))
     validations["personalnames.html"] = (persv)
@@ -53,7 +53,7 @@ class HmtValidator  {
     validations["placenames.html"] = placev
     ethnicv = new EthnicNameValidation(tokens, new File(authListsDir, "hmtplaces.csv"))
     validations["ethnicnames.html"] = ethnicv
-    lexv = new LexicalValidation(tokens, byzOrtho, morphCmd)
+    lexv = new LexicalValidation(tokens, byzOrtho, lexMapping, morphCmd)
     validations["lexicaltokens.html"] = lexv
   }
 

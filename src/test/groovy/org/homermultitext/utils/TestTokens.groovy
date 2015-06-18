@@ -18,15 +18,26 @@ class TestTokens extends GroovyTestCase {
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(pn, urn, context)
 
-    println "Time to analyze: ${pn} from ${urn} in context ${context}"
-
-
     // only 1 analysis:
     assert  analyses.size() == 1
     ArrayList analysis  = analyses[0]
     assert analysis[0] == "${urn}@${pn}"
     assert analysis[1] == context
     
+  }
+
+  void testSigmaElide() {
+    String urn = "urn:cts:greekLit:tlg0012.tlg001.msA:12.138"
+    String str = "ὑψόσ'"
+    String context = ""
+    String expectedContext = "urn:cite:hmt:tokentypes.lexical"
+    
+    HmtEditorialTokenization toker = new HmtEditorialTokenization()
+    ArrayList analyses = toker.tokenizeString(str, urn, context)
+
+    ArrayList analysis  = analyses[0]
+    assert analysis[0] == "${urn}@${str}"
+    assert analysis[1] == expectedContext
   }
   
 }

@@ -20,10 +20,13 @@ class LexicalValidation implements HmtValidation {
 
   ArrayList authList = []
 
+  ArrayList lexMapList = []
+
   
-  LexicalValidation(File tokensFile, File authListFile, String morphCmd) {
+  LexicalValidation(File tokensFile, File authListFile, File lexMappingFile, String morphCmd) {
     tokensMap = populateTokensMap(tokensFile)
     authList = populateAuthorityList(authListFile)
+    lexMapList = populateLexMap(lexMappingFile)
     computeScores2(tokensFile, morphCmd)
   }
 
@@ -113,7 +116,6 @@ class LexicalValidation implements HmtValidation {
 
   
   void computeScores2(File srcFile, String parserCmd) {
-
     def lextokens = srcFile.readLines().findAll { l -> l ==~ /.+,urn:cite:hmt:tokentypes.lexical/}
     this.total = lextokens.size()
 
@@ -153,7 +155,6 @@ class LexicalValidation implements HmtValidation {
 
       // USE GREEKLANG TO CHECK ISPUCNT
       //
-
       // report chain:
       if (! urnOk) {
 	System.err.println "${lexCount}: invalid URN value " + tokenUrn + " from token " + lex
@@ -161,6 +162,7 @@ class LexicalValidation implements HmtValidation {
 	failures = failures + 1
 	
 	
+	//      } else if ((token.size() < 1) || (token == "⁑")) {
       } else if ((token.size() < 1) || (token == "⁑")) {
 	System.err.println "${lexCount}: need to create punctuation token ${token}"
 	// NO: make this an punctuation token!
@@ -172,6 +174,12 @@ class LexicalValidation implements HmtValidation {
 	System.err.println "${lexCount}: Byzantine orthography ok: " + token
 	validationMap[tokenUrn] = "byz"
 	successes = successes + 1
+
+      } else if (lexMapList.contains(token)) {
+	System.err.println "${lexCount}: modern orthography ok: " + token
+	validationMap[tokenUrn] = "success"
+	successes = successes + 1
+	
 	
       } else {
 
@@ -194,7 +202,27 @@ class LexicalValidation implements HmtValidation {
     }
   }
 
+  
+  /** Loads date from a .csv source file mapping
+   * modern orthography not recognized by morpheus
+   * to an equivalent modern orthography.  The mapping
+   * should give a URN for the mapping in the first column,
+   * the valid but unrecognized form in the second column, 
+   * and the parseable equivalent in the third column.
+   * @param srcFile .csv File with mapping data.
+   * @returns A list of valid forms morpheus cannot parse.
+   */
+  ArrayList populateLexMap(File srcFile) {
+    ArrayList validList = []
+    srcFile.eachLine {
+      def cols = it.split(/,/)
+      validList.add(cols[1])
+    }
+    return validList
+  }
 
+
+  
   // add error checking...
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
