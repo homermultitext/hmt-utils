@@ -379,7 +379,7 @@ class HmtValidator  {
 	}
 	body {
 	  header(role: "banner") {
-	    mkp.yield "Ethnic: ${label}"
+	    mkp.yield "Lexical tokens: ${label}"
 	    nav(role: "navigation") {
 	      ul {
 		li {
@@ -389,7 +389,7 @@ class HmtValidator  {
 	    }
 	  }
 	  article(role: "main") {
-	    h1("Ethnic: ${label}")
+	    h1("Lexical tokens: ${label}")
 
 	    
 	    LinkedHashMap occurrencesMap = lexv.getOccurrences()
