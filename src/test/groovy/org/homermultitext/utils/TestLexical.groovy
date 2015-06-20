@@ -8,6 +8,7 @@ import org.junit.Test
 class TestLexical extends GroovyTestCase {
 
   File tokens = new File("testdata/tokens/tokens.csv")
+  File lexMap = new File("testdata/authlists/lexmap.csv")
   File byz = new File("testdata/authlists/orthoequivs.csv")
   
   String morphCmd = "../morpheus/bin/morpheus"
@@ -19,7 +20,7 @@ THese should be right for *unique* tokens:
   Integer expectedSuccesses = 390
   */
   void testLexicalValidation() {
-    LexicalValidation lexicalv = new LexicalValidation(tokens, byz, morphCmd)
+    LexicalValidation lexicalv = new LexicalValidation(tokens, byz, lexMap, morphCmd)
     
     assertFalse lexicalv.validates()
 
