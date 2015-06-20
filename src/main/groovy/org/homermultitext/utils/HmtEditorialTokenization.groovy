@@ -269,7 +269,7 @@ class HmtEditorialTokenization {
 	String nameText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	String nameText = nameText1.replaceFirst(/[\s]+$/, "")
 	
-	System.err.println "tokenizeElement: Trying to make GreekString from persname " + nameText
+	if (debug > 0) { System.err.println "tokenizeElement: Trying to make GreekString from persname " + nameText }
 	gs = new GreekString(nameText, "Unicode")
 	classifiedTokens.add(["${urnBase}@${nameText}", "${node.'@n'}"])
 	
@@ -295,8 +295,10 @@ class HmtEditorialTokenization {
       GreekString gs
 
       try {
-	gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
-	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
+	String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	String placeText = placeText1.replaceFirst(/[\s]+$/, "")
+	gs = new GreekString(placeText, "Unicode")
+	classifiedTokens.add(["${urnBase}@${placeText}", "${node.'@n'}"])
 
       } catch (Exception e) {
 	System.err.println "tokenizeElement: FAILED to classify placeName " + node
@@ -324,9 +326,11 @@ class HmtEditorialTokenization {
 	GreekNode n = new GreekNode(node)
 	GreekString gs
 	try {
-	  gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
+	  String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	  String placeText = placeText1.replaceFirst(/[\s]+$/, "")
+	  gs = new GreekString(placeText, "Unicode")
 	  String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
-	  classifiedTokens.add(["${urnBase}@${gs.toString(true)}", urn])
+	  classifiedTokens.add(["${urnBase}@${placeText}", urn])
 
 	  if (debug > 2) { System.err.println "\ttokenizeElement: ETHNIC NODE: "  + node.text() }
 	  
@@ -440,7 +444,9 @@ class HmtEditorialTokenization {
 	def root = new XmlParser().parseText(str)
 
 	try {
-	  System.err.println "tokenizeTabString: tokenize element with continue set to " + continueOnException
+	  if (debug > 1) {
+	    System.err.println "tokenizeTabString: tokenize element with continue set to " + continueOnException
+	  }
 	  def rawTokens =  tokenizeElement(root, urnBase, "", continueOnException)
 	  if (debug > 5) {System.err.println "tokenizeTabString: RAW TOKENS " + rawTokens}
 	  replyList = replyList + indexSubReff(rawTokens)

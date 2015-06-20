@@ -1,0 +1,1 @@
+urn:cts:greekLit:tlg0012.tlg001.msA:18.270#270#269#271#/tei:TEI/tei:text/tei:body/tei:div[@n = '18']#<l xmlns="http://www.tei-c.org/ns/1.0" n="270">γνώσεται. ἀσπασίως γὰρ ἀφίξεται <placeName n="urn:cite:hmt:place.place6">Ί̈λιον</placeName> ϊ̄ρὴν </l>#/tei:TEI/tei:text/tei:body/tei:div[@n = '?']/tei:l[@n = '?']
