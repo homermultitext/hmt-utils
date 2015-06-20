@@ -2,6 +2,7 @@ package org.homermultitext.utils
 
 import edu.harvard.chs.cite.CtsUrn
 import edu.unc.epidoc.transcoder.TransCoder
+import au.com.bytecode.opencsv.CSVReader
 
 class LexicalValidation implements HmtValidation {
 
@@ -119,26 +120,34 @@ class LexicalValidation implements HmtValidation {
     def lextokens = srcFile.readLines().findAll { l -> l ==~ /.+,urn:cite:hmt:tokentypes.lexical/}
     this.total = lextokens.size()
 
+
+
+    
     TransCoder tobeta = new TransCoder()
     tobeta.setConverter("BetaCode")
     tobeta.setParser("Unicode")
 
     Integer lexCount = 0
-    lextokens.each { lex ->
+
+    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    srcReader.readAll().each { lexLine ->
       boolean urnOk = false
-      lexCount++
+      lexCount++;
     
       Integer good = 0
       Integer bad = 0
       def scoreMap = [:]
-      def cols = lex.split(/,/)
+
+  
+      //    lextokens.each { lex ->
+      //      def cols = lex.split(/,/)
 
       CtsUrn tokenUrn
       String token
       String betaToken
       // try hasSubref()
       try {
-	tokenUrn = new CtsUrn(cols[0])
+	tokenUrn = new CtsUrn(lexLine[0])
 	if (tokenUrn.hasSubref()) {
 	  token = tokenUrn.getSubref()
 	  betaToken = tobeta.getString(token.toLowerCase())
@@ -157,7 +166,7 @@ class LexicalValidation implements HmtValidation {
       //
       // report chain:
       if (! urnOk) {
-	System.err.println "${lexCount}: invalid URN value " + tokenUrn + " from token " + lex
+	System.err.println "${lexCount}: invalid URN value " + tokenUrn + " from token " + lexLine
 	validationMap[tokenUrn]  = "fail"
 	failures = failures + 1
 	
@@ -200,6 +209,7 @@ class LexicalValidation implements HmtValidation {
 	}
       }
     }
+
   }
 
   
