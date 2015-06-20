@@ -266,26 +266,27 @@ class HmtEditorialTokenization {
       if (debug > 2) { System.err.println "\ttokenizeElement: PERSNAME NODE: "  + node.text() }
       GreekString gs
       try {
-	gs = new GreekString(n.collectText().replaceAll(/ /,''), "Unicode")
-	//println "Classified ${gs} as " + node.'@n'
-	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
+	String nameText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	String nameText = nameText1.replaceFirst(/[\s]+$/, "")
+	
+	System.err.println "tokenizeElement: Trying to make GreekString from persname " + nameText
+	gs = new GreekString(nameText, "Unicode")
+	classifiedTokens.add(["${urnBase}@${nameText}", "${node.'@n'}"])
 	
       } catch (Exception e) {
-	//println "FAILED to classify " + node
-	
+	System.err.println "tokenizeElement: FAILED to classify personal name " + node.'@n'
+	System.err.println "Continue?  " + continueOnException	
 	if (continueOnException) {
-	  //println " So pair as error"
+	  System.err.println " So pairing as error"
 	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
-	  
 	  classifiedTokens.add(pairing)
+	  
 	} else {
-	  //println "QUITTING on exception"
+	  
+	  System.err.println "Since continueOnException = ${continueOnException}, QUITTING on exception"
 	  throw e
 	}
       }
-
-
-
       break
 
       
@@ -298,15 +299,14 @@ class HmtEditorialTokenization {
 	classifiedTokens.add(["${urnBase}@${gs.toString(true)}", "${node.'@n'}"])
 
       } catch (Exception e) {
-	//println "FAILED to classify " + node
-	
+	System.err.println "tokenizeElement: FAILED to classify placeName " + node
 	if (continueOnException) {
-	  //println " So pair as error"
+	  System.err.println " So pairing as error"
 	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
 	  
 	  classifiedTokens.add(pairing)
 	} else {
-	  //println "QUITTING on exception"
+	  System.err.println "QUITTING on exception"
 	  throw e
 	}
       }
@@ -427,6 +427,8 @@ class HmtEditorialTokenization {
   }
   ArrayList tokenizeTabString(String tabData, String separatorStr, boolean continueOnException) 
   throws Exception {
+
+    
     def replyList = []
     tabData.readLines().each { l ->
       def cols = l.split(/${separatorStr}/)
@@ -438,6 +440,7 @@ class HmtEditorialTokenization {
 	def root = new XmlParser().parseText(str)
 
 	try {
+	  System.err.println "tokenizeTabString: tokenize element with continue set to " + continueOnException
 	  def rawTokens =  tokenizeElement(root, urnBase, "", continueOnException)
 	  if (debug > 5) {System.err.println "tokenizeTabString: RAW TOKENS " + rawTokens}
 	  replyList = replyList + indexSubReff(rawTokens)
@@ -453,7 +456,7 @@ class HmtEditorialTokenization {
 	}
 
       } else {
-	System.err.println "HmtEditorialTokenization: omit input line ${l}"
+	if (debug > 0) { System.err.println "HmtEditorialTokenization: omit input line ${l}"}
       }
     }
     return replyList

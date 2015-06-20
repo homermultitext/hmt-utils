@@ -28,13 +28,16 @@ Based on the text's category and token type, each substring identified by the to
 
 The following types or classes of tokens are recognized:
 
-- *lexical* tokens
-- *punctuation* tokens
-- *numeric* tokens
-- *personal names*
-- *geographic names*
-- *literal string of characters* ("word as word")
-- *unintelligible* tokens ("*sic*")
+- *lexical* tokens (`urn:cite:hmt:tokentypes`)
+- *punctuation* tokens (`urn:cite:hmt:tokentypes`)
+- *numeric* tokens (`urn:cite:hmt:num`)
+- *personal names* (`urn:cite:hmt:pers`)
+- *geographic names* (`urn:cite:hmt:place`)
+- *ethnic group* (`urn:cite:hmt:peoples`)
+- *astronomical bodies* (`urn:cite:hmt:astro`)
+- *literal string of characters* ("word as word") (`urn:cite:hmt:waw`)
+- *unintelligible* tokens ("*sic*") (`urn:cite:hmt:sic`)
+- *invalid content* (`urn:cite:hmt:error`)
 
 
 ## Tokenization systems
