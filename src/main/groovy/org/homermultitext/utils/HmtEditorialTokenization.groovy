@@ -3,7 +3,7 @@ package org.homermultitext.utils
 import org.apache.commons.io.FilenameUtils
 import edu.harvard.chs.f1k.GreekNode
 
-import edu.holycross.shot.greekutils.GreekString
+import edu.holycross.shot.greekutils.GreekMsString
 import edu.holycross.shot.greekutils.MilesianString
 
 
@@ -127,7 +127,7 @@ class HmtEditorialTokenization {
 	  pairing = ["${urnBase}@${t}", tokenType]
 	} catch (Exception e) {
 	  if (continueOnException) {
-	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:error.badGreekString"]
+	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:error.badGreekMsString"]
 	  } else {
 	    throw e
 	  }
@@ -135,7 +135,7 @@ class HmtEditorialTokenization {
 	break
 
 	default:
-	GreekString gs
+	GreekMsString gs
 
 	if (punct.contains(t)) {
 	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.punctuation"]
@@ -143,11 +143,11 @@ class HmtEditorialTokenization {
 	
 	} else if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
 	  try {
-	    gs = new GreekString(t, "Unicode")
+	    gs = new GreekMsString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", tokenType]
 	  } catch (Exception e) {
 	    if (continueOnException) {
-	      pairing = ["${urnBase}@${t}", "urn:cite:hmt:error.badGreekString"]
+	      pairing = ["${urnBase}@${t}", "urn:cite:hmt:error.badGreekMsString"]
 	    } else {
 	      throw e
 	    }
@@ -156,11 +156,11 @@ class HmtEditorialTokenization {
 
 	} else {
 	  try {
-	    gs = new GreekString(t, "Unicode")	
+	    gs = new GreekMsString(t, "Unicode")	
 	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
 	  } catch (Exception e) {
 	    if (continueOnException) {
-	      pairing = ["${urnBase}@${t}", "urn:cite:hmt:error.badGreekString"]
+	      pairing = ["${urnBase}@${t}", "urn:cite:hmt:error.badGreekMsString"]
 	    } else {
 	      throw e
 	    }
@@ -264,13 +264,13 @@ class HmtEditorialTokenization {
       case "persName":
       GreekNode n = new GreekNode(node)
       if (debug > 2) { System.err.println "\ttokenizeElement: PERSNAME NODE: "  + node.text() }
-      GreekString gs
+      GreekMsString gs
       try {
 	String nameText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	String nameText = nameText1.replaceFirst(/[\s]+$/, "")
 	
-	if (debug > 0) { System.err.println "tokenizeElement: Trying to make GreekString from persname " + nameText }
-	gs = new GreekString(nameText, "Unicode")
+	if (debug > 0) { System.err.println "tokenizeElement: Trying to make GreekMsString from persname " + nameText }
+	gs = new GreekMsString(nameText, "Unicode")
 	classifiedTokens.add(["${urnBase}@${nameText}", "${node.'@n'}"])
 	
       } catch (Exception e) {
@@ -278,7 +278,7 @@ class HmtEditorialTokenization {
 	System.err.println "Continue?  " + continueOnException	
 	if (continueOnException) {
 	  System.err.println " So pairing as error"
-	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekMsString"]
 	  classifiedTokens.add(pairing)
 	  
 	} else {
@@ -292,19 +292,19 @@ class HmtEditorialTokenization {
       
       case "placeName":
       GreekNode n = new GreekNode(node)
-      GreekString gs
+      GreekMsString gs
 
       try {
 	String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	String placeText = placeText1.replaceFirst(/[\s]+$/, "")
-	gs = new GreekString(placeText, "Unicode")
+	gs = new GreekMsString(placeText, "Unicode")
 	classifiedTokens.add(["${urnBase}@${placeText}", "${node.'@n'}"])
 
       } catch (Exception e) {
 	System.err.println "tokenizeElement: FAILED to classify placeName " + node
 	if (continueOnException) {
 	  System.err.println " So pairing as error"
-	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekMsString"]
 	  
 	  classifiedTokens.add(pairing)
 	} else {
@@ -324,11 +324,11 @@ class HmtEditorialTokenization {
 	} 
       } else if (node.'@type' == "ethnic") {
 	GreekNode n = new GreekNode(node)
-	GreekString gs
+	GreekMsString gs
 	try {
 	  String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	  String placeText = placeText1.replaceFirst(/[\s]+$/, "")
-	  gs = new GreekString(placeText, "Unicode")
+	  gs = new GreekMsString(placeText, "Unicode")
 	  String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
 	  classifiedTokens.add(["${urnBase}@${placeText}", urn])
 
@@ -338,7 +338,7 @@ class HmtEditorialTokenization {
 	  //println "FAILED to classify " + node
 	  if (continueOnException) {
 	    //println " So pair as error"
-	    def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekString"]
+	    def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekMsString"]
 	    classifiedTokens.add(pairing)
 	  } else {
 	    //println "QUITTING on exception"
