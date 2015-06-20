@@ -29,6 +29,7 @@ Based on the text's category and token type, each substring identified by the to
 The following types or classes of tokens are recognized:
 
 - *lexical* tokens
+- *punctuation* tokens
 - *numeric* tokens
 - *personal names*
 - *geographic names*
