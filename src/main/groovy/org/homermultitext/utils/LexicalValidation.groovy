@@ -83,7 +83,7 @@ class LexicalValidation implements HmtValidation {
 	failures = failures + 1
 
 	
-      } else if 	(k == "⁑") {
+      } else if (k == "⁑") {
 	validationMap[k] = "punct"
 
 	

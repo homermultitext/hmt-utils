@@ -19,8 +19,9 @@ class HmtValidator  {
 
   int debug = 0
 
-  
+  /** Icon used in HTML reports for bad tokens. */
   String del = "http://www.homermultitext.org/delete.png"
+  /** Icon used in HTML reports for good tokens. */
   String check = "http://www.homermultitext.org/check.png"
 
 
