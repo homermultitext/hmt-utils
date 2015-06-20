@@ -30,7 +30,7 @@ if (hasProperty('conf')) {
 
 
 group = "org.homermultitext"
-version = '0.4.7'
+version = '0.4.8'
 
 if (project.hasProperty('pub')) {
     System.err.print "Using configuration data from ${pub}"
