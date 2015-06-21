@@ -118,7 +118,7 @@ class HmtValidator  {
 		th("Success/Failure/Total")
 		th("Details")
 	      }
-	      validations.keySet().each { k ->
+	      validations.keySet().sort().each { k ->
 		def v = validations[k]
 		tr {
 		  td(v.label())
@@ -183,7 +183,7 @@ class HmtValidator  {
 		th("Occurs in")
 	      }
 
-	      resultsMap.keySet().each { pname ->
+	      resultsMap.keySet().sort().each { pname ->
 		tr {
 		  td(pname)
 		  td {
@@ -196,7 +196,7 @@ class HmtValidator  {
 		  td {
 		    ArrayList occurrences = occurrencesMap[pname]
 		    ul {
-		      occurrences.each {
+		      occurrences.sort().each {
 			li(it)
 		      }
 		    }
@@ -254,7 +254,7 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().each { pname ->
+		resultsMap.keySet().sort().each { pname ->
 		  tr {
 		    td(pname)
 		    td {
@@ -267,7 +267,7 @@ class HmtValidator  {
 		    td {
 		      ArrayList occurrences = occurrencesMap[pname]
 		      ul {
-			occurrences.each {
+			occurrences.sort().each {
 			  li(it)
 			}
 		      }
@@ -330,7 +330,7 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().each { pname ->
+		resultsMap.keySet().sort().each { pname ->
 		  tr {
 		    td(pname)
 		    td {
@@ -343,7 +343,7 @@ class HmtValidator  {
 		    td {
 		      ArrayList occurrences = occurrencesMap[pname]
 		      ul {
-			occurrences.each {
+			occurrences.sort().each {
 			  li(it)
 			}
 		      }
@@ -404,7 +404,7 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().each { fullRef ->
+		resultsMap.keySet().sort().each { fullRef ->
 
 		  if ((fullRef != null) && (fullRef.hasSubref())) {
 
@@ -431,7 +431,7 @@ class HmtValidator  {
 		    td {
 		      ArrayList occurrences = occurrencesMap[lex]
 		      ul {
-			occurrences.each {
+			occurrences.sort().each {
 			  li(it)
 			}
 		      }

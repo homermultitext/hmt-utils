@@ -272,9 +272,10 @@ class LexicalValidation implements HmtValidation {
   // add error checking...
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
-    srcFile.eachLine {
-      def cols = it.split(/,/)
-      validList.add(cols[1])
+    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    srcReader.readAll().each { lexLine ->
+      String normaler = Normalizer.normalize(lexLine[1], Form.NFC)
+      validList.add(normaler)
     }
     return validList
   }
@@ -284,13 +285,28 @@ class LexicalValidation implements HmtValidation {
     LinkedHashMap occurrences = [:]
 
     CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    Integer lineCount = 0
     srcReader.readAll().each { lexLine ->
+      lineCount++;
+      System.err.println "popTOkes: ${lineCount} ${lexLine}"
+      String psg
+      String tokenType
       if (lexLine.size() != 2) {
-	System.err.println "??? lexLine = #${lexLine}#"
+	// OpenCSV BREAKS ON BIG UNICODE!
+	System.err.println "populateTokenMap:lexline has ${lexLine.size()} cols???  #${lexLine}#"
+	if (lexLine[1]  ==~ /\[[0-9]+\]/) {
+	  String frankenstein = lexLine[0] + lexLine[1]
+	  System.err.println "Try FRANKENSTEINED " + frankenstein
+	  psg = Normalizer.normalize(frankenstein, Form.NFC)      
+	  tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
+	} else {
+	  System.err.println "Couldn't make sense of second part, " + lexLine[1]
+	  throw (new Exception("LexicalValidation:populateTokensMap: failed on ${lexLine}"))
+	}
+      } else {
+	psg = Normalizer.normalize(lexLine[0], Form.NFC)      
+	tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
       }
-      String psg = lexLine[0]
-      String tokenType = lexLine[1]
-
       if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	CtsUrn urn
 	boolean urnOk

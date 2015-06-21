@@ -7,7 +7,7 @@ import org.junit.Test
 class TestValidatorPass extends GroovyTestCase {
 
   File tabsDir = new File("testdata/tabs")
-  File tabSrc = new File(tabsDir, "three-lines.tab")
+  File tabSrc = new File(tabsDir, "tiniest.tab")
   File tokensFile = new File("build/venA-iliad-tokens.txt")
   String separatorStr = "#"
 
@@ -18,7 +18,8 @@ class TestValidatorPass extends GroovyTestCase {
   String morphCmd = "../morpheus/bin/morpheus"
 
 
-  Integer expectedNodes = 3
+  //  Integer expectedNodes = 3
+  Integer expectedNodes = 1
   
   void testCycleFromTabs() {
     // First, build a clean tokenization from tabulated source
@@ -26,19 +27,17 @@ class TestValidatorPass extends GroovyTestCase {
     // Insist on completely error-free tokenization!
     boolean continueOnException = false
     def tokenizationResults = toker.tokenizeTabFile(tabSrc,separatorStr,continueOnException )
-    Integer idx = 0
+    Integer idx = 1
     tokenizationResults.each {
-      String outStr = "${it[0]},${it[1]}\n"
+      String outStr = '"' + it[0] + '","' + it[1] + '"\n'
       tokensFile.append(outStr)
       idx++
     }
-
     assert tabSrc.readLines().size() == expectedNodes
 
     System.err.println "From tabulated source with ${tabSrc.readLines().size()} citable node, set up " + idx  + " tokenization results to validate."
     // Now let's validate:
     HmtValidator v = new HmtValidator(tokensFile,authSrc, byz,lexMap, morphCmd)
-
     System.err.println "and then validated " + v.lexv.tokensCount()  + " lexical tokens."
 
     
