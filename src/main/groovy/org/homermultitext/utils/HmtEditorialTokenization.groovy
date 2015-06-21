@@ -14,8 +14,6 @@ class HmtEditorialTokenization {
 
   Integer debug = 0
 
-  static ArrayList punct = [".", ",", "·", "⁑" , "⁚" ]
-  
   /** Empty constructor.
    */
   HmtEditorialTokenization() {
@@ -77,6 +75,7 @@ class HmtEditorialTokenization {
 	if (debug > 2) {
 	  println "${codePoint} = ${cpStr} NOT GreekMsPunctuation"
 	}
+	tokes.add(s)
       }
     }    
     return tokes
@@ -107,9 +106,9 @@ class HmtEditorialTokenization {
   throws Exception {
     ArrayList classifiedTokens = []
 
-    //println "tokenizeString: Tokenizing " + str
+    if (debug > 2) { println "Editorial:tokenizeString: tokenizing " + str}
     splitString(str).each { t ->
-      //println "Look at " + t
+      if (debug > 2) { println "\tLook at " + t + " with type " + tokenType}
       ArrayList pairing
 
       if (t.size() > 0) {
@@ -136,12 +135,13 @@ class HmtEditorialTokenization {
 
 	default:
 	GreekMsString gs
-
-	if (punct.contains(t)) {
+	if (debug > 1) { System.err.println "Tokenizer: try to figure out " + t}
+	if (GreekMsString.isMsPunctuation(t)) {
 	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.punctuation"]
 	  classifiedTokens.add(pairing)
 	
 	} else if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
+	  
 	  try {
 	    gs = new GreekMsString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", tokenType]

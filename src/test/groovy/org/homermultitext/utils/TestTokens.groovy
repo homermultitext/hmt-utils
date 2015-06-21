@@ -17,7 +17,7 @@ class TestTokens extends GroovyTestCase {
     
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(pn, urn, context)
-
+    println "Analyses for ${pn} == " + analyses 
     // only 1 analysis:
     assert  analyses.size() == 1
     ArrayList analysis  = analyses[0]
@@ -34,7 +34,7 @@ class TestTokens extends GroovyTestCase {
     
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(str, urn, context)
-
+    println "Analyses for ${str} == " + analyses 
     ArrayList analysis  = analyses[0]
     assert analysis[0] == "${urn}@${str}"
     assert analysis[1] == expectedContext
@@ -48,7 +48,10 @@ class TestTokens extends GroovyTestCase {
     
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(str, urn, context, false)
-    println "From " + str + ", got " + analyses
+
+    assert analyses.size() == 2
+    ArrayList punctAnalysis = analyses[1]
+    assert punctAnalysis[1] == "urn:cite:hmt:tokentypes.punctuation"
   }
   
 }
