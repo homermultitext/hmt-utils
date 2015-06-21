@@ -14,7 +14,6 @@ class TestSplits extends GroovyTestCase {
     String str  = "δίῳ·"
     String dot2 =    "πυκίλαι·"
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
-
     ArrayList splits =  toker.splitString(str)
     assert splits.size() == 2
     assert GreekMsString.isMsPunctuation(splits[1])
@@ -36,8 +35,21 @@ class TestSplits extends GroovyTestCase {
       frombeta.setParser("Unicode")
       println "Backwards is ${asc} == ascii ${frombeta.getString(asc)}"
     }
-
-
   }
-  
+
+  void testPeriod() {
+    String phrase = "γνώσεται. ἀσπασίως γὰρ ἀφίξεται "
+    HmtEditorialTokenization toker = new HmtEditorialTokenization()
+    toker.debug = 5
+
+    Integer expectedTokens = 5
+    ArrayList splits =  toker.splitString(phrase)
+
+    
+    System.err.println "${phrase} yields ${splits.size()} tokens:"
+    System.err.println splits
+
+
+    assert splits.size() == expectedTokens
+  }
 }
