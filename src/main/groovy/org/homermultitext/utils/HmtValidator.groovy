@@ -418,6 +418,11 @@ class HmtValidator  {
 		      } else if (resultsMap[fullRef] ==  "byz") {
 			img(src : check)
 			mkp.yield("(byzantine orthography)")
+			
+		      } else if (resultsMap[fullRef] ==  "punctuation") {
+			img(src : check)
+			mkp.yield("(punctuation)")
+			
 		      } else {
 			mkp.yield(resultsMap[fullRef])
 			img(src : del)

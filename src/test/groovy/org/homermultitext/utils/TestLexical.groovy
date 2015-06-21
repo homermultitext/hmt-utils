@@ -13,14 +13,16 @@ class TestLexical extends GroovyTestCase {
   
   String morphCmd = "../morpheus/bin/morpheus"
 
+
+  File log  = new File("lex.log")
   /*
-THese should be right for *unique* tokens:
-  Integer expectedCount = 501
-  Integer expectedFails = 111
-  Integer expectedSuccesses = 390
+    These should be right for *unique* tokens:
+    Integer expectedCount = 501
+    Integer expectedFails = 111
+    Integer expectedSuccesses = 390
   */
   void testLexicalValidation() {
-    LexicalValidation lexicalv = new LexicalValidation(tokens, byz, lexMap, morphCmd)
+    LexicalValidation lexicalv = new LexicalValidation(tokens, byz, lexMap, morphCmd, log)
     
     assertFalse lexicalv.validates()
 
