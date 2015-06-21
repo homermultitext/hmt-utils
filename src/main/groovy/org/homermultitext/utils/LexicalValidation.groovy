@@ -7,6 +7,7 @@ import au.com.bytecode.opencsv.CSVReader
 
 import edu.harvard.chs.cite.CtsUrn
 import edu.unc.epidoc.transcoder.TransCoder
+
 import edu.holycross.shot.greekutils.GreekMsString
 
 class LexicalValidation implements HmtValidation {
@@ -14,8 +15,9 @@ class LexicalValidation implements HmtValidation {
   Integer debug = 0
 
   boolean verbose = false
-  File dbLog
   boolean log = false
+  File dbLog
+
   
   // map of token URNs to CTS URNs w subref (occurrences)
   LinkedHashMap tokensMap = [:]
@@ -114,7 +116,7 @@ class LexicalValidation implements HmtValidation {
 
   /** 
    * Counts all tokens.
-   * @returns Total number of tokens analyzed.
+   * @returns Total number of lexical tokens analyzed.
    */
   Integer tokensCount() {
     return total

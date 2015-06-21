@@ -50,34 +50,34 @@ class HmtEditorialTokenization {
     splits.each { s ->
       // then check for trailing punctuation
       int max = s.codePointCount(0, s.length() - 1)
-      if (max == 0)  {
-	tokes.add(s)
-	
-      } else {
-	int codePoint = s.codePointAt(max)
-	//println "Last code point in ${s} is " + codePoint
-	String cpStr =  new String(Character.toChars(codePoint))
-	
-	if (punct.contains(cpStr)) {
-	  //println "== punctuation"
-	  String lexPart = ""
 
-	  int limit = max - 1
-	  //println "Num code points: " + max + " so cycle from 0 to " + limit
+      int codePoint = s.codePointAt(max)
+      if (debug > 1 ) {println "Last code point in ${s} is " + codePoint}
+      String cpStr =  new String(Character.toChars(codePoint))
+	
+      if (GreekMsString.isMsPunctuation(cpStr)) {
+	if (debug > 1) {println "== punctuation"}
+	String lexPart = ""
+	int limit = max - 1
+	if (debug > 2) { println "Num code points: " + max + " so cycle from 0 to " + limit }
+	if (limit >= 0) {
 	  (0..limit).each { idx ->
 	    int cp = s.codePointAt(idx)
 	    String charAsStr =  new String(Character.toChars(cp))
-	    //println "at ${idx}, cp " + cp + " = " + charAsStr
+	    if (debug > 2) { println "at ${idx}, cp " + cp + " = " + charAsStr}
 	    lexPart = lexPart + charAsStr
-	    //println "\t(lexpart now ${lexPart})"
+	    if (debug > 2) { println "\t(lexpart now ${lexPart})"}
 	  }	    
 	  tokes.add(lexPart)
 	  tokes.add(new String(Character.toChars(codePoint)))
 	} else {
 	  tokes.add(s)
 	}
+      } else {
+	if (debug > 2) {
+	  println "${codePoint} = ${cpStr} NOT GreekMsPunctuation"
+	}
       }
-
     }    
     return tokes
   }

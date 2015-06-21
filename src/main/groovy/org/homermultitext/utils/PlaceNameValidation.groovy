@@ -1,8 +1,9 @@
 package org.homermultitext.utils
 
-
 import edu.harvard.chs.cite.CiteUrn
+import au.com.bytecode.opencsv.CSVReader
 
+import edu.holycross.shot.greekutils.GreekMsString
 
 /**
  * Implementation of the Validation interface to
@@ -30,22 +31,35 @@ class PlaceNameValidation implements HmtValidation {
   /** List of valid values. */
   ArrayList authorityList = []
 
+
+  /** Constructor drawing required data from File sources.
+   * @param tokensFile CSV file associating passages in first column
+   * with analyses in second.
+   * @param authListFile CSV file with URN value in first column.
+   * @param debugLevel Degree of spewing to System.err.
+   */
   PlaceNameValidation(File tokensFile, File authListFile, Integer debugLevel) {
     debug = debugLevel
     tokensMap = populateTokensMap(tokensFile)
     System.err.println  "constructor set toeknsMap to " + tokensMap
     authorityList = populateAuthorityList(authListFile)
-    computeScores()
+    validationMap = computeScores()
   }
-  
+
+  /** Constructor drawing required data from File sources.
+   * @param tokensFile CSV file associating passages in first column
+   * with analyses in second.
+   * @param authListFile CSV file with URN value in first column.
+   */
   PlaceNameValidation(File tokensFile, File authListFile) {
     tokensMap = populateTokensMap(tokensFile)
     authorityList = populateAuthorityList(authListFile)
-    computeScores()
+    validationMap =    computeScores()
   }
 
 
-  /// methods required to implement interface
+  /* ********************************************************** */
+  /// methods required to implement HmtValidation interface:
 
   /** 
    * @returns A label for the validation class. 
@@ -102,50 +116,65 @@ class PlaceNameValidation implements HmtValidation {
   LinkedHashMap getOccurrences() {
     return tokensMap
   }
+  //
+  /* ********************************************************** */  
+
+
+
+
+
+
+  /* ********************************************************** */  
+  /// methods that actually do the validation work:
   
-  /// methods doing the validation work:
-  
-  void computeScores() {
+  LinkedHashMap computeScores() {
+    LinkedHashMap scoreMap = [:]
+
+    
     // check for existence of tokensMap ...
     this.total = tokensMap.size()
     
     Integer good = 0
     Integer bad = 0
-    def scoreMap = [:]
+
 
 
     if (debug > 0) {System.err.println "analyze against list " + tokensMap.keySet()}
     tokensMap.keySet().each { k ->
-
       if (debug > 0) {
 	System.err.println "PlaceNameValidation: ${k} in list? ${authorityList.contains(k)}"
       }
 	
       if (authorityList.contains(k)) {
 	this.successes++;
-	validationMap[k] = true
+	scoreMap[k] = true
       } else {
 	this.failures++;
-	validationMap[k] = false
+	scoreMap[k] = false
       }
     }
+    return scoreMap
   }
 
 
+
+  
   // add error checking: file must exist, be nonempty,
   // keys must be valid urns
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
     Integer count = 0
-    srcFile.eachLine { l ->
+    
+    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    srcReader.readAll().each { tokenLine ->
+      // skip headerline:
       if (count > 0)  {
-	def cols = l.split(/,/)
 	CiteUrn urn
-	String authValue = cols[0]
+	String authValue = tokenLine[0]
 	try {
 	  if (debug > 1) { System.err.println "Loading URN string " + authValue}
 	  urn = new CiteUrn(authValue)
-	  validList.add(cols[0])
+	  validList.add(tokenLine[0])
 	} catch (Exception e) {
 	  System.err.println "PlaceNameValidation: bad value in authority list. ${e}"
 	  throw e
@@ -162,20 +191,20 @@ class PlaceNameValidation implements HmtValidation {
     LinkedHashMap occurrences = [:]
     def placeNames = srcFile.readLines().findAll { l -> l ==~ /.+,urn:cite:hmt:place.+/}
      placeNames.each { p ->
-      def cols = p.split(/,/)
-      if (debug > 0) {   System.err.println "Place name column : " + cols }
-      def pname = cols[1]
-      def psg = cols[0]
-      if (occurrences[pname]) {
-	def psgs = occurrences[pname]
-	psgs.add(psg)
-	occurrences[pname] =  psgs
-      } else {
-	occurrences[pname] = [psg]
-      }
-    }
+       def cols = p.split(/,/)
+       if (debug > 0) {   System.err.println "Place name column : " + cols }
+       def pname = cols[1]
+       def psg = cols[0]
+       if (occurrences[pname]) {
+	 def psgs = occurrences[pname]
+	 psgs.add(psg)
+	 occurrences[pname] =  psgs
+       } else {
+	 occurrences[pname] = [psg]
+       }
+     }
      return occurrences
   }
-
+  /* ********************************************************** */  
   
 }

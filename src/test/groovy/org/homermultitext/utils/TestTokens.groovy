@@ -39,5 +39,16 @@ class TestTokens extends GroovyTestCase {
     assert analysis[0] == "${urn}@${str}"
     assert analysis[1] == expectedContext
   }
+
+  void testHighStops() {
+    String str  = "δίῳ·"
+    String urn = "urn:cts:greekLit:tlg0012.tlg001.msA:18.257"
+    String context = ""
+
+    
+    HmtEditorialTokenization toker = new HmtEditorialTokenization()
+    ArrayList analyses = toker.tokenizeString(str, urn, context, false)
+    println "From " + str + ", got " + analyses
+  }
   
 }
