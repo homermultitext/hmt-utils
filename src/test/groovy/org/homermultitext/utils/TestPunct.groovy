@@ -10,7 +10,7 @@ class TestPunct extends GroovyTestCase {
 
 
   void testPunctSplitting() {
-    String txt = "οὐλομένην· ἡ μυρί'"
+    String txt = "οὐλομένην· ἡ μυρί'"
     String urn = "urn:cts:greekLit:tlg0012.tlg001.msA:1.2"
     String context = ""
     
@@ -35,7 +35,7 @@ class TestPunct extends GroovyTestCase {
     ArrayList endOfSchol = analyses[0]
     assert endOfSchol[1] == "urn:cite:hmt:tokentypes.punctuation"
     
-    txt = "ονόματα·"
+    txt = "ονόματα·"
     urn = "urn:cts:greekLit:tlg5026.msA.hmt:18.21"
     ArrayList analyses2 = toker.tokenizeString(txt, urn, context)
     // 2 analyses:  a word, and a punctuation mark:

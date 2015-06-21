@@ -12,14 +12,17 @@ class TestSplits extends GroovyTestCase {
   
   void testHighStops() {
     String str  = "δίῳ·"
+    String dot2 =    "πυκίλαι·"
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
-    toker.debug = 5
+
     ArrayList splits =  toker.splitString(str)
     assert splits.size() == 2
     assert GreekMsString.isMsPunctuation(splits[1])
 
 
-    
+    toker.debug = 5
+    ArrayList splits2 = toker.splitString(dot2)
+    println "For ${dot2}, got ${splits2}"
     
     boolean needViz = false
     if (needViz) {
@@ -33,7 +36,8 @@ class TestSplits extends GroovyTestCase {
       frombeta.setParser("Unicode")
       println "Backwards is ${asc} == ascii ${frombeta.getString(asc)}"
     }
-    
+
+
   }
   
 }

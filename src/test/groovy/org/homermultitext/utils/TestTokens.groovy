@@ -53,5 +53,7 @@ class TestTokens extends GroovyTestCase {
     ArrayList punctAnalysis = analyses[1]
     assert punctAnalysis[1] == "urn:cite:hmt:tokentypes.punctuation"
   }
+
+  
   
 }
