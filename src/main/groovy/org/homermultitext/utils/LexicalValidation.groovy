@@ -3,7 +3,8 @@ package org.homermultitext.utils
 import java.text.Normalizer
 import java.text.Normalizer.Form
 
-import au.com.bytecode.opencsv.CSVReader
+//import au.com.bytecode.opencsv.CSVReader
+import edu.holycross.shot.safecsv.SafeCsvReader
 
 import edu.harvard.chs.cite.CtsUrn
 import edu.unc.epidoc.transcoder.TransCoder
@@ -157,7 +158,7 @@ class LexicalValidation implements HmtValidation {
     Integer bad = 0
     Integer lexCount = 0
 
-    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { lexLine ->
       String psg = lexLine[0]
       String tokenType = lexLine[1]
@@ -168,7 +169,6 @@ class LexicalValidation implements HmtValidation {
 	CtsUrn tokenUrn
 	String token
 	String betaToken
-      
 	try {
 	  tokenUrn = new CtsUrn(lexLine[0])
 	  String msg = "\nvalidate " + tokenUrn
@@ -185,7 +185,7 @@ class LexicalValidation implements HmtValidation {
 	} catch (Exception e) {
 	  System.err.println ("LexicalValidation: failed to make CtsUrn: " + e)
 	}
-
+	
 	if ((! urnOk) || (token.size() < 1)) {
 	  System.err.println "LexicalValidation:computeScores:${lexCount}: invalid URN value " + tokenUrn + " from token " + lexLine
 	  scoreBoard[tokenUrn]  = "fail"
@@ -259,7 +259,7 @@ class LexicalValidation implements HmtValidation {
   ArrayList populateLexMap(File srcFile) {
     ArrayList validList = []
 
-    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { lexLine ->
       String normalUrn = Normalizer.normalize(lexLine[1], Form.NFC)
       validList.add(normalUrn)
@@ -272,7 +272,7 @@ class LexicalValidation implements HmtValidation {
   // add error checking...
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
-    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { lexLine ->
       String normaler = Normalizer.normalize(lexLine[1], Form.NFC)
       validList.add(normaler)
@@ -280,56 +280,45 @@ class LexicalValidation implements HmtValidation {
     return validList
   }
 
-
+  
   LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
 
-    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     Integer lineCount = 0
     srcReader.readAll().each { lexLine ->
       lineCount++;
-      if (debug > 2) { System.err.println "LexicalValidation:populateTokens: ${lineCount} ${lexLine}"
-      String psg
-      String tokenType
+      if (debug > 2) { System.err.println "LexicalValidation:populateTokens: ${lineCount} ${lexLine}" }
       if (lexLine.size() != 2) {
-	// OpenCSV BREAKS ON BIG UNICODE!
-	if (debug > 2) { System.err.println "populateTokenMap:lexline has ${lexLine.size()} cols???  #${lexLine}#"
-	}
-	if (lexLine[1]  ==~ /\[[0-9]+\]/) {
-	  String frankenstein = lexLine[0] + lexLine[1]
-	  System.err.println "Try FRANKENSTEINED " + frankenstein
-	  psg = Normalizer.normalize(frankenstein, Form.NFC)      
-	  tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
-	} else {
-	  System.err.println "Couldn't make sense of second part, " + lexLine[1]
-	  throw (new Exception("LexicalValidation:populateTokensMap: failed on ${lexLine}"))
-	}
+	System.err.println "Wrong number of columns (${lexLine.size()}) in line ${lexLine}"
       } else {
-	psg = Normalizer.normalize(lexLine[0], Form.NFC)      
-	tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
-      }
-      if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
-	CtsUrn urn
-	boolean urnOk
-	String lex
-	try {
-	  urn  = new CtsUrn(psg)
-	  urnOk = true
-	  lex = urn.getSubref()
-	} catch (Exception e) {
-	  System.err.println "LexicalValidation:populateTokensMap: failed on ${psg} " + e
-	  lex = "error"
-	}
-	if (occurrences[lex]) {
-	  def psgs = occurrences[lex]
-	  psgs.add(psg)
-	  occurrences[lex] =  psgs
-	} else {
-	  occurrences[lex] = [psg]
+	String psg = Normalizer.normalize(lexLine[0], Form.NFC)      
+	String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
+
+
+	if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
+	  CtsUrn urn
+	  boolean urnOk
+	  String lex
+	  try {
+	    urn  = new CtsUrn(psg)
+	    urnOk = true
+	    lex = urn.getSubref()
+	  } catch (Exception e) {
+	    System.err.println "LexicalValidation:populateTokensMap: failed on ${psg} " + e
+	    lex = "error"
+	  }
+	  if (occurrences[lex]) {
+	    def psgs = occurrences[lex]
+	    psgs.add(psg)
+	    occurrences[lex] =  psgs
+	  } else {
+	    occurrences[lex] = [psg]
+	  }
 	}
       }
     }
     return occurrences
   }
-
+    
 }

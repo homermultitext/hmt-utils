@@ -1,6 +1,10 @@
 package org.homermultitext.utils
 
 
+import edu.harvard.chs.cite.CiteUrn
+import edu.holycross.shot.safecsv.SafeCsvReader
+import edu.holycross.shot.greekutils.GreekMsString
+
 class PersNameValidation implements HmtValidation {
 
   Integer debug = 0
@@ -76,18 +80,44 @@ class PersNameValidation implements HmtValidation {
     }
   }
 
-
+  /*
   // add error checking...
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
+    srcReader.readAll().each { tokenLine ->
     srcFile.eachLine {
       def cols = it.split(/,/)
       validList.add(cols[0])
     }
     return validList
+    }*/
+
+  ArrayList populateAuthorityList(File srcFile) {
+    ArrayList validList = []
+    Integer count = 0
+    
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
+    srcReader.readAll().each { tokenLine ->
+      // skip headerline:
+      if (count > 0)  {
+	CiteUrn urn
+	String authValue = tokenLine[0]
+	try {
+	  if (debug > 1) { System.err.println "Loading URN string " + authValue}
+	  urn = new CiteUrn(authValue)
+	  validList.add(tokenLine[0])
+	} catch (Exception e) {
+	  System.err.println "PersNameValidation: bad value in authority list. ${e}"
+	  throw e
+	}
+      }
+      count++;
+    }
+    return validList
   }
   
-  
+  /*  
   // read file, return contents as a map
   LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
@@ -107,6 +137,27 @@ class PersNameValidation implements HmtValidation {
     }
      return occurrences
   }
+  */
 
+  
+    LinkedHashMap populateTokensMap(File srcFile) {
+    LinkedHashMap occurrences = [:]
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
+    srcReader.readAll().each { cols ->
+      if (cols[1] ==~ /urn:cite:hmt:pers.+/) {
+	if (debug > 0) {   System.err.println "Personal name column : " +  cols[1] }
+	def pname = cols[1]
+	def psg = cols[0]
+	if (occurrences[pname]) {
+	  def psgs = occurrences[pname]
+	  psgs.add(psg)
+	  occurrences[pname] =  psgs
+	} else {
+	  occurrences[pname] = [psg]
+	}
+      }
+     }
+     return occurrences
+  }
   
 }

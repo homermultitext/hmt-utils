@@ -1,8 +1,7 @@
 package org.homermultitext.utils
 
 import edu.harvard.chs.cite.CiteUrn
-import au.com.bytecode.opencsv.CSVReader
-
+import edu.holycross.shot.safecsv.SafeCsvReader
 import edu.holycross.shot.greekutils.GreekMsString
 
 /**
@@ -41,7 +40,7 @@ class PlaceNameValidation implements HmtValidation {
   PlaceNameValidation(File tokensFile, File authListFile, Integer debugLevel) {
     debug = debugLevel
     tokensMap = populateTokensMap(tokensFile)
-    System.err.println  "constructor set toeknsMap to " + tokensMap
+    if (debug > 1) { System.err.println  "constructor set toeknsMap to " + tokensMap}
     authorityList = populateAuthorityList(authListFile)
     validationMap = computeScores()
   }
@@ -165,7 +164,7 @@ class PlaceNameValidation implements HmtValidation {
     ArrayList validList = []
     Integer count = 0
     
-    CSVReader srcReader = new CSVReader(new FileReader(srcFile))
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { tokenLine ->
       // skip headerline:
       if (count > 0)  {
@@ -189,19 +188,20 @@ class PlaceNameValidation implements HmtValidation {
   // read file, return contents as a map
   LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
-    def placeNames = srcFile.readLines().findAll { l -> l ==~ /.+,urn:cite:hmt:place.+/}
-     placeNames.each { p ->
-       def cols = p.split(/,/)
-       if (debug > 0) {   System.err.println "Place name column : " + cols }
-       def pname = cols[1]
-       def psg = cols[0]
-       if (occurrences[pname]) {
-	 def psgs = occurrences[pname]
-	 psgs.add(psg)
-	 occurrences[pname] =  psgs
-       } else {
-	 occurrences[pname] = [psg]
-       }
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
+    srcReader.readAll().each { cols ->
+      if (cols[1] ==~ /urn:cite:hmt:place.+/) {
+	if (debug > 0) {   System.err.println "Place name column : " +  cols[1] }
+	def pname = cols[1]
+	def psg = cols[0]
+	if (occurrences[pname]) {
+	  def psgs = occurrences[pname]
+	  psgs.add(psg)
+	  occurrences[pname] =  psgs
+	} else {
+	  occurrences[pname] = [psg]
+	}
+      }
      }
      return occurrences
   }
