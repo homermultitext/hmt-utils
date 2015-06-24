@@ -1,5 +1,9 @@
 package org.homermultitext.utils
 
+import edu.harvard.chs.cite.CiteUrn
+import edu.holycross.shot.safecsv.SafeCsvReader
+import edu.holycross.shot.greekutils.GreekMsString
+
 
 class EthnicNameValidation implements HmtValidation {
 
@@ -80,6 +84,7 @@ class EthnicNameValidation implements HmtValidation {
 
 
   // add error checking...
+  /*
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
     srcFile.eachLine {
@@ -88,8 +93,58 @@ class EthnicNameValidation implements HmtValidation {
     }
     return validList
   }
+  */
   
+  // add error checking: file must exist, be nonempty,
+  // keys must be valid urns
+  ArrayList populateAuthorityList(File srcFile) {
+    ArrayList validList = []
+    Integer count = 0
+    
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
+    srcReader.readAll().each { tokenLine ->
+      // skip headerline:
+      if (count > 0)  {
+	CiteUrn urn
+	String authValue = tokenLine[0]
+	try {
+	  if (debug > 1) { System.err.println "Loading URN string " + authValue}
+	  urn = new CiteUrn(authValue)
+	  validList.add(tokenLine[0])
+	} catch (Exception e) {
+	  System.err.println "EthnicNameValidation: bad value in authority list. ${e}"
+	  throw e
+	}
+      }
+      count++;
+    }
+    return validList
+  }
   
+
+
+    // read file, return contents as a map
+  LinkedHashMap populateTokensMap(File srcFile) {
+    LinkedHashMap occurrences = [:]
+    SafeCsvReader srcReader = new SafeCsvReader(srcFile)
+    srcReader.readAll().each { cols ->
+      if (cols[1] ==~ /urn:cite:hmt:peoples.+/) {
+	if (debug > 0) {   System.err.println "Ethnic name column : " +  cols[1] }
+	def pname = cols[1]
+	def psg = cols[0]
+	if (occurrences[pname]) {
+	  def psgs = occurrences[pname]
+	  psgs.add(psg)
+	  occurrences[pname] =  psgs
+	} else {
+	  occurrences[pname] = [psg]
+	}
+      }
+     }
+     return occurrences
+  }
+
+  /*
   // read file, return contents as a map
   LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
@@ -109,6 +164,6 @@ class EthnicNameValidation implements HmtValidation {
     }
      return occurrences
   }
-
+  */
   
 }

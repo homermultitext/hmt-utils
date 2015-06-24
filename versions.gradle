@@ -9,7 +9,7 @@ ext {
       "citemgr" : "0.6.1",
       "greeklang" : "0.0.16",
       "hocuspocus": "0.12.5",
-      "safecsv": "0.0.1",
+      "safecsv": "0.0.2j7",
       "opencsv": "2.3"
     ]
 }
