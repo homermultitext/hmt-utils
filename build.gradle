@@ -77,7 +77,9 @@ dependencies {
   compile group: 'org.homermultitext', name : 'citemgr' , version: versionMap["citemgr"]
   compile group: 'edu.holycross.shot', name : 'greeklang' , version: versionMap["greeklang"]
   compile group: "commons-io", name: "commons-io", version: "2.4"
+  compile group: 'edu.holycross.shot', name: 'safecsv', version : versionMap["safecsv"]
   compile group: 'net.sf.opencsv', name: 'opencsv', version : versionMap["opencsv"]
+  
   
   compile group: 'edu.holycross.shot', name : 'hocuspocus' , version: versionMap['hocuspocus']
 

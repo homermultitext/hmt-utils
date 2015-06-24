@@ -288,12 +288,13 @@ class LexicalValidation implements HmtValidation {
     Integer lineCount = 0
     srcReader.readAll().each { lexLine ->
       lineCount++;
-      System.err.println "popTOkes: ${lineCount} ${lexLine}"
+      if (debug > 2) { System.err.println "LexicalValidation:populateTokens: ${lineCount} ${lexLine}"
       String psg
       String tokenType
       if (lexLine.size() != 2) {
 	// OpenCSV BREAKS ON BIG UNICODE!
-	System.err.println "populateTokenMap:lexline has ${lexLine.size()} cols???  #${lexLine}#"
+	if (debug > 2) { System.err.println "populateTokenMap:lexline has ${lexLine.size()} cols???  #${lexLine}#"
+	}
 	if (lexLine[1]  ==~ /\[[0-9]+\]/) {
 	  String frankenstein = lexLine[0] + lexLine[1]
 	  System.err.println "Try FRANKENSTEINED " + frankenstein

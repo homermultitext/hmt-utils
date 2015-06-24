@@ -47,35 +47,38 @@ class HmtEditorialTokenization {
     ArrayList splits = str.split(/[\s]+/)
     splits.each { s ->
       // then check for trailing punctuation
-      int max = s.codePointCount(0, s.length() - 1)
 
-      int codePoint = s.codePointAt(max)
-      if (debug > 1 ) {println "Last code point in ${s} is " + codePoint}
-      String cpStr =  new String(Character.toChars(codePoint))
+      if (s.length() > 0)  {
+	int max = s.codePointCount(0, s.length() - 1)
+	int codePoint = s.codePointAt(max)
+	if (debug > 1 ) {println "Last code point in ${s} is " + codePoint}
+	String cpStr =  new String(Character.toChars(codePoint))
 	
-      if (GreekMsString.isMsPunctuation(cpStr)) {
-	if (debug > 1) {println "== punctuation"}
-	String lexPart = ""
-	int limit = max - 1
-	if (debug > 2) { println "Num code points: " + max + " so cycle from 0 to " + limit }
-	if (limit >= 0) {
-	  (0..limit).each { idx ->
-	    int cp = s.codePointAt(idx)
-	    String charAsStr =  new String(Character.toChars(cp))
-	    if (debug > 2) { println "at ${idx}, cp " + cp + " = " + charAsStr}
-	    lexPart = lexPart + charAsStr
-	    if (debug > 2) { println "\t(lexpart now ${lexPart})"}
-	  }	    
-	  tokes.add(lexPart)
-	  tokes.add(new String(Character.toChars(codePoint)))
+	if (GreekMsString.isMsPunctuation(cpStr)) {
+	  if (debug > 1) {println "== punctuation"}
+	  String lexPart = ""
+	  int limit = max - 1
+	  if (debug > 2) { println "Num code points: " + max + " so cycle from 0 to " + limit }
+	  if (limit >= 0) {
+	    (0..limit).each { idx ->
+	      int cp = s.codePointAt(idx)
+	      String charAsStr =  new String(Character.toChars(cp))
+	      if (debug > 2) { println "at ${idx}, cp " + cp + " = " + charAsStr}
+	      lexPart = lexPart + charAsStr
+	      if (debug > 2) { println "\t(lexpart now ${lexPart})"}
+	    }	    
+	    tokes.add(lexPart)
+	    tokes.add(new String(Character.toChars(codePoint)))
+	  } else {
+	    tokes.add(s)
+	  }
+
 	} else {
+	  if (debug > 2) {
+	    println "${codePoint} = ${cpStr} NOT GreekMsPunctuation"
+	  }
 	  tokes.add(s)
 	}
-      } else {
-	if (debug > 2) {
-	  println "${codePoint} = ${cpStr} NOT GreekMsPunctuation"
-	}
-	tokes.add(s)
       }
     }    
     return tokes
@@ -202,6 +205,7 @@ class HmtEditorialTokenization {
 
 
     } else {
+      if (debug > 2) { System.err.println "\ttokenizeElement: " + node.name() }
       String nodeName
       if (node.name() instanceof java.lang.String) {
 	nodeName = node.name()
@@ -452,7 +456,8 @@ class HmtEditorialTokenization {
 	  replyList = replyList + indexSubReff(rawTokens)
 
 	} catch (Exception e) {
-	  System.err.println "HmtEditorialTokenization:tokenize: exception ${e}"
+	  System.err.println "HmtEditorialTokenization:tokenize: broke on ${root}"
+	  System.err.println "exception ${e}"
 	  System.err.println "FAILED TO PROCESS LINE: ${l}"
 	  if (continueOnException) {
 	    System.err.println "Need to find a way to continue!"
