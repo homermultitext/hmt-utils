@@ -201,6 +201,7 @@ addVersion.doLast {
 
 task conc(type: Copy, dependsOn: [test, addVersion]) {
 //task conc(type: Copy) {
+  description "Filter copies final version of concordion output for pretty CSS formatting."
   from "${buildDir}/concordion-results"
   into "${buildDir}/concordion-formatted"
   filter(ReplaceTokens, tokens: tokenMap)
