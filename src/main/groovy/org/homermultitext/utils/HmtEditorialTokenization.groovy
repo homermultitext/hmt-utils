@@ -1,7 +1,7 @@
 package org.homermultitext.utils
 
 import org.apache.commons.io.FilenameUtils
-import edu.harvard.chs.f1k.GreekNode
+
 
 import edu.holycross.shot.greekutils.GreekMsString
 import edu.holycross.shot.greekutils.MilesianString
@@ -102,16 +102,24 @@ class HmtEditorialTokenization {
    */
   ArrayList tokenizeString (String str, String urnBase, String tokenType)
   throws Exception {
+    if (debug > 2) {
+      System.err.println "Tokenizing raw string " + str
+    }
     return tokenizeString(str,urnBase,tokenType,true)
   }
 
   ArrayList tokenizeString (String str, String urnBase, String tokenType, boolean continueOnException)
   throws Exception {
+    if (debug > 2) {
+      System.err.println "continue? ${continueOnException} while tokenizing " + str
+    }
+
+    
     ArrayList classifiedTokens = []
 
-    if (debug > 2) { println "Editorial:tokenizeString: tokenizing " + str}
+    if (debug > 2) { System.err.println "Editorial:tokenizeString: tokenizing " + str + " and split it to " + splitString(str)}
     splitString(str).each { t ->
-      if (debug > 2) { println "\tLook at " + t + " with type " + tokenType}
+      if (debug > 2) { System.err.println "\tLook at " + t + " with type " + tokenType}
       ArrayList pairing
 
       if (t.size() > 0) {
@@ -245,8 +253,7 @@ class HmtEditorialTokenization {
       break
 
       case "sic":
-      GreekNode n = new GreekNode(node)
-      String wd = n.collectText()
+      String wd = XmlNode.collectText(node)
       wd = wd.replaceAll(~/\s/, "") // generalize to all white space
       if (tokenType.size() > 0) {
 	classifiedTokens.add(["${urnBase}@${wd}", "urn:cite:hmt:tokentypes.sic"])
@@ -255,8 +262,7 @@ class HmtEditorialTokenization {
 
 
       case "w":
-      GreekNode n = new GreekNode(node)
-      String wd = n.collectText()
+      String wd = XmlNode.collectText(node)
       wd = wd.replaceAll(~/\s/, "") // generalize to all white space
       if (tokenType.size() > 0) {
 	classifiedTokens.add(["${urnBase}@${wd}", tokenType])
@@ -266,14 +272,16 @@ class HmtEditorialTokenization {
       break
 
       case "persName":
-      GreekNode n = new GreekNode(node)
+      String wd = XmlNode.collectText(node)
       if (debug > 2) { System.err.println "\ttokenizeElement: PERSNAME NODE: "  + node.text() }
       GreekMsString gs
       try {
-	String nameText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	//	String nameText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	String nameText1 = wd.replaceFirst(/^[\s]+/, "")
 	String nameText = nameText1.replaceFirst(/[\s]+$/, "")
 	
 	if (debug > 0) { System.err.println "tokenizeElement: Trying to make GreekMsString from persname " + nameText }
+	
 	gs = new GreekMsString(nameText, "Unicode")
 	classifiedTokens.add(["${urnBase}@${nameText}", "${node.'@n'}"])
 	
@@ -295,11 +303,12 @@ class HmtEditorialTokenization {
 
       
       case "placeName":
-      GreekNode n = new GreekNode(node)
+      String wd = XmlNode.collectText(node)
       GreekMsString gs
 
       try {
-	String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	//String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	String placeText1 = wd.replaceFirst(/^[\s]+/, "")
 	String placeText = placeText1.replaceFirst(/[\s]+$/, "")
 	gs = new GreekMsString(placeText, "Unicode")
 	classifiedTokens.add(["${urnBase}@${placeText}", "${node.'@n'}"])
@@ -327,10 +336,11 @@ class HmtEditorialTokenization {
 	  }
 	} 
       } else if (node.'@type' == "ethnic") {
-	GreekNode n = new GreekNode(node)
+	String wd = XmlNode.collectText(node)
 	GreekMsString gs
 	try {
-	  String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	  //String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
+	  String placeText1 = wd.replaceFirst(/^[\s]+/, "")
 	  String placeText = placeText1.replaceFirst(/[\s]+$/, "")
 	  gs = new GreekMsString(placeText, "Unicode")
 	  String urn = node.'@n'.replace("hmt:place", "hmt:peoples")

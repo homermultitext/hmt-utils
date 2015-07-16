@@ -6,9 +6,7 @@ apply plugin: "base"
 apply plugin:  "groovy"
 apply plugin:  "maven"
 
-
 apply from: "versions.gradle"
-
 
 if (hasProperty('conf')) {
     System.err.println "Using configuration data from ${conf}"
@@ -17,7 +15,6 @@ if (hasProperty('conf')) {
         throw new Exception("No configuration file ${conf} found.")
     }
     apply from: conf
-
 } else {
     File confFile = new File("conf.gradle")
     if (! confFile.exists()) {
@@ -25,30 +22,29 @@ if (hasProperty('conf')) {
     }
     System.err.println "Using conf.gradle for configuration"
     apply from: "conf.gradle"
-    
 }
 
 
 group = "org.homermultitext"
-version = '0.6.0j7'
+version = '0.7.0j7'
+//version = '0.7.0'
 
 if (project.hasProperty('pub')) {
-    System.err.print "Using configuration data from ${pub}"
-    File confFile = new File(pub)
-    if (! confFile.exists()) {
-        throw new Exception("No publication configuration file ${pub} found.")
-    } else {
-        apply from: pub
-    }
-
+  System.err.print "Using configuration data from ${pub}"
+  File confFile = new File(pub)
+  if (! confFile.exists()) {
+    throw new Exception("No publication configuration file ${pub} found.")
+  } else {
+    apply from: pub
+  }
 } else {
-    File confFile = new File("pub.gradle")
-    if (! confFile.exists()) {
-        throw new Exception("No publication configuration file ${confFile} found.")
-    } else {
-        println "Using default configuration in 'pub.gradle'"
-        apply from: "pub.gradle"
-    }
+  File confFile = new File("pub.gradle")
+  if (! confFile.exists()) {
+    throw new Exception("No publication configuration file ${confFile} found.")
+  } else {
+    println "Using default configuration in 'pub.gradle'"
+    apply from: "pub.gradle"
+  }
 }
 
 buildscript {

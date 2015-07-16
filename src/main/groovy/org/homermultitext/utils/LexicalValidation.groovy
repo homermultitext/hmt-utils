@@ -3,7 +3,7 @@ package org.homermultitext.utils
 import java.text.Normalizer
 import java.text.Normalizer.Form
 
-//import au.com.bytecode.opencsv.CSVReader
+
 import edu.holycross.shot.safecsv.SafeCsvReader
 
 import edu.harvard.chs.cite.CtsUrn
@@ -153,7 +153,6 @@ class LexicalValidation implements HmtValidation {
     tobeta.setConverter("BetaCode")
     tobeta.setParser("Unicode")
 
-
     Integer good = 0
     Integer bad = 0
     Integer lexCount = 0
@@ -177,6 +176,11 @@ class LexicalValidation implements HmtValidation {
 	  if (tokenUrn.hasSubref()) {
 	    token = tokenUrn.getSubref()
 	    betaToken = tobeta.getString(token.toLowerCase())
+
+	    if (debug > 1) {
+	      System.err.println "LexicalValidation:compute: token ${token}, beta ${betaToken}"
+	    }
+	    
 	    urnOk = true
 	  } else {
 	    System.err.println "LexicalValidation: no subref on URN " + tokenUrn
@@ -192,7 +196,7 @@ class LexicalValidation implements HmtValidation {
 	  failures = failures + 1
 
 	  
-	} else if (GreekMsString.isValidMsChar(token)) {
+	} else if (GreekMsString.isMsPunctuation(betaToken)) {
 	  String msg = "${lexCount}: valid punctuation: " + token
 	  if (verbose) { System.err.println msg}
 	  if (log) { dbLog.append(msg + "\n") }

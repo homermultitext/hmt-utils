@@ -31,9 +31,6 @@ class TestXmlNode extends GroovyTestCase {
       String charAsStr =  new String(Character.toChars(cp))
       println "at index ${idx}, cp " + cp + " = " + charAsStr
     }
-    */
-
-    /*
     println "Here's actual ${actual}:"
     max = actual.codePointCount(0, actual.length() - 1)
     (0..max).each { idx ->
@@ -43,17 +40,11 @@ class TestXmlNode extends GroovyTestCase {
     }
     */
 
-    
-    //    assert expan == XmlNode.collectText(expanXml)
-    
-
     def root = new XmlParser().parseText(abbrExpanChoice)
     root.p.choice.expan.each { ex ->
       assert expan == XmlNode.collectText(ex).replaceFirst(" ","")
     }
-    
-    
-    println "Here's a snatch : " + XmlNode.collectText(abbrExpanChoice)
+    //println "Here's a snatch : " + XmlNode.collectText(abbrExpanChoice)
   }
   
 }

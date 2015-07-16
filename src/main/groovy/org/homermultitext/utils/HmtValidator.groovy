@@ -118,6 +118,8 @@ class HmtValidator  {
 		th("Success/Failure/Total")
 		th("Details")
 	      }
+
+
 	      validations.keySet().sort().each { k ->
 		def v = validations[k]
 		tr {
@@ -396,7 +398,11 @@ class HmtValidator  {
 	    LinkedHashMap occurrencesMap = lexv.getOccurrences()
 	    LinkedHashMap resultsMap = lexv.getValidationResults()
 
-	    if (occurrencesMap.size() > 0) {
+
+	    Integer count = 0
+	    h2("Failures: ${lexv.failureCount()}")
+
+	    if (lexv.failureCount() > 0) {
 	      table {
 		tr {
 		  th("Reference")
@@ -406,49 +412,83 @@ class HmtValidator  {
 
 		resultsMap.keySet().sort().each { fullRef ->
 
-		  if ((fullRef != null) && (fullRef.hasSubref())) {
-
-		    String lex = fullRef.getSubref()
-		  
-		  tr {
-		    td(lex)
-		    td {
-		      if (resultsMap[fullRef] ==  "success") {
-			img(src : check)
-		      } else if (resultsMap[fullRef] ==  "byz") {
-			img(src : check)
-			mkp.yield("(byzantine orthography)")
-			
-		      } else if (resultsMap[fullRef] ==  "punctuation") {
-			img(src : check)
-			mkp.yield("(punctuation)")
-			
-		      } else {
+		  String lex = fullRef.getSubref()
+		  if (resultsMap[fullRef] == "fail") {
+		    count++;		  
+		    tr {
+		      td("${count}. " + lex)
+		      td {
 			mkp.yield(resultsMap[fullRef])
 			img(src : del)
 		      }
-		    }
-		    td {
-		      ArrayList occurrences = occurrencesMap[lex]
-		      ul {
-			occurrences.sort().each {
-			  li(it)
+		      td {
+			ArrayList occurrences = occurrencesMap[lex]
+			ul {
+			  occurrences.sort().each {
+			    li(it)
+			  }
 			}
 		      }
 		    }
 		  }
-		  }
+		}
+	      } // table of failures
+	    }
+
+
+
+
+	    h2("Successes: ${lexv.successCount()}")
+	    if (lexv.successCount() > 0) {
+	      count = 0
+	      table {
+		tr {
+		  th("Reference")
+		  th("Valid?")
+		  th("Occurs in")
 		}
 
+		resultsMap.keySet().sort().each { fullRef ->
+		  String lex = fullRef.getSubref()
+		  if (resultsMap[fullRef] != "fail") {
+		    count++;		  
+		    tr {
+		      td("${count}. " + lex)
+		      td {
+			if (resultsMap[fullRef] ==  "success") {
+			  img(src : check)
+			} else if (resultsMap[fullRef] ==  "byz") {
+			  img(src : check)
+			  mkp.yield("(byzantine orthography)")
+			
+			} else if (resultsMap[fullRef] ==  "punctuation") {
+			  img(src : check)
+			  mkp.yield("(punctuation)")
+			
+			} else {
+			  mkp.yield(resultsMap[fullRef])
+			  img(src : del)
+			}
+		      }
+		      td {
+			ArrayList occurrences = occurrencesMap[lex]
+			ul {
+			  occurrences.sort().each {
+			    li(it)
+			  }
+			}
+		      }
+		    }
+		  }
 		}
-	    } else {
-	      p("No lexical tokens found. (???)")
-	      }
+	      } // table of successes
 	    }
 	  }
 	}
+      }
     }
     return reportXml.toString()
   }
-}
 
+  
+}
