@@ -9,6 +9,7 @@ class TestTinyLexical extends GroovyTestCase {
 
   // Tokens for one scholion:
   File tokens = new File("testdata/tokens/msA_18_69.txt")
+  //File tokens = new File("testdata/tokens/singleton.txt")
 
   // Authority  lists:
   File lexMap = new File("testdata/authlists/lexmap.csv")
@@ -37,8 +38,8 @@ class TestTinyLexical extends GroovyTestCase {
       println "${k}: ${resMap[k]}"
     }
 
-    File rept = new File("lexreport.html")
-    rept.setText(lexicalv.getLexicalTokensReport("scholion-A-18.69"), "UTF-8")
+    //    File rept = new File("lexreport.html")
+    //rept.setText(lexicalv.getLexicalTokensReport("scholion-A-18.69"), "UTF-8")
 
 
     
