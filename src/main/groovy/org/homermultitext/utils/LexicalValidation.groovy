@@ -294,7 +294,7 @@ class LexicalValidation implements HmtValidation {
 	    if (verbose) { System.err.println punctMsg}
 	    if (log) { dbLog.append(punctMsg + "\n") }
 	    
-	    scoreBoard[tokenUrn]  = "punctuation"
+	    scoreBoard[tokenUrn.toString()]  = "punctuation"
 	    successes = successes + 1
 	
 	  } else if (byzOrthoAuthList.contains(token.toString())) {
@@ -302,7 +302,7 @@ class LexicalValidation implements HmtValidation {
 	    if (verbose) { System.err.println byzOrthoMsg}
 	    if (log) { byzOrthoMsg.append(msg + "\n") }
 
-	    scoreBoard[tokenUrn] = "byz"
+	    scoreBoard[tokenUrn.toString()] = "byz"
 	    successes = successes + 1
 
 	  } else if (modernOrthoAuthList.contains(token.toString())) {
@@ -311,7 +311,7 @@ class LexicalValidation implements HmtValidation {
 	    if (verbose) { System.err.println orthoMsg}
 	    if (log) { dbLog.append(orthoMsg + "\n") }
 
-	    scoreBoard[tokenUrn] = "success"
+	    scoreBoard[tokenUrn.toString()] = "success"
 	    successes = successes + 1
 	
 	  } else {
@@ -326,13 +326,13 @@ class LexicalValidation implements HmtValidation {
 	    def reply = proc.in.text.readLines()
 
 	    if (reply[1] ==~ /.*unknown.+/) {
-	      scoreBoard[tokenUrn]  = "fail"
+	      scoreBoard[tokenUrn.toString()]  = "fail"
 	      failures = failures + 1
 	      if (verbose) { System.err.println " fails."}
 	      if (log) { dbLog.append(" fail.\n") }
 
 	    } else {
-	      scoreBoard[tokenUrn]  = "success"
+	      scoreBoard[tokenUrn.toString()]  = "success"
 	      successes = successes + 1
 	      if (verbose) { System.err.println " success."}
 	      if (log) { dbLog.append(" success.\n") }

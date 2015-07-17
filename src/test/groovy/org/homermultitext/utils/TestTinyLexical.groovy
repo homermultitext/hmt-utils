@@ -8,8 +8,8 @@ import org.junit.Test
 class TestTinyLexical extends GroovyTestCase {
 
   // Tokens for one scholion:
-  File tokens = new File("testdata/tokens/msA_18_69.txt")
-  //File tokens = new File("testdata/tokens/singleton.txt")
+  //File tokens = new File("testdata/tokens/msA_18_69.txt")
+  File tokens = new File("testdata/tokens/singleton.txt")
 
   // Authority  lists:
   File lexMap = new File("testdata/authlists/lexmap.csv")
@@ -34,10 +34,17 @@ class TestTinyLexical extends GroovyTestCase {
 
     def resMap = lexicalv.getValidationResults()
 
+
+    println "Results map: "
     resMap.keySet().each { k ->
-      println "${k}: ${resMap[k]}"
+      println "${k}: ${resMap[k]}, k of class " + k.getClass()
     }
 
+    println "From tokens map:"
+    lexicalv.tokensMap.keySet().each { k ->
+      println "${k}: ${lexicalv.tokensMap[k]}, k of class " + k.getClass()
+    }
+    
     //    File rept = new File("lexreport.html")
     //rept.setText(lexicalv.getLexicalTokensReport("scholion-A-18.69"), "UTF-8")
 

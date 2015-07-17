@@ -85,6 +85,7 @@ class HmtValidator  {
     ethnicnames.setText(getEthnicNamesReport(label), "UTF-8")
 
     File lexicaltokens = new File(reportsDir, "lexicaltokens.html")
+    System.err.println "Setting string value on " + lexicaltokens + " now..."
     lexicaltokens.setText(getLexicalTokensReport(label), "UTF-8")
 
   }
@@ -365,14 +366,6 @@ class HmtValidator  {
 
 
 
-
-
-  /** Constructs a String of HTML for a page detailing results of
-   * validation of names of lexical tokens.
-   * @param label A String used within the report to identify
-   * the physical text-bearing surface or surfaces whose tokenized content is
-   * being analyzed.
-   */
   String getLexicalTokensReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
@@ -393,14 +386,12 @@ class HmtValidator  {
 	  }
 	  article(role: "main") {
 	    h1("Lexical tokens: ${label}")
-
-	    
 	    LinkedHashMap occurrencesMap = lexv.getOccurrences()
 	    LinkedHashMap resultsMap = lexv.getValidationResults()
 
 
 	    Integer count = 0
-	    h2("Failures: ${lexv.failureCount()}")
+	    h2("Failures: ${lexv.failureCount()} distinct tokens not analyzed")
 
 	    if (lexv.failureCount() > 0) {
 	      table {
@@ -411,12 +402,20 @@ class HmtValidator  {
 		}
 
 		resultsMap.keySet().sort().each { fullRef ->
-
-		  String lex = fullRef.getSubref()
+		  String lex
 		  if (resultsMap[fullRef] == "fail") {
-		    count++;		  
+		    CtsUrn tokenUrn
+		    try {
+		      tokenUrn = new CtsUrn(fullRef)
+		      lex = tokenUrn.getSubref()
+		    } catch (Exception e) {
+		      //throw e
+		      lex = "Invalid URN: " + tokenUrn
+		    }
+
+		    count++
 		    tr {
-		      td("${count}. " + lex)
+		      td("${count}.  ${lex}")
 		      td {
 			mkp.yield(resultsMap[fullRef])
 			img(src : del)
@@ -432,8 +431,82 @@ class HmtValidator  {
 		    }
 		  }
 		}
-	      } // table of failures
+		// content for table of failures goes above this
+	      }
 	    }
+
+	    if (lexv.successCount() > 0) {
+	      count = 0
+	      h2("Successes: ${lexv.successCount()} distinct tokens analyzed")
+
+	      table {
+		tr {
+		  th("Reference")
+		  th("Valid?")
+		  th("Occurs in")
+		}
+		resultsMap.keySet().sort().each { fullRef ->
+		  String lex
+		  if (resultsMap[fullRef] != "fail") {
+		    count++
+		    CtsUrn tokenUrn
+		    try {
+		      tokenUrn = new CtsUrn(fullRef)
+		      lex = tokenUrn.getSubref()
+		    } catch (Exception e) {
+		      //throw e
+		      lex = "Invalid URN: " + tokenUrn
+		    }
+
+		    tr {
+		      td("${count}.  ${lex}")
+		      td {
+			if (resultsMap[fullRef] ==  "success") {
+			  img(src : check)
+			} else if (resultsMap[fullRef] ==  "byz") {
+			  img(src : check)
+			  mkp.yield("(byzantine orthography)")
+			} else if (resultsMap[fullRef] ==  "punctuation") {
+			  img(src : check)
+			  mkp.yield("(punctuation)")
+			} else {
+			  mkp.yield(resultsMap[fullRef])
+			  img(src : del)
+			}
+		      }
+		      td {
+			ArrayList occurrences = occurrencesMap[lex]
+			ul {
+			  occurrences.sort().each {
+			    li(it)
+			  }
+			}
+		      }
+		    }
+		  }
+		}
+		// content for success table goes above this
+	      }
+	    }
+
+	  }
+	}
+      }
+    }
+    return reportXml.toString()
+  }
+
+  /** Constructs a String of HTML for a page detailing results of
+   * validation of names of lexical tokens.
+   * @param label A String used within the report to identify
+   * the physical text-bearing surface or surfaces whose tokenized content is
+   * being analyzed.
+   */
+  String getLexicalTokensReportBogus(String label) {
+    /*
+    def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
+      html {
+	body {
 
 
 
@@ -483,11 +556,13 @@ class HmtValidator  {
 		}
 	      } // table of successes
 	    }
+	    // Article goes above this line!
 	  }
 	}
       }
     }
-    return reportXml.toString()
+    System.err.println "LexicalTokensreport: rreturning " + reportXml
+    return reportXml.toString()*/
   }
 
   
