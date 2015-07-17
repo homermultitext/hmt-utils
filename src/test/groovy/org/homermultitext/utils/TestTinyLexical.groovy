@@ -9,7 +9,8 @@ class TestTinyLexical extends GroovyTestCase {
 
   // Tokens for one scholion:
   //File tokens = new File("testdata/tokens/msA_18_69.txt")
-  File tokens = new File("testdata/tokens/singleton.txt")
+  //File tokens = new File("testdata/tokens/singleton.txt")
+  File tokens = new File("testdata/tokens/brokenparse.txt")
 
   // Authority  lists:
   File lexMap = new File("testdata/authlists/lexmap.csv")

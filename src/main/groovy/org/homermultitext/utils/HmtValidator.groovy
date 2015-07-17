@@ -8,6 +8,7 @@ import org.homermultitext.citemanager.DseManager
 
 import groovy.xml.StreamingMarkupBuilder
 
+import edu.holycross.shot.safecsv.SafeCsvReader
 
 
 /**  A class for assessing compliance of text contents with
@@ -35,6 +36,9 @@ class HmtValidator  {
   /** Validation of lexical tokens. */
   LexicalValidation lexv
 
+
+  ArrayList badStrings = []
+  
   /** Map of output file names to Validation objects. */
   LinkedHashMap validations = [:]  
 
@@ -56,6 +60,14 @@ class HmtValidator  {
     validations["ethnicnames.html"] = ethnicv
     lexv = new LexicalValidation(tokens, byzOrtho, lexMapping, morphCmd)
     validations["lexicaltokens.html"] = lexv
+
+    tokens.eachLine { l ->
+      System.err.println "Check " + l
+      if (l ==~ /urn:cite:hmt:error.badGreekMsString/) {
+	badStrings.add(l)
+	System.err.println "\tadded to " + badStrings
+      }
+    }
   }
 
 
@@ -70,6 +82,15 @@ class HmtValidator  {
     validations["ethnicnames.html"] = ethnicv
     lexv = new LexicalValidation(tokens, byzOrtho, lexMapping, morphCmd, logFile)
     validations["lexicaltokens.html"] = lexv
+
+    tokens.eachLine { l ->
+      System.err.println "Check " + l
+      if (l ==~ /.+urn:cite:hmt:error.badGreekMsString.*/) {
+	badStrings.add(l)
+	System.err.println "\tadded to " + badStrings
+      }
+    }
+
   }
 
 
@@ -100,9 +121,13 @@ class HmtValidator  {
     ethnicnames.setText(getEthnicNamesReport(label), "UTF-8")
 
     File lexicaltokens = new File(reportsDir, "lexicaltokens.html")
-    System.err.println "Setting string value on " + lexicaltokens + " now..."
     lexicaltokens.setText(getLexicalTokensReport(label), "UTF-8")
 
+    File badstrings = new File(reportsDir, "invalidstrings.html")
+
+    badstrings.setText(getBadStrings(label), "UTF-8")
+
+    
   }
 
   
@@ -153,6 +178,15 @@ class HmtValidator  {
 		  }
 		}
 	      }
+	      tr {
+		td("Invalid Greek strings")
+		td {
+		  img(src : del)
+		}
+		td {
+		  a (href: "invalidstrings.html", "see details")
+		}
+	      }
 	    }
 	  }
 	}
@@ -160,7 +194,6 @@ class HmtValidator  {
     }
     return reportXml.toString()
   }
-
 
   
   /** Constructs a String of HTML for a page detailing results of
@@ -511,74 +544,45 @@ class HmtValidator  {
     return reportXml.toString()
   }
 
-  /** Constructs a String of HTML for a page detailing results of
-   * validation of names of lexical tokens.
+  /** Constructs a String of HTML for a page listing tokens
+   * with invalid Greek string values.
    * @param label A String used within the report to identify
    * the physical text-bearing surface or surfaces whose tokenized content is
    * being analyzed.
    */
-  String getLexicalTokensReportBogus(String label) {
-    /*
+  String getBadStrings(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
+	head {
+	  title ("Invalid Greek string values: ${label}")
+	  link(type: "text/css", rel: "stylesheet", href: "css/hmt-core.css", title: "HMT CSS")
+	}
 	body {
-
-
-
-
-	    h2("Successes: ${lexv.successCount()}")
-	    if (lexv.successCount() > 0) {
-	      count = 0
-	      table {
-		tr {
-		  th("Reference")
-		  th("Valid?")
-		  th("Occurs in")
+	  header(role: "banner") {
+	    mkp.yield "Invalid Greek string values: ${label}"
+	    nav(role: "navigation") {
+	      ul {
+		li {
+		  a(href: "${label}.html", "summary of ${label}")
 		}
-
-		resultsMap.keySet().sort().each { fullRef ->
-		  String lex = fullRef.getSubref()
-		  if (resultsMap[fullRef] != "fail") {
-		    count++;		  
-		    tr {
-		      td("${count}. " + lex)
-		      td {
-			if (resultsMap[fullRef] ==  "success") {
-			  img(src : check)
-			} else if (resultsMap[fullRef] ==  "byz") {
-			  img(src : check)
-			  mkp.yield("(byzantine orthography)")
-			
-			} else if (resultsMap[fullRef] ==  "punctuation") {
-			  img(src : check)
-			  mkp.yield("(punctuation)")
-			
-			} else {
-			  mkp.yield(resultsMap[fullRef])
-			  img(src : del)
-			}
-		      }
-		      td {
-			ArrayList occurrences = occurrencesMap[lex]
-			ul {
-			  occurrences.sort().each {
-			    li(it)
-			  }
-			}
-		      }
-		    }
-		  }
-		}
-	      } // table of successes
+	      }
 	    }
-	    // Article goes above this line!
+	  }
+	  article(role: "main") {
+	    h1("Invalid Greek string values: ${label}")
+	    ul {
+	      badStrings.each {
+		li(it)
+	      }
+	    }
 	  }
 	}
       }
     }
-    System.err.println "LexicalTokensreport: rreturning " + reportXml
-    return reportXml.toString()*/
+    return reportXml.toString()    
   }
 
   
 }
+
+      
