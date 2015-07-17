@@ -59,6 +59,21 @@ class HmtValidator  {
   }
 
 
+
+  HmtValidator(File tokens, File authListsDir, File byzOrtho, File lexMapping, String morphCmd, File logFile) {
+
+    persv = new PersNameValidation(tokens, new File(authListsDir, "hmtnames.csv"))
+    validations["personalnames.html"] = (persv)
+    placev = new PlaceNameValidation(tokens, new File(authListsDir, "hmtplaces.csv"))
+    validations["placenames.html"] = placev
+    ethnicv = new EthnicNameValidation(tokens, new File(authListsDir, "hmtplaces.csv"))
+    validations["ethnicnames.html"] = ethnicv
+    lexv = new LexicalValidation(tokens, byzOrtho, lexMapping, morphCmd, logFile)
+    validations["lexicaltokens.html"] = lexv
+  }
+
+
+  
   /** Writes a coordinated suite of HTML reports.
    * @param reportsDir A writable directory where the output
    * will be written.

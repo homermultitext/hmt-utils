@@ -14,11 +14,12 @@ class TestValidator extends GroovyTestCase {
   File byz = new File("testdata/authlists/orthoequivs.csv")
   File lexMap = new File("testdata/authlists/lexmap.csv")
   String morphCmd = "../morpheus/bin/morpheus"
-    
+
+  File logger = new File("testvalidator-log.txt")
   
   
   void testValidator() {
-    HmtValidator v = new HmtValidator(tokens,authSrc, byz,lexMap, morphCmd)
+    HmtValidator v = new HmtValidator(tokens,authSrc, byz,lexMap, morphCmd, logger)
     assert v.persv.validates()
     assert v.placev.validates()
     assert v.ethnicv.validates()
