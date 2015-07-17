@@ -300,7 +300,7 @@ class LexicalValidation implements HmtValidation {
 	  } else if (byzOrthoAuthList.contains(token.toString())) {
 	    String byzOrthoMsg = "${lexCount}: Byzantine orthography  for ${tokenUrn} ok: " + token
 	    if (verbose) { System.err.println byzOrthoMsg}
-	    if (log) { byzOrthoMsg.append(byzOrthoMsg + "\n") }
+	    if (log) { dbLog.append(byzOrthoMsg + "\n") }
 
 	    scoreBoard[tokenUrn.toString()] = "byz"
 	    successes = successes + 1
