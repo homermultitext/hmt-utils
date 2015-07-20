@@ -62,10 +62,10 @@ class HmtValidator  {
     validations["lexicaltokens.html"] = lexv
 
     tokens.eachLine { l ->
-      System.err.println "Check " + l
+      if (debug > 2) { System.err.println "Check " + l}
       if (l ==~ /urn:cite:hmt:error.badGreekMsString/) {
 	badStrings.add(l)
-	System.err.println "\tadded to " + badStrings
+	if (debug > 0) { System.err.println "\tadded ${l} to " + badStrings}
       }
     }
   }
@@ -84,10 +84,10 @@ class HmtValidator  {
     validations["lexicaltokens.html"] = lexv
 
     tokens.eachLine { l ->
-      System.err.println "Check " + l
+      if (debug > 2) { System.err.println "Check " + l}
       if (l ==~ /.+urn:cite:hmt:error.badGreekMsString.*/) {
 	badStrings.add(l)
-	System.err.println "\tadded to " + badStrings
+	if (debug > 1) { System.err.println "\tadded ${l} to " + badStrings}
       }
     }
 
@@ -579,8 +579,15 @@ class HmtValidator  {
 	  article(role: "main") {
 	    h1("Invalid Greek string values: ${label}")
 	    ul {
-	      badStrings.each {
-		li(it)
+	      badStrings.each { bad ->
+		String badreport
+		def parts = bad.split('@')
+		if (parts.size() < 2) {
+		  badreport = "?? can't make sense of " + bad
+		} else {
+		  badreport = "${parts[1].replaceFirst(/\[.+/,'')} from ${parts[0]}"
+		}
+		li(badreport)
 	      }
 	    }
 	  }
