@@ -422,7 +422,7 @@ class HmtValidator  {
 
 
 
-  String getLexicalTokensReport(String label) {
+  String getLexcalTokensReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
 	head {
@@ -466,7 +466,7 @@ class HmtValidator  {
 		      lex = tokenUrn.getSubref()
 		    } catch (Exception e) {
 		      //throw e
-		      lex = "Invalid URN: " + tokenUrn
+		      lex = "Invalid URN: " + fullRef
 		    }
 
 		    count++
