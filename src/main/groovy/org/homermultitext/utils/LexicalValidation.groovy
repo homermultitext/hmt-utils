@@ -283,7 +283,8 @@ class LexicalValidation implements HmtValidation {
 	
 	if (continueAnalysis) {
 	  String betaToken = tobeta.getString(tokenString.toLowerCase())
-
+	  betaToken = betaToken.replaceFirst("S1","S")
+	  
 	  if (debug > 1) {
 	    System.err.println "LexicalValidation:compute: token ${token}, beta ${betaToken}"
 	  }
