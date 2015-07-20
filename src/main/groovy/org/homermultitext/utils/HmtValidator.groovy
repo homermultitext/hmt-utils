@@ -161,7 +161,7 @@ class HmtValidator  {
 	      }
 
 
-	      validations.keySet().sort().each { k ->
+	      validations.keySet()?.sort().each { k ->
 		def v = validations[k]
 		tr {
 		  td(v.label())
@@ -179,12 +179,20 @@ class HmtValidator  {
 		}
 	      }
 	      tr {
-		td("Invalid Greek strings")
-		td {
-		  img(src : del)
-		}
-		td {
-		  a (href: "invalidstrings.html", "see details")
+		if (badStrings.size() > 0) {
+		  td("Invalid Greek strings (${badStrings.size()} tokens)")
+		  td {
+		    img(src : del)
+		  }
+		  td {
+		    a (href: "invalidstrings.html", "see details")
+		  }
+		} else {
+		  td ("Tokenizer found no invalid Greek strings")
+		  td {
+		    img(src : check)
+		  }
+		  td()
 		}
 	      }
 	    }
@@ -234,7 +242,7 @@ class HmtValidator  {
 		th("Occurs in")
 	      }
 
-	      resultsMap.keySet().sort().each { pname ->
+	      resultsMap.keySet()?.sort().each { pname ->
 		tr {
 		  td(pname)
 		  td {
@@ -247,7 +255,7 @@ class HmtValidator  {
 		  td {
 		    ArrayList occurrences = occurrencesMap[pname]
 		    ul {
-		      occurrences.sort().each {
+		      occurrences?.sort().each {
 			li(it)
 		      }
 		    }
@@ -305,7 +313,7 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().sort().each { pname ->
+		resultsMap.keySet()?.sort().each { pname ->
 		  tr {
 		    td(pname)
 		    td {
@@ -318,7 +326,7 @@ class HmtValidator  {
 		    td {
 		      ArrayList occurrences = occurrencesMap[pname]
 		      ul {
-			occurrences.sort().each {
+			occurrences?.sort().each {
 			  li(it)
 			}
 		      }
@@ -381,7 +389,7 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().sort().each { pname ->
+		resultsMap.keySet()?.sort().each { pname ->
 		  tr {
 		    td(pname)
 		    td {
@@ -394,7 +402,7 @@ class HmtValidator  {
 		    td {
 		      ArrayList occurrences = occurrencesMap[pname]
 		      ul {
-			occurrences.sort().each {
+			occurrences?.sort().each {
 			  li(it)
 			}
 		      }
@@ -449,7 +457,7 @@ class HmtValidator  {
 		  th("Occurs in")
 		}
 
-		resultsMap.keySet().sort().each { fullRef ->
+		resultsMap.keySet()?.sort().each { fullRef ->
 		  String lex
 		  if (resultsMap[fullRef] == "fail") {
 		    CtsUrn tokenUrn
@@ -471,7 +479,7 @@ class HmtValidator  {
 		      td {
 			ArrayList occurrences = occurrencesMap[lex]
 			ul {
-			  occurrences.sort().each {
+			  occurrences?.sort().each {
 			    li(it)
 			  }
 			}
@@ -493,7 +501,7 @@ class HmtValidator  {
 		  th("Valid?")
 		  th("Occurs in")
 		}
-		resultsMap.keySet().sort().each { fullRef ->
+		resultsMap.keySet()?.sort().each { fullRef ->
 		  String lex
 		  if (resultsMap[fullRef] != "fail") {
 		    count++
@@ -525,7 +533,7 @@ class HmtValidator  {
 		      td {
 			ArrayList occurrences = occurrencesMap[lex]
 			ul {
-			  occurrences.sort().each {
+			  occurrences?.sort().each {
 			    li(it)
 			  }
 			}
