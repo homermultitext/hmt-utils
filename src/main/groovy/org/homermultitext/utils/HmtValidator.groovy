@@ -422,7 +422,7 @@ class HmtValidator  {
 
 
 
-  String getLexcalTokensReport(String label) {
+  String getLexicalTokensReport(String label) {
     def reportXml = new groovy.xml.StreamingMarkupBuilder().bind {
       html {
 	head {
@@ -599,5 +599,6 @@ class HmtValidator  {
 
   
 }
+
 
       
