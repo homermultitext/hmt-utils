@@ -65,16 +65,25 @@ class TestTokens extends GroovyTestCase {
 
   void testWhiteSpace (){
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
-    toker.debug = 10
+    toker.debug = 0
 
     // test file with impostor high dot:
     File tabFile = new File("testdata/tokens/main-18-6.txt")
     ArrayList analyses = toker.tokenizeTabFile(tabFile, "#", false)
-    println "W white space " +  analyses
+    println "W white space in 18.6:" +  analyses
     analyses.each {
       println it
     }
 
+    File tab2 = new File("testdata/tokens/main-18-8.txt")
+    ArrayList analyses2 = toker.tokenizeTabFile(tab2, "#", false)
+
+    println "W white space in 18.8:" +  analyses2
+    analyses2.each {
+      println it
+    }
+
+    
   }
 
   
