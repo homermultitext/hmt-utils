@@ -17,7 +17,7 @@ class TestTokens extends GroovyTestCase {
     
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(pn, urn, context)
-    println "Analyses for ${pn} == " + analyses 
+    //println "Analyses for ${pn} == " + analyses 
     // only 1 analysis:
     assert  analyses.size() == 1
     ArrayList analysis  = analyses[0]
@@ -34,7 +34,7 @@ class TestTokens extends GroovyTestCase {
     
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(str, urn, context)
-    println "Analyses for ${str} == " + analyses 
+    //println "Analyses for ${str} == " + analyses 
     ArrayList analysis  = analyses[0]
     assert analysis[0] == "${urn}@${str}"
     assert analysis[1] == expectedContext
@@ -52,6 +52,29 @@ class TestTokens extends GroovyTestCase {
     assert analyses.size() == 2
     ArrayList punctAnalysis = analyses[1]
     assert punctAnalysis[1] == "urn:cite:hmt:tokentypes.punctuation"
+
+
+    // test file with impostor high dot:
+    File dotFile = new File("testdata/tokens/dot.txt")
+    String dotStr = dotFile.getText("UTF-8")
+    ArrayList dotFileAnalyses = toker.tokenizeString(dotStr,urn,context,false)
+    assert dotFileAnalyses.size() == 4
+    ArrayList lastAnalysis = dotFileAnalyses[3]
+    assert lastAnalysis[1]  == "urn:cite:hmt:tokentypes.punctuation"
+  }
+
+  void testWhiteSpace (){
+    HmtEditorialTokenization toker = new HmtEditorialTokenization()
+    toker.debug = 10
+
+    // test file with impostor high dot:
+    File tabFile = new File("testdata/tokens/main-18-6.txt")
+    ArrayList analyses = toker.tokenizeTabFile(tabFile, "#", false)
+    println "W white space " +  analyses
+    analyses.each {
+      println it
+    }
+
   }
 
   

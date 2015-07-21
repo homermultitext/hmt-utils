@@ -46,6 +46,7 @@ class HmtEditorialTokenization {
     // first split on white space:
     ArrayList splits = str.split(/[\s]+/)
     splits.each { s ->
+      s = s.replaceAll("\u00B7"," \u0387")
       // then check for trailing punctuation
 
       if (s.length() > 0)  {
@@ -66,18 +67,24 @@ class HmtEditorialTokenization {
 	      if (debug > 2) { println "at ${idx}, cp " + cp + " = " + charAsStr}
 	      lexPart = lexPart + charAsStr
 	      if (debug > 2) { println "\t(lexpart now ${lexPart})"}
-	    }	    
+	    }
 	    tokes.add(lexPart)
 	    tokes.add(new String(Character.toChars(codePoint)))
 	  } else {
-	    tokes.add(s)
+	    if (s ==~ /\s+/) {
+	    } else {
+	      tokes.add(s)
+	    }
 	  }
 
 	} else {
 	  if (debug > 2) {
 	    println "${codePoint} = ${cpStr} NOT GreekMsPunctuation"
 	  }
-	  tokes.add(s)
+	  if (s ==~ /\s+/) {
+	  } else {
+	    tokes.add(s)
+	  }
 	}
       }
     }    
@@ -122,7 +129,9 @@ class HmtEditorialTokenization {
       if (debug > 2) { System.err.println "\tLook at " + t + " with type " + tokenType}
       ArrayList pairing
 
-      if (t.size() > 0) {
+      if (t ==~ /[\s]+/) {
+	// skip white space
+      } else if (t.size() > 0)  {
 	switch(tokenType) {
 
 	case "urn:cite:hmt:tokentypes.waw":

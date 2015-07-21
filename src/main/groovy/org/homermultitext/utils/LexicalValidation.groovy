@@ -417,7 +417,7 @@ class LexicalValidation implements HmtValidation {
 	// normalize before counting on string comparisons:
 	String psg = Normalizer.normalize(lexLine[0], Form.NFC)      
 	String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
-
+	psg = psg.replaceAll("\u00B7"," \u0387")
 
 	if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	  // First, make sure urn value is OK:
