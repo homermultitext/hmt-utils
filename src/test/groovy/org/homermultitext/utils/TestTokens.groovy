@@ -70,9 +70,9 @@ class TestTokens extends GroovyTestCase {
     // test file with impostor high dot:
     File tabFile = new File("testdata/tokens/main-18-6.txt")
     ArrayList analyses = toker.tokenizeTabFile(tabFile, "#", false)
-    println "W white space in 18.6:" +  analyses
+    //    println "W white space in 18.6:" +  analyses
     analyses.each {
-      println it
+      //println it
     }
 
     File tab2 = new File("testdata/tokens/main-18-8.txt")

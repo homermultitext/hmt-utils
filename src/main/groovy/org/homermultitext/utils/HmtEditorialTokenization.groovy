@@ -47,8 +47,12 @@ class HmtEditorialTokenization {
     ArrayList splits = str.split(/[\s]+/)
     splits.each { s ->
       s = s.replaceAll("\u00B7"," \u0387")
-      // then check for trailing punctuation
+      s.replaceAll(/^[ ]+/,"")
+      s.replaceAll(/[ ]+$/,"")
 
+      if (debug > 2) { System.err.println "Tokenizer examining : #" + s + "# of size " + s.length()}
+
+      // then check for trailing punctuation
       if (s.length() > 0)  {
 	int max = s.codePointCount(0, s.length() - 1)
 	int codePoint = s.codePointAt(max)
@@ -57,6 +61,9 @@ class HmtEditorialTokenization {
 	
 	if (GreekMsString.isMsPunctuation(cpStr)) {
 	  if (debug > 1) {println "== punctuation"}
+
+	  // Save lexical component and puncutation component
+	  // as two tokens. First, the lexical part:
 	  String lexPart = ""
 	  int limit = max - 1
 	  if (debug > 2) { println "Num code points: " + max + " so cycle from 0 to " + limit }
@@ -68,11 +75,17 @@ class HmtEditorialTokenization {
 	      lexPart = lexPart + charAsStr
 	      if (debug > 2) { println "\t(lexpart now ${lexPart})"}
 	    }
-	    tokes.add(lexPart)
+	    // strip any spaces between lexical part and punctuation!
+	    lexPart = lexPart.replaceAll(/[ ]+$/,"")
+	    // add the two separate parts as successive tokens:
+
+	    if (lexPart.length() > 0) {
+	      tokes.add(lexPart)
+	      if (debug > 2) {    System.err.println "Stripped to " + lexPart + " and " + new String(Character.toChars(codePoint)) }
+	    }
 	    tokes.add(new String(Character.toChars(codePoint)))
 	  } else {
-	    if (s ==~ /\s+/) {
-	    } else {
+	    if (s.length() > 0) {
 	      tokes.add(s)
 	    }
 	  }

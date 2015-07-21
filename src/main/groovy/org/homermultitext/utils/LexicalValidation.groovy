@@ -404,6 +404,7 @@ class LexicalValidation implements HmtValidation {
    * @returns A map of string values to occurrences.
    */
   LinkedHashMap populateTokensMap(File srcFile) {
+    if (debug > 1) { System.err.println "Populate tokens map from ${srcFile}"}
     LinkedHashMap occurrences = [:]
 
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
@@ -420,7 +421,9 @@ class LexicalValidation implements HmtValidation {
 	psg = psg.replaceAll("\u00B7"," \u0387")
 	psg = psg.replaceAll(/^[ ]+/,'')
 	psg = psg.replaceAll(/[ ]+$/,'')
-	
+
+
+	System.err.println "Check on #${psg}#"
 
 	if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	  // First, make sure urn value is OK:
@@ -440,16 +443,6 @@ class LexicalValidation implements HmtValidation {
 	    // check that urn has a subref?
 	    lex = urn.getSubref()
 	  }
-	    /*
-	    try {
-	      GreekMsString msLex = new GreekMsString(lex, "Unicode")
-	    } catch (Exception e) {
-	      System.err.println "LexicalValidation:populateTokensMap: invalid Greek string in ${psg} " + e
-	      lex = "error"
-	    }
-	      
-	    */
-
 	    
 	  if (occurrences[lex]) {
 	    def psgs = occurrences[lex]
