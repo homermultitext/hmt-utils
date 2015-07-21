@@ -319,7 +319,7 @@ class LexicalValidation implements HmtValidation {
 
 	    def command = "${parserCmd} ${betaToken}"
 	    String xcodeMsg =  "${lexCount}: Analyzing ${token} with ${command}..."
-	    if (verbose) { System.err.println xcodeMsg}
+	    System.err.println xcodeMsg
 	    if (log) { dbLog.append(xcodeMsg) }
 
 	    def proc = command.execute()
