@@ -204,10 +204,7 @@ class LexicalValidation implements HmtValidation {
   throws Exception {
     // Map of tokens to validation result
     LinkedHashMap scoreBoard = [:]
-    
-    TransCoder tobeta = new TransCoder()
-    tobeta.setConverter("BetaCode")
-    tobeta.setParser("Unicode")
+
 
     Integer good = 0
     Integer bad = 0
@@ -216,7 +213,7 @@ class LexicalValidation implements HmtValidation {
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { lexLine ->
       // normalize before doing any string comparisons:
-      String psg = Normalizer.normalize(lexLine[0], Form.NFC)
+      String psgUrnString = Normalizer.normalize(lexLine[0], Form.NFC)
       String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)
       
       if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
@@ -224,31 +221,32 @@ class LexicalValidation implements HmtValidation {
 	boolean continueAnalysis = true
 	CtsUrn tokenUrn
 	try {
-	  tokenUrn = new CtsUrn(psg)
+	  tokenUrn = new CtsUrn(psgUrnString)
 	  continueAnalysis = true
 	} catch (Exception e) {
 	  failures = failures + 1
-	  String errMsg = "LexicalValidation:compute: ${psg} not a valid CTS URN (failures ${failures}): " + e
+	  String errMsg = "LexicalValidation:compute: ${psgUrnString} not a valid CTS URN (failures ${failures}): " + e
 	  System.err.println errMsg
 	  if (log) { dbLog.append(errMsg + "\n") }
-	  scoreBoard[psg]  = "fail"
+	  scoreBoard[psgUrnString]  = "fail"
 	  
 
 	  continueAnalysis = false
 	}
 
+
 	
-	String tokenString
+	String subrefString
 	if (continueAnalysis) {
 	  if (tokenUrn.hasSubref()) {
-	    tokenString = tokenUrn.getSubref()
+	    subrefString = tokenUrn.getSubref()
 	  } else {
 	    continueAnalysis = false
-	    String errMsg = "LexicalValidation:compute: ${psg} does not a have valid subreference."
+	    String errMsg = "LexicalValidation:compute: ${psgUrnString} does not a have valid subreference."
 	    System.err.println errMsg
 	    if (log) { dbLog.append(errMsg + "\n") }
 	    
-	    scoreBoard[psg]  = "fail"
+	    scoreBoard[psgUrnString]  = "fail"
 	    failures = failures + 1
 	  }
 	}
@@ -264,17 +262,17 @@ class LexicalValidation implements HmtValidation {
 	  if (log) { dbLog.append(msg + "\n") }
 
 	  try {
-	    token = new GreekMsString(tokenString, "Unicode")
+	    token = new GreekMsString(subrefString, "Unicode")
 	    if (token.toString().size() < 1) {
 	      continueAnalysis = false
 	    }
 	  } catch (Exception e) {
-	    String errMsg =  "LexicalValidation:compute: ${tokenString} is not a valid Greek String: " + e
+	    String errMsg =  "LexicalValidation:compute: ${subrefString} is not a valid Greek String: " + e
 	    
 	    System.err.println errMsg
 	    if (log) { dbLog.append(errMsg + "\n") }
 
-	    scoreBoard[psg]  = "fail"
+	    scoreBoard[psgUrnString]  = "fail"
 	    failures = failures + 1
 	    continueAnalysis = false
 	  }
@@ -282,14 +280,22 @@ class LexicalValidation implements HmtValidation {
 
 	
 	if (continueAnalysis) {
-	  String betaToken = tobeta.getString(tokenString.toLowerCase())
-	  betaToken = betaToken.replaceFirst("S1","S")
+
+	  //	  GreekMsString msString
+	  // try {
+	  //msString = new GreekMsString(subrefString)
+	  //}
+	  
+	  
+	  String asciiToken = token.toString(false)
+	  System.err.println  "LEXICAL: CONVERT ms string "  + token.toString(true) + " to ascii " +asciiToken
+
 	  
 	  if (debug > 1) {
-	    System.err.println "LexicalValidation:compute: token ${token}, beta ${betaToken}"
+	    System.err.println "LexicalValidation:compute: token ${token}, ascii ${asciiToken}"
 	  }
 
-	  if (GreekMsString.isMsPunctuation(betaToken)) {
+	  if (GreekMsString.isMsPunctuation(asciiToken)) {
 	    
 	    String punctMsg = "${lexCount}: valid punctuation: " + token
 	    if (verbose) { System.err.println punctMsg}
@@ -317,7 +323,7 @@ class LexicalValidation implements HmtValidation {
 	
 	  } else {
 
-	    def command = "${parserCmd} ${betaToken}"
+	    def command = "${parserCmd} ${asciiToken}"
 	    String xcodeMsg =  "${lexCount}: Analyzing ${token} with ${command}..."
 	    System.err.println xcodeMsg
 	    if (log) { dbLog.append(xcodeMsg) }
@@ -416,26 +422,26 @@ class LexicalValidation implements HmtValidation {
 	System.err.println "Wrong number of columns (${lexLine.size()}) in line ${lexLine}"
       } else {
 	// normalize before counting on string comparisons:
-	String psg = Normalizer.normalize(lexLine[0], Form.NFC)      
+	String psgUrnString = Normalizer.normalize(lexLine[0], Form.NFC)      
 	String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
-	psg = psg.replaceAll("\u00B7"," \u0387")
-	psg = psg.replaceAll(/^[ ]+/,'')
-	psg = psg.replaceAll(/[ ]+$/,'')
+	psgUrnString = psgUrnString.replaceAll("\u00B7"," \u0387")
+	psgUrnString = psgUrnString.replaceAll(/^[ ]+/,'')
+	psgUrnString = psgUrnString.replaceAll(/[ ]+$/,'')
 
 
-	System.err.println "Check on #${psg}#"
+	System.err.println "Check on #${psgUrnString}#"
 
 	if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	  // First, make sure urn value is OK:
 	  CtsUrn urn
 	  String lex
 	  try {
-	    urn  = new CtsUrn(psg)
+	    urn  = new CtsUrn(psgUrnString)
 	    if (urn == null) {
 	      lex = "error"
 	    }
 	  } catch (Exception e) {
-	    System.err.println "LexicalValidation:populateTokensMap: failed on ${psg} " + e
+	    System.err.println "LexicalValidation:populateTokensMap: failed on ${psgUrnString} " + e
 	    lex = "error"
 	  }
 
@@ -446,10 +452,10 @@ class LexicalValidation implements HmtValidation {
 	    
 	  if (occurrences[lex]) {
 	    def psgs = occurrences[lex]
-	    psgs.add(psg)
+	    psgs.add(psgUrnString)
 	    occurrences[lex] =  psgs
 	  } else {
-	    occurrences[lex] = [psg]
+	    occurrences[lex] = [psgUrnString]
 	  }
 	}
       }
