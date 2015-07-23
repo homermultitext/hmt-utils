@@ -280,17 +280,8 @@ class LexicalValidation implements HmtValidation {
 
 	
 	if (continueAnalysis) {
-
-	  //	  GreekMsString msString
-	  // try {
-	  //msString = new GreekMsString(subrefString)
-	  //}
-	  
-	  
 	  String asciiToken = token.toString(false)
-	  System.err.println  "LEXICAL: CONVERT ms string "  + token.toString(true) + " to ascii " +asciiToken
-
-	  
+	  	  
 	  if (debug > 1) {
 	    System.err.println "LexicalValidation:compute: token ${token}, ascii ${asciiToken}"
 	  }
@@ -304,7 +295,7 @@ class LexicalValidation implements HmtValidation {
 	    scoreBoard[tokenUrn.toString()]  = "punctuation"
 	    successes = successes + 1
 	
-	  } else if (byzOrthoAuthList.contains(token.toString())) {
+	  } else if (byzOrthoAuthList.contains(token.toString(true))) {
 	    String byzOrthoMsg = "${lexCount}: Byzantine orthography  for ${tokenUrn} ok: " + token
 	    if (verbose) { System.err.println byzOrthoMsg}
 	    if (log) { dbLog.append(byzOrthoMsg + "\n") }
@@ -390,7 +381,12 @@ class LexicalValidation implements HmtValidation {
     ArrayList validList = []
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { lexLine ->
-      String normaler = Normalizer.normalize(lexLine[1], Form.NFC)
+
+      String trimmed = lexLine[1].replaceAll(/^[ ]+/,"")
+      trimmed = trimmed.replaceAll(/[ ]+$/,"")
+      String normaler = Normalizer.normalize(trimmed, Form.NFC)
+
+      if (debug > 5) { System.err.println "LEXVALID: populating with NFC #" + normaler + "# of size ${normaler.size()}"}
       validList.add(normaler)
     }
     return validList
