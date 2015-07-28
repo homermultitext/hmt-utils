@@ -5,6 +5,13 @@ import edu.harvard.chs.cite.CiteUrn
 import edu.holycross.shot.safecsv.SafeCsvReader
 import edu.holycross.shot.greekutils.GreekMsString
 
+
+
+/**
+ * Implementation of the Validation interface to
+ * validate the referential integrity of tokens referring
+ * to personal names.
+ */
 class PersNameValidation implements HmtValidation {
 
   Integer debug = 0

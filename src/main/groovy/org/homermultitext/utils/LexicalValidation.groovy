@@ -27,11 +27,11 @@ class LexicalValidation implements HmtValidation {
   
 
   /** Map of the same token values to classification.  Classification is
-   * one of the strings "success", "fail", or "byz".
+   * one of the strings "success", "fail", "alt" or "byz".
    */ 
   LinkedHashMap validationMap = [:]
 
-  /** Number of tokens classified as either "success" or "byzortho".  */
+  /** Number of tokens classified as either "success", "alt" or "byz".  */
   Integer successes = 0
   /** Number of tokens classified as "fail".  */
   Integer failures = 0
@@ -198,7 +198,7 @@ class LexicalValidation implements HmtValidation {
    * then the subreference value is subjected to second-tier analysis.
    * @param parserCmd Path to execute morpheus parser with a system call.
    * @returns A map of lexical tokens to one of the String values 
-   * "success", "fail" or "byz".
+   * "success", "fail", "alt" or "byz".
    */
   LinkedHashMap computeScores(File srcFile, String parserCmd)
   throws Exception {
@@ -309,7 +309,7 @@ class LexicalValidation implements HmtValidation {
 	    if (verbose) { System.err.println orthoMsg}
 	    if (log) { dbLog.append(orthoMsg + "\n") }
 
-	    scoreBoard[tokenUrn.toString()] = "success"
+	    scoreBoard[tokenUrn.toString()] = "alt"
 	    successes = successes + 1
 	
 	  } else {
@@ -425,7 +425,9 @@ class LexicalValidation implements HmtValidation {
 	psgUrnString = psgUrnString.replaceAll(/[ ]+$/,'')
 
 
-	System.err.println "Check on #${psgUrnString}#"
+
+	debug  = 1
+	if (debug > 0) {System.err.println "LexicalValidation: check on #${psgUrnString}#"}
 
 	if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	  // First, make sure urn value is OK:

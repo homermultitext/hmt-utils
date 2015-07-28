@@ -447,7 +447,11 @@ class HmtValidator  {
 
 
 	    Integer count = 0
-	    h2("Failures: ${lexv.failureCount()} distinct tokens not analyzed")
+	    if (lexv.failureCount() == 1) {
+	      h2("Failures: 1 distinct token not analyzed")
+	    } else {
+	      h2("Failures: ${lexv.failureCount()} distinct tokens not analyzed")
+	    }
 
 	    if (lexv.failureCount() > 0) {
 	      table {
@@ -595,6 +599,17 @@ class HmtValidator  {
       }
     }
     return reportXml.toString()    
+  }
+
+
+  
+
+  // gets an ordered list of Orca objects.
+  // 
+  ArrayList getParseableTokens() {
+    def parseable = []
+
+    return parseable
   }
 
   
