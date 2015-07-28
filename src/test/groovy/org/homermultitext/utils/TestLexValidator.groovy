@@ -17,8 +17,7 @@ class TestLexValidator extends GroovyTestCase {
   
   
   void testValidator() {
-    LexicalValidation lex = new LexicalValidation(tokens,authSrc, byz,morphCmd, true)
-
+    LexicalValidation lex = new LexicalValidation(tokens,byz,lexMap,morphCmd)
   }
   
 }
