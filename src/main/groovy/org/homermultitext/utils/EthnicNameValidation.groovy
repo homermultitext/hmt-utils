@@ -21,16 +21,57 @@ class EthnicNameValidation implements HmtValidation {
 
   ArrayList authList = []
 
-  
+
+  /** Constructor with single parameter for authority list.
+   * Useful for interactively validating one or more tokens.
+   * @param authListFile Authority list for ethnic names.
+   */
+  EthnicNameValidation(File authListFile) {
+    authList = populateAuthorityList(authListFile)
+  }
+
+
+
+  /** Constructor with parameters for tokens to validate and 
+   * authority list to use in validation.
+   * Useful for batch validation of tokens in a file.
+   * @param tokensFile Tokens to validate.
+   * @param authListFile Authority list for ethnic names.
+   */
   EthnicNameValidation(File tokensFile, File authListFile) {
     tokensMap = populateTokensMap(tokensFile)
     authList = populateAuthorityList(authListFile)
     computeScores()
   }
 
+  // ////////////////////////////////////////////////////////
+  // ********* methods required to implement interface *** //
+  //
 
-  /// methods required to implement interface
+  
+  /** Validates a single token.
+   * @param token CITE URN of token to validate, as a String.
+   * @returns Either the string "true" or the string "false".
+   */
+  String validateToken(String token) {
+    String decision = "false"
+    String place = token.replace("hmt:peoples","hmt:place")
+    System.err.println "Try out place token " + place
+    if (authList.contains(place)) {
+      decision = "true"
+    }
+    return decision
+  }
 
+  boolean isValid(String token) {
+    if (validateToken(token) == "true") {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  
   String label() {
    return "Validation of identifiers for ethnic names"
   }
