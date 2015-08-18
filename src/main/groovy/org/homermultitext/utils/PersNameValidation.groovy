@@ -36,8 +36,25 @@ class PersNameValidation implements HmtValidation {
   }
 
 
-  /// methods required to implement interface
+  PersNameValidation(File authListFile) {
+    authList = populateAuthorityList(authListFile)
+  }
 
+  /// methods required to implement interface
+  String validateToken(String token) {
+    String decision = "false"
+    if (authList.contains(token)) {
+      decision = "true"
+    }
+    return decision
+  }
+
+  boolean isValid(String token) {
+    return (validateToken(token) == "true")
+  }
+
+
+  
   String label () {
     return "Validation of personal name identifiers"
   }

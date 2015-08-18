@@ -56,7 +56,6 @@ class EthnicNameValidation implements HmtValidation {
   String validateToken(String token) {
     String decision = "false"
     String place = token.replace("hmt:peoples","hmt:place")
-    System.err.println "Try out place token " + place
     if (authList.contains(place)) {
       decision = "true"
     }
