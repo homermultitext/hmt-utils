@@ -57,9 +57,28 @@ class PlaceNameValidation implements HmtValidation {
   }
 
 
+
+  PlaceNameValidation(File authListFile) {
+    authorityList = populateAuthorityList(authListFile)
+  }
+
   /* ********************************************************** */
   /// methods required to implement HmtValidation interface:
 
+
+  
+  String validateToken(String token) {
+    String decision = "false"
+    if (authorityList.contains(token)) {
+      decision = "true"
+    }
+    return decision
+  }
+
+  boolean isValid(String token) {
+    return (validateToken(token) == "true")
+  }
+  
   /** 
    * @returns A label for the validation class. 
    */

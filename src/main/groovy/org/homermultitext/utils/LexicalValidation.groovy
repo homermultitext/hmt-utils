@@ -46,6 +46,8 @@ class LexicalValidation implements HmtValidation {
    * for valid forms. */
   ArrayList modernOrthoAuthList = []
 
+  String parserCommandPath = ""
+  
 
 
   /** Constructor with all required data sources.
@@ -107,6 +109,14 @@ class LexicalValidation implements HmtValidation {
     if (verbose) {System.err.println "Validated " + validationMap.size() + " entries"}
     
   }
+
+
+  LexicalValidation(File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
+    byzOrthoAuthList = populateAuthorityList(byzOrthoAuthListFile)
+    modernOrthoAuthList = populateLexMap(lexMappingFile)
+    parserCommandPath = morphCmd
+  }
+
   
   LexicalValidation(File tokensFile, File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
     verbose = true
@@ -115,9 +125,7 @@ class LexicalValidation implements HmtValidation {
     System.err.println "Lexical validation got " + tokensMap.size() + " tokens"
 
     byzOrthoAuthList = populateAuthorityList(byzOrthoAuthListFile)
-
     modernOrthoAuthList = populateLexMap(lexMappingFile)
-
     validationMap = computeScores(tokensFile, morphCmd)
     System.err.println "Validated " + validationMap.size() + " entries"
 
@@ -127,6 +135,134 @@ class LexicalValidation implements HmtValidation {
   // 
   /// methods required to implement HmtValidation interface
   
+  String validateToken(String tokenString) {
+    String result = ""
+    
+    boolean continueAnalysis = false
+    CtsUrn tokenUrn
+    try {
+      tokenUrn = new CtsUrn(tokenString)
+      continueAnalysis = true
+    } catch (Exception e) {
+      //failures = failures + 1
+      String errMsg = "LexicalValidation:compute: ${tokenString} not a valid CTS URN"// (failures ${failures}): " + e
+      System.err.println errMsg
+      if (log) { dbLog.append(errMsg + "\n") }
+      // scoreBoard[psgUrnString]  = "fail"
+      result = "fail"
+      continueAnalysis = false
+    }
+
+
+	
+    String subrefString
+    if (continueAnalysis) {
+      if (tokenUrn.hasSubref()) {
+	subrefString = tokenUrn.getSubref()
+      } else {
+	continueAnalysis = false
+	String errMsg = "LexicalValidation:compute: ${psgUrnString} does not a have valid subreference."
+	System.err.println errMsg
+	if (log) { dbLog.append(errMsg + "\n") }
+	    
+	//   scoreBoard[psgUrnString]  = "fail"
+	result = "fail"
+	//  failures = failures + 1
+      }
+    }
+
+	
+    GreekMsString token
+    if (continueAnalysis) {
+      String msg = "\nvalidate " + tokenUrn
+      if (verbose) { System.err.println msg}
+      if (log) { dbLog.append(msg + "\n") }
+
+      try {
+	token = new GreekMsString(subrefString, "Unicode")
+	if (token.toString().size() < 1) {
+	  continueAnalysis = false
+	}
+      } catch (Exception e) {
+	String errMsg =  "LexicalValidation:compute: ${subrefString} is not a valid Greek String: " + e
+	
+	System.err.println errMsg
+	if (log) { dbLog.append(errMsg + "\n") }
+
+	//    scoreBoard[psgUrnString]  = "fail"
+	result = "fail"
+	//  failures = failures + 1
+	continueAnalysis = false
+      }
+    }
+
+	
+    if (continueAnalysis) {
+      String asciiToken = token.toString(false)
+	  	  
+      if (debug > 1) {
+	System.err.println "LexicalValidation:compute: token ${token}, ascii ${asciiToken}"
+      }
+
+      if (GreekMsString.isMsPunctuation(asciiToken)) {
+	    
+	String punctMsg = "${lexCount}: valid punctuation: " + token
+	if (verbose) { System.err.println punctMsg}
+	if (log) { dbLog.append(punctMsg + "\n") }
+	    
+	//	scoreBoard[tokenUrn.toString()]  = "punctuation"
+	result = "punctuation"
+	//  successes = successes + 1
+	
+      } else if (byzOrthoAuthList.contains(token.toString(true))) {
+	String byzOrthoMsg = "${lexCount}: Byzantine orthography  for ${tokenUrn} ok: " + token
+	if (verbose) { System.err.println byzOrthoMsg}
+	if (log) { dbLog.append(byzOrthoMsg + "\n") }
+
+	//scoreBoard[tokenUrn.toString()] = "byz"
+	result = "byz"
+	//successes = successes + 1
+
+      } else if (modernOrthoAuthList.contains(token.toString())) {
+	    
+	//	String orthoMsg = "${lexCount}: modern orthography ok: " + token
+	//	if (verbose) { System.err.println orthoMsg}
+	//if (log) { dbLog.append(orthoMsg + "\n") }
+
+	//    scoreBoard[tokenUrn.toString()] = "alt"
+	result = "alt"
+	//  successes = successes + 1
+	
+      } else {
+
+	def command = "${parserCommandPath} ${asciiToken}"
+	//String xcodeMsg =  "${lexCount}: Analyzing ${token} with ${command}..."
+	//System.err.println xcodeMsg
+	//if (log) { dbLog.append(xcodeMsg) }
+
+	def proc = command.execute()
+	proc.waitFor()
+	def reply = proc.in.text.readLines()
+
+	if (reply[1] ==~ /.*unknown.+/) {
+	  //scoreBoard[tokenUrn.toString()]  = "fail"
+	  result = "fail"
+	  //  failures = failures + 1
+	  if (verbose) { System.err.println " fails."}
+	  if (log) { dbLog.append(" fail.\n") }
+
+	} else {
+	  //      scoreBoard[tokenUrn.toString()]  = "success"
+	  result = "success"
+	  //successes = successes + 1
+	  if (verbose) { System.err.println " success."}
+	  if (log) { dbLog.append(" success.\n") }
+
+	}
+      }
+    }
+    return result
+  }
 
   
   /** 
@@ -219,6 +355,9 @@ class LexicalValidation implements HmtValidation {
       if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	lexCount++;
 	boolean continueAnalysis = true
+
+	// THIS IS WHAT WE WANT TO MOVE TO SINGLE TOKEN METHOD:
+	/*
 	CtsUrn tokenUrn
 	try {
 	  tokenUrn = new CtsUrn(psgUrnString)
@@ -337,7 +476,7 @@ class LexicalValidation implements HmtValidation {
 
 	    }
 	  }
-	}
+	  }*/
       }
     }
     this.total = lexCount
@@ -425,8 +564,6 @@ class LexicalValidation implements HmtValidation {
 	psgUrnString = psgUrnString.replaceAll(/[ ]+$/,'')
 
 
-
-	debug  = 1
 	if (debug > 0) {System.err.println "LexicalValidation: check on #${psgUrnString}#"}
 
 	if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
