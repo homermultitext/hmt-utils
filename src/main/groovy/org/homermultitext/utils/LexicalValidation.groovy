@@ -73,10 +73,13 @@ class LexicalValidation implements HmtValidation {
     verbose = chatty
     
     tokensMap = populateTokensMap(tokensFile)
-    if (verbose) { System.err.println "Lexical validation got " + tokensMap.size() + " tokens"}
-
+    if (verbose) { System.err.println "5-arg constructor: Lexical validation got " + tokensMap.size() + " tokens"}
+    parserCommandPath = morphCmd
+    
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
     modernOrthoAuthority = populateLexMap(lexMappingFile)
+
+    if (verbose) { System.err.println "Will compute scores with morph cmd " + parserCommandPath}
     validationMap = computeScores(tokensFile, morphCmd)
 
 
@@ -105,6 +108,7 @@ class LexicalValidation implements HmtValidation {
     dbLog = logFile
     log = true
     
+    parserCommandPath = morphCmd    
     tokensMap = populateTokensMap(tokensFile)
     if (verbose) { System.err.println "Lexical validation got " + tokensMap.size() + " tokens"}
 
@@ -112,6 +116,7 @@ class LexicalValidation implements HmtValidation {
 
     modernOrthoAuthority = populateLexMap(lexMappingFile)
 
+    
     validationMap = computeScores(tokensFile, morphCmd)
     if (verbose) {System.err.println "Validated " + validationMap.size() + " entries"}
     
@@ -127,12 +132,14 @@ class LexicalValidation implements HmtValidation {
   
   LexicalValidation(File tokensFile, File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
     verbose = true
+    parserCommandPath = morphCmd
     
     tokensMap = populateTokensMap(tokensFile)
     System.err.println "Lexical validation got " + tokensMap.size() + " tokens"
 
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
     modernOrthoAuthority = populateLexMap(lexMappingFile)
+
     validationMap = computeScores(tokensFile, morphCmd)
     System.err.println "Validated " + validationMap.size() + " entries"
 

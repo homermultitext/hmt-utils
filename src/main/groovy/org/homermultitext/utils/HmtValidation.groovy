@@ -45,6 +45,12 @@ public interface HmtValidation {
    */
   LinkedHashMap getValidationResults()
 
+
+  /** Validates a single token.
+   * @returns A String value classifying the token.
+   */
+  String validateToken(String token) 
+
   /** Gets a mapping of all tokens to a CTS URN 
    * identifying the occurrence of this token.
    * @returns A map keyed by token URNs, mapping to text passages.
