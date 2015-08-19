@@ -189,11 +189,9 @@ class LexicalValidation implements HmtValidation {
       tokenUrn = new CtsUrn(tokenString)
       continueAnalysis = true
     } catch (Exception e) {
-      //failures = failures + 1
-      //String errMsg = "LexicalValidation:compute: ${tokenString} not a valid CTS URN"// (failures ${failures}): " + e
-      //System.err.println errMsg
-      //if (log) { dbLog.append(errMsg + "\n") }
-      // scoreBoard[psgUrnString]  = "fail"
+      String errMsg = "LexicalValidation: ${tokenString} not a valid CTS URN"
+      System.err.println errMsg
+      if (log) { dbLog.append(errMsg + "\n") }
       result = "fail"
       continueAnalysis = false
     }
@@ -207,10 +205,7 @@ class LexicalValidation implements HmtValidation {
 	String errMsg = "LexicalValidation:compute: ${psgUrnString} does not a have valid subreference."
 	System.err.println errMsg
 	if (log) { dbLog.append(errMsg + "\n") }
-	    
-	//   scoreBoard[psgUrnString]  = "fail"
 	result = "fail"
-	//  failures = failures + 1
       }
     }
 
@@ -227,13 +222,9 @@ class LexicalValidation implements HmtValidation {
 	}
       } catch (Exception e) {
 	String errMsg =  "LexicalValidation:compute: ${subrefString} is not a valid Greek String: " + e
-	
 	System.err.println errMsg
 	if (log) { dbLog.append(errMsg + "\n") }
-
-	//    scoreBoard[psgUrnString]  = "fail"
 	result = "fail"
-	//  failures = failures + 1
 	continueAnalysis = false
       }
     }
@@ -241,64 +232,32 @@ class LexicalValidation implements HmtValidation {
 	
     if (continueAnalysis) {
       String asciiToken = token.toString(false)
-	  	  
       if (debug > 1) {
-	System.err.println "LexicalValidation:compute: token ${token}, ascii ${asciiToken}"
+	System.err.println "LexicalValidation: token ${token}, ascii ${asciiToken}"
       }
-
-      if (GreekMsString.isMsPunctuation(asciiToken)) {
-	    
-	String punctMsg = "${lexCount}: valid punctuation: " + token
-	if (verbose) { System.err.println punctMsg}
-	if (log) { dbLog.append(punctMsg + "\n") }
-	    
-	//	scoreBoard[tokenUrn.toString()]  = "punctuation"
-	result = "punctuation"
-	//  successes = successes + 1
-	
-      } else if (byzOrthoAuthority.keySet().contains(token.toString(true))) {
-	//String byzOrthoMsg = "${lexCount}: Byzantine orthography  for ${tokenUrn} ok: " + token
-	//if (verbose) { System.err.println byzOrthoMsg}
-	//if (log) { dbLog.append(byzOrthoMsg + "\n") }
-
-	//scoreBoard[tokenUrn.toString()] = "byz"
+      
+      if (byzOrthoAuthority.keySet().contains(token.toString(true))) {
 	result = "byz"
-	//successes = successes + 1
 
       } else if (modernOrthoAuthority.keySet().contains(token.toString())) {
-	    
-	//	String orthoMsg = "${lexCount}: modern orthography ok: " + token
-	//	if (verbose) { System.err.println orthoMsg}
-	//if (log) { dbLog.append(orthoMsg + "\n") }
-
-	//    scoreBoard[tokenUrn.toString()] = "alt"
 	result = "alt"
-	//  successes = successes + 1
+
 	
       } else {
-
 	def command = "${parserCommandPath} ${asciiToken}"
-	//String xcodeMsg =  "${lexCount}: Analyzing ${token} with ${command}..."
-	//System.err.println xcodeMsg
-	//if (log) { dbLog.append(xcodeMsg) }
+	String xcodeMsg =  "Analyzing ${token} with ${command}..."
+	System.err.println xcodeMsg
+	if (log) { dbLog.append(xcodeMsg) }
 
 	def proc = command.execute()
 	proc.waitFor()
 	def reply = proc.in.text.readLines()
 
 	if (reply[1] ==~ /.*unknown.+/) {
-	  //scoreBoard[tokenUrn.toString()]  = "fail"
 	  result = "fail"
-	  //  failures = failures + 1
-	  if (verbose) { System.err.println " fails."}
-	  if (log) { dbLog.append(" fail.\n") }
 
 	} else {
-	  //      scoreBoard[tokenUrn.toString()]  = "success"
 	  result = "success"
-	  //successes = successes + 1
-	  if (verbose) { System.err.println " success."}
-	  if (log) { dbLog.append(" success.\n") }
 
 	}
       }
@@ -376,7 +335,7 @@ class LexicalValidation implements HmtValidation {
    * then the subreference value is subjected to second-tier analysis.
    * @param parserCmd Path to execute morpheus parser with a system call.
    * @returns A map of lexical tokens to one of the String values 
-   * "success", "fail", "alt" or "byz".
+   * "success", "fail", "alt", or "byz".
    */
   LinkedHashMap computeScores(File srcFile, String parserCmd)
   throws Exception {
@@ -396,13 +355,40 @@ class LexicalValidation implements HmtValidation {
       
       if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	lexCount++;
-	// THIS IS WHAT WE WANT TO MOVE TO SINGLE TOKEN METHOD:
-	/*
-	  submit psgUrnString to single token method
-	  record resutling score in scoreBoard
-	  switch on result, update couns of good/bad
-	  log and/or err msg
-	 */
+
+	String evaluation = validateToken(psgUrnString)
+	scoreBoard[psgUrnString] = evaluation
+	switch (evaluation) {
+	case "fail":
+	failures = failures + 1
+	String errMsg = "LexicalValidation: failed to analyze ${psgUrnString}"
+	System.err.println errMsg
+	if (log) { dbLog.append(errMsg + "\n") }
+	break
+
+
+	case "alt":
+	successes = successes + 1
+	String altMsg = "Alternate modern orthography OK"
+	System.err.println altMsg
+	if (log) {dbLog.append(altMsg + "\n")}
+	break
+	
+	case "byz":
+	successes = successes + 1
+	String byzMsg = "Alternate Byzantine orthography OK"
+	System.err.println byzMsg
+	if (log) {dbLog.append(byzMsg + "\n")}
+	break
+
+	case "success":
+	successes = successes + 1
+	break
+	
+	default:
+	System.err.println "UNKNOWN ANALYSIS FOR ${psgUrnString}: ${evaulation}"
+	break
+	}
       }
     }
     this.total = lexCount
