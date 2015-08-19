@@ -38,15 +38,19 @@ class LexicalValidation implements HmtValidation {
   /** Total number of tokens.  */
   Integer total = 0
 
-  /** Authority list for accepted Byzantine orthographies
-   * for valid forms. */
+  /** Map with authority list for accepted Byzantine orthographies
+   * for valid forms.  Valid Byzantine forms are keys; URNs in
+   * Byzantine orthography collection are the values.
+   */
   LinkedHashMap byzOrthoAuthority = [:]
 
   
-  
-  /** Authority list for accepted modern alternate orthographies
-   * for valid forms. */
-  ArrayList modernOrthoAuthList = []
+
+  /** Map with authority list for valid alternate modern orthographies.
+   * Valid forms are keys; URNs in alternate orthography collection are 
+   * the values.
+   */
+  LinkedHashMap modernOrthoAuthority = [:]
 
   
   String parserCommandPath = ""
@@ -72,7 +76,7 @@ class LexicalValidation implements HmtValidation {
     if (verbose) { System.err.println "Lexical validation got " + tokensMap.size() + " tokens"}
 
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
-    modernOrthoAuthList = populateLexMap(lexMappingFile)
+    modernOrthoAuthority = populateLexMap(lexMappingFile)
     validationMap = computeScores(tokensFile, morphCmd)
 
 
@@ -106,7 +110,7 @@ class LexicalValidation implements HmtValidation {
 
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
 
-    modernOrthoAuthList = populateLexMap(lexMappingFile)
+    modernOrthoAuthority = populateLexMap(lexMappingFile)
 
     validationMap = computeScores(tokensFile, morphCmd)
     if (verbose) {System.err.println "Validated " + validationMap.size() + " entries"}
@@ -116,7 +120,7 @@ class LexicalValidation implements HmtValidation {
 
   LexicalValidation(File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
-    modernOrthoAuthList = populateLexMap(lexMappingFile)
+    modernOrthoAuthority = populateLexMap(lexMappingFile)
     parserCommandPath = morphCmd
   }
 
@@ -128,7 +132,7 @@ class LexicalValidation implements HmtValidation {
     System.err.println "Lexical validation got " + tokensMap.size() + " tokens"
 
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
-    modernOrthoAuthList = populateLexMap(lexMappingFile)
+    modernOrthoAuthority = populateLexMap(lexMappingFile)
     validationMap = computeScores(tokensFile, morphCmd)
     System.err.println "Validated " + validationMap.size() + " entries"
 
@@ -137,13 +141,14 @@ class LexicalValidation implements HmtValidation {
 
   /** Looks up URN in orthography authority list
    * for a given Byzantine form.
-   * @param byzForm Byzantine form to look up.
+   * @param byzFormRaw Byzantine form to look up.
    * @returns CITE URN in Byzantine orthography collection.
-   * @throws Exception if byzForm does not appear in the
+   * @throws Exception if byzFormRaw does not appear in the
    * authority list.
    */
-  String urnForByzOrtho(String byzForm)
+  String urnForByzOrtho(String byzFormRaw)
   throws Exception {
+    String byzForm =  Normalizer.normalize(byzFormRaw, Form.NFC)
     if (byzOrthoAuthority.keySet().contains(byzForm)) {
       return byzOrthoAuthority[byzForm]
     } else {
@@ -151,7 +156,23 @@ class LexicalValidation implements HmtValidation {
     }
   }
 
-  String urnForAltOrtho(String byzForm) {
+
+
+  /** Looks up URN in authority list for alternate
+   * modern orthographies.
+   * @param altFormRaw Alternate orthographic form o look up.
+   * @returns CITE URN in alternate orthography collection.
+   * @throws Exception if altFormRaw does not appear in the
+   * authority list.
+   */
+  String urnForAltOrtho(String altFormRaw)
+  throws Exception {
+    String altForm =  Normalizer.normalize(altFormRaw, Form.NFC)
+    if (modernOrthoAuthority.keySet().contains(altForm)) {
+      return modernOrthoAuthority[altForm]
+    } else {
+      throw new Exception("LexicalValidation: ${altForm} not a recognized alternate orthography.")
+    }
   }
 
   
@@ -177,8 +198,6 @@ class LexicalValidation implements HmtValidation {
       continueAnalysis = false
     }
 
-
-	
     String subrefString
     if (continueAnalysis) {
       if (tokenUrn.hasSubref()) {
@@ -195,7 +214,6 @@ class LexicalValidation implements HmtValidation {
       }
     }
 
-	
     GreekMsString token
     if (continueAnalysis) {
       String msg = "\nvalidate " + tokenUrn
@@ -247,7 +265,7 @@ class LexicalValidation implements HmtValidation {
 	result = "byz"
 	//successes = successes + 1
 
-      } else if (modernOrthoAuthList.contains(token.toString())) {
+      } else if (modernOrthoAuthority.keySet().contains(token.toString())) {
 	    
 	//	String orthoMsg = "${lexCount}: modern orthography ok: " + token
 	//	if (verbose) { System.err.println orthoMsg}
@@ -401,15 +419,15 @@ class LexicalValidation implements HmtValidation {
    * @param srcFile .csv File with mapping data.
    * @returns A list of valid forms morpheus cannot parse.
    */
-  ArrayList populateLexMap(File srcFile) {
-    ArrayList validList = []
-
+  LinkedHashMap populateLexMap(File srcFile) {
+    LinkedHashMap validForms = [:]
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { lexLine ->
-      String normalUrn = Normalizer.normalize(lexLine[1], Form.NFC)
-      validList.add(normalUrn)
+      String urn = lexLine[0]
+      String normalForm = Normalizer.normalize(lexLine[1], Form.NFC)
+      validForms[normalForm] = urn
     }
-    return validList
+    return validForms
   }
 
 

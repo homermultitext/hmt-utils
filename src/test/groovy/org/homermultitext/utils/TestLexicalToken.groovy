@@ -45,6 +45,8 @@ class TestLexicalToken extends GroovyTestCase {
     String expectedUrn =  "urn:cite:hmt:byzortho.1983"
     assert lex.urnForByzOrtho(byzHoString) == expectedUrn
 
+    String altNereids = "Νηρηΐδες"
+    println "${altNereids} -> " + lex.urnForAltOrtho(altNereids)
     
   }
   
