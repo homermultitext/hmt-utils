@@ -57,7 +57,7 @@ class LexicalValidation implements HmtValidation {
   
 
 
-  /** Constructor with all required data sources.
+  /** Constructor with all required data sources and boolean parameter for verbose setting.
    * @param File with output of HMT tokenization.  Each line is a comma-delimited
    * pairing of a CTS URN for a token (including subreference) to a classification
    * of the token.
@@ -123,13 +123,18 @@ class LexicalValidation implements HmtValidation {
   }
 
 
+
+  /** Minimal constructor with authority lists and parser command, but not data set
+   * identified.  Useful for analyziing dynamically generated material.
+   */
   LexicalValidation(File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
     modernOrthoAuthority = populateLexMap(lexMappingFile)
     parserCommandPath = morphCmd
   }
 
-  
+  /** Constructor with all required data sources. 
+   */
   LexicalValidation(File tokensFile, File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
     verbose = true
     parserCommandPath = morphCmd
@@ -186,34 +191,36 @@ class LexicalValidation implements HmtValidation {
   // ///////////////////////////////////////////////////////// 
   // 
   /// methods required to implement HmtValidation interface
-  
+
+
   String validateToken(String tokenString) {
-    String result = ""
-    
-    boolean continueAnalysis = false
     CtsUrn tokenUrn
     try {
       tokenUrn = new CtsUrn(tokenString)
-      continueAnalysis = true
+      return validateToken(tokenUrn)
+      
     } catch (Exception e) {
       String errMsg = "LexicalValidation: ${tokenString} not a valid CTS URN"
       System.err.println errMsg
       if (log) { dbLog.append(errMsg + "\n") }
-      result = "fail"
-      continueAnalysis = false
+      return "fail"
     }
-
+  }
+  
+  String validateToken(CtsUrn tokenUrn) {
+    String result = ""
+    
+    boolean continueAnalysis = true
     String subrefString
-    if (continueAnalysis) {
-      if (tokenUrn.hasSubref()) {
-	subrefString = tokenUrn.getSubref()
-      } else {
-	continueAnalysis = false
-	String errMsg = "LexicalValidation:compute: ${psgUrnString} does not a have valid subreference."
-	System.err.println errMsg
-	if (log) { dbLog.append(errMsg + "\n") }
-	result = "fail"
-      }
+    
+    if (tokenUrn.hasSubref()) {
+      subrefString = tokenUrn.getSubref()
+    } else {
+      continueAnalysis = false
+      String errMsg = "LexicalValidation:compute: ${psgUrnString} does not a have valid subreference."
+      System.err.println errMsg
+      if (log) { dbLog.append(errMsg + "\n") }
+      result = "fail"
     }
 
     GreekMsString token
