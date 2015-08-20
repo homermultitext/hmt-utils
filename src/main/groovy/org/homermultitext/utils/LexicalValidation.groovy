@@ -373,6 +373,7 @@ class LexicalValidation implements HmtValidation {
 	String evaluation = validateToken(psgUrnString)
 	scoreBoard[psgUrnString] = evaluation
 	switch (evaluation) {
+
 	case "fail":
 	failures = failures + 1
 	String errMsg = "LexicalValidation: failed to analyze ${psgUrnString}"

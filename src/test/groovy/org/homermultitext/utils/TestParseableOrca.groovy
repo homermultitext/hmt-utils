@@ -17,11 +17,15 @@ class TestParseableOrca extends GroovyTestCase {
   String morphCmd = "../morpheus/bin/morpheus"
     
 
-  String analysisName = "sample"
+  String analysisName = "urn:cite:citedemo:parseable"
   
   void testOrca() {
     ParseableStringOrca pso = new ParseableStringOrca(analysisName, byz, lexMap, morphCmd)
-    pso.orcafyTabFile(tabs)
+
+    def orcaAnalysis = pso.orcafyTabFile(tabs)
+    orcaAnalysis.each {
+      println it.getTransformedText()
+    }
   }
   
 }
