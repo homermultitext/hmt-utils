@@ -22,9 +22,24 @@ class TestParseableOrca extends GroovyTestCase {
   void testOrca() {
     ParseableStringOrca pso = new ParseableStringOrca(analysisName, byz, lexMap, morphCmd)
 
-    def orcaAnalysis = pso.orcafyTabFile(tabs)
-    orcaAnalysis.each {
+    
+    pso.orcafyTabFile(tabs)
+    pso.analysisList.each {
       println it.getTransformedText()
+    }
+
+    println "Byz mappings for this collection: "
+    def bMap =     pso.getByzMappings()
+    bMap.keySet().each { k ->
+      println "${k} -> " + bMap[k]
+    }
+
+
+
+    println "Modern ortho mappings for this collection: "
+    def altMap = pso.getAltMappings()
+    altMap.keySet().each { k ->
+      println "${k} -> " + altMap[k]
     }
   }
   

@@ -15,7 +15,7 @@ class TestTokenizerPass extends GroovyTestCase {
   File outputFile = new File("build/three-lines-tokens.txt")
   String separatorStr = "#"
 
-  /*  
+
   void testEditorialTokenizer() {
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     toker.debug = 3
@@ -29,7 +29,7 @@ class TestTokenizerPass extends GroovyTestCase {
     //    assert tokenizationResults.size() == expectedTokens
   }
 
-  */ 
+
 
   void testEditorialTokenizer2() {
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
