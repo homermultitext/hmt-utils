@@ -10,7 +10,7 @@ class TestFloatLex extends GroovyTestCase {
   File tokens = new File("testdata/tokens/floatTokens.txt")
   File lexMap = new File("testdata/authlists/lexmap.csv")
   File byz = new File("testdata/authlists/orthoequivs.csv")
-  
+
   String morphCmd = "../morpheus/bin/morpheus"
 
 
@@ -22,8 +22,10 @@ class TestFloatLex extends GroovyTestCase {
     Integer expectedSuccesses = 390
   */
   void testLexicalValidation() {
+    // Turned off until support for morphology is reimplemented
+    /*
     LexicalValidation lexicalv = new LexicalValidation(tokens, byz, lexMap, morphCmd, log)
-    
+
     //assertFalse lexicalv.validates()
 
     // all tokens accounted for:
@@ -36,10 +38,11 @@ class TestFloatLex extends GroovyTestCase {
     vmap.keySet().each { k ->
       println "${k} -> " + vmap[k]
     }
-    
+
     // break down as expected:
     //assert lexicalv.successCount() == expectedSuccesses
     //assert lexicalv.failureCount() == expectedFails
+    */
   }
-  
+
 }

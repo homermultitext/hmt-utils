@@ -7,6 +7,7 @@ import org.junit.Test
 import org.homermultitext.citemanager.DseManager
 
 class TestLexicalToken extends GroovyTestCase {
+// Turned off until support for morphology is reimplemented
 
   File byz = new File("testdata/authlists/orthoequivs.csv")
   File lexMap = new File("testdata/authlists/lexmap.csv")
@@ -15,16 +16,17 @@ class TestLexicalToken extends GroovyTestCase {
   // test values
   //
   //alternate moden orthography
-  String nereids = "urn:cts:greekLit:tlg0012.tlg001.msA:18.38@Νηρηΐδες"  
+  String nereids = "urn:cts:greekLit:tlg0012.tlg001.msA:18.38@Νηρηΐδες"
   // valid byzantine orthography
   String ho = "urn:cts:greekLit:tlg0012.tlg001.msA:1.56@ο"
-  
+
 
   LexicalValidation lex = new LexicalValidation(byz,lexMap,morphCmd)
-  
+
   void testValidForms() {
+    /*
     String wrath = "urn:cts:greekLit:tlg0012.tlg001.msA:1.1@μῆνιν"
-  
+
     assert lex.validateToken(wrath) == "success"
     assert lex.validateToken(nereids) == "alt"
     assert lex.validateToken(ho) == "byz"
@@ -47,7 +49,7 @@ class TestLexicalToken extends GroovyTestCase {
 
     String altNereids = "Νηρηΐδες"
     println "${altNereids} -> " + lex.urnForAltOrtho(altNereids)
-    
+    */
   }
-  
+
 }

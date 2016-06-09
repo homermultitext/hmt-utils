@@ -15,15 +15,17 @@ class TestTinyLexical extends GroovyTestCase {
   // Authority  lists:
   File lexMap = new File("testdata/authlists/lexmap.csv")
   File byz = new File("testdata/authlists/orthoequivs.csv")
-  
+
   // Parser command:
   String morphCmd = "../morpheus/bin/morpheus"
-  
+
   File log  = new File("tinylex.log")
 
   void testLexicalValidation() {
+    // Turned of until morphological validation reimplemented
+    /*
     LexicalValidation lexicalv = new LexicalValidation(tokens, byz, lexMap, morphCmd, log)
-    
+
     //assertFalse lexicalv.validates()
 
     // all tokens accounted for:
@@ -45,15 +47,16 @@ class TestTinyLexical extends GroovyTestCase {
     lexicalv.tokensMap.keySet().each { k ->
       println "${k}: ${lexicalv.tokensMap[k]}, k of class " + k.getClass()
     }
-    
+
     //    File rept = new File("lexreport.html")
     //rept.setText(lexicalv.getLexicalTokensReport("scholion-A-18.69"), "UTF-8")
 
 
-    
+
     // break down as expected:
     //assert lexicalv.successCount() == expectedSuccesses
     //assert lexicalv.failureCount() == expectedFails
+    */
   }
-  
+
 }

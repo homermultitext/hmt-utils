@@ -20,7 +20,7 @@ class TestPassByValidator extends GroovyTestCase {
 
   //  Integer expectedNodes = 3
   Integer expectedNodes = 1
-  
+
   void testCycleFromTabs() {
     // First, build a clean tokenization from tabulated source
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
@@ -37,10 +37,10 @@ class TestPassByValidator extends GroovyTestCase {
 
     System.err.println "From tabulated source with ${tabSrc.readLines().size()} citable node, set up " + idx  + " tokenization results to validate."
     // Now let's validate:
-    HmtValidator v = new HmtValidator(tokensFile,authSrc, byz,lexMap, morphCmd)
-    System.err.println "and then validated " + v.lexv.tokensCount()  + " lexical tokens."
+    //HmtValidator v = new HmtValidator(tokensFile,authSrc, byz,lexMap, morphCmd)
+    //System.err.println "and then validated " + v.lexv.tokensCount()  + " lexical tokens."
 
-    
+
     // is is true that sum of all validions totals should equal
     // total input?  or are there errors that show up in now validation?
     // Sum up:
@@ -52,8 +52,9 @@ class TestPassByValidator extends GroovyTestCase {
       punctuation
       numbers
      */
-    
-    v.writeReports(new File("build/vadliator"), "testvalidator")
+
+    //v.writeReports(new File("build/vadliator"), "testvalidator")
+    // Turned off until support for morphology is reimplemented
   }
-  
-}    
+
+}

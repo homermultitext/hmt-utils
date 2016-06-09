@@ -13,11 +13,12 @@ class TestLexValidator extends GroovyTestCase {
   File byz = new File("testdata/authlists/orthoequivs.csv")
   File lexMap = new File("testdata/authlists/lexmap.csv")
   String morphCmd = "../morpheus/bin/morpheus"
-    
-  
-  
+
+
+
   void testValidator() {
-    LexicalValidation lex = new LexicalValidation(tokens,byz,lexMap,morphCmd)
+    //LexicalValidation lex = new LexicalValidation(tokens,byz,lexMap,morphCmd)
+    // Turned off until support for morphology is reimplemented
   }
-  
+
 }

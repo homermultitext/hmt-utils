@@ -13,13 +13,15 @@ class TestFloatValidator extends GroovyTestCase {
   File byz = new File("testdata/authlists/orthoequivs.csv")
   File lexMap = new File("testdata/authlists/lexmap.csv")
   String morphCmd = "../morpheus/bin/morpheus"
-    
+
   File logFile = new File("floatlog.txt")
-  
+
   void testValidator() {
-    LexicalValidation lex = new LexicalValidation(tokens,byz,lexMap, morphCmd, logFile)
+    // Turned off until support for morphology is reimplemented
+    /*LexicalValidation lex = new LexicalValidation(tokens,byz,lexMap, morphCmd, logFile)
     def analyses = lex.getValidationMap()
     println "Analyses for Iliad 18.266: " + analyses
+    */
   }
-  
+
 }
