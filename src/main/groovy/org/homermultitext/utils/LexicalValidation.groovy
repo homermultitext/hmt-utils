@@ -258,6 +258,8 @@ class LexicalValidation implements HmtValidation {
 
 	
       } else {
+	// NS WORK HERE
+	/*
 	def command = "${parserCommandPath} ${asciiToken}"
 	String xcodeMsg =  "Analyzing ${token} with ${command}..."
 	System.err.println xcodeMsg
@@ -274,6 +276,8 @@ class LexicalValidation implements HmtValidation {
 	  result = "success"
 
 	}
+	*/
+	result = "unanalyzed"
       }
     }
     return result
