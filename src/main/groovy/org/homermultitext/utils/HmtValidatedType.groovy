@@ -7,5 +7,5 @@ package org.homermultitext.utils
 */
 public enum HmtValidatedType {
 
-  PERSONAL, GEOGRAPHIC, ETHNIC, LEXICAL
+  PERSONAL_NAME, GEOGRAPHIC_NAME, ETHNIC_NAME, LEXICAL
 }
