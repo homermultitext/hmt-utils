@@ -1,0 +1,1 @@
+"urn:cts:greekLit:tlg0012.tlg001.msA:18.294@έλσαι[1]","urn:cite:hmt:tokentypes.lexical"
