@@ -6,6 +6,10 @@ import org.apache.commons.io.FilenameUtils
 import edu.holycross.shot.orthography.GreekMsString
 import edu.holycross.shot.orthography.MilesianString
 
+import edu.harvard.chs.cite.CtsUrn
+import edu.harvard.chs.cite.CiteUrn
+import edu.harvard.chs.cite.Orca
+
 
 /** Class to tokenize text following Homer Multitext project conventions for
 *   definition of character set and markup.
@@ -17,11 +21,38 @@ class HmtEditorialTokenization {
   */
   Integer debug = 0
 
+  String orcaCollectionStr = "urn:cite:hmt:edtokens"
+
   /** Empty constructor.
    */
   HmtEditorialTokenization() {
   }
 
+
+  // Given an ordered list of editorial tokens, creates
+  // an ordered list of the cite library's Orca objects
+  ArrayList tokenizationToOrcaList(ArrayList tokenList) {
+    Calendar now = Calendar.getInstance()
+    String versionStamp = "${now.get(Calendar.YEAR)}_${ now.get(Calendar.MONTH) + 1 }_${now.get(Calendar.DATE)}"
+
+    def orcaList = []
+    tokenList.eachWithIndex {t, i ->
+      try {
+	CtsUrn psgAnalyzed = new CtsUrn(t[0])
+	CiteUrn analysisObject = new CiteUrn(t[1])
+	CiteUrn analysisRecord = new CiteUrn("${orcaCollectionStr}.${i}.${versionStamp}")
+	String textDeformation = psgAnalyzed.getSubref()
+	Orca orca = new Orca(analysisRecord, psgAnalyzed, analysisRecord,textDeformation)
+	println "Adding orca " + orca
+	orcaList.add(orca)
+	
+      } catch (Exception e) {
+	System.err.println "At ${i}, failed with tokenization pair " + t
+	System.err.println e.toString()
+      }
+    }
+    return orcaList
+  }
 
   /** Gets a short phrase describing the kind of tokenization
    * done by this implementation of TokenizationSystem.
