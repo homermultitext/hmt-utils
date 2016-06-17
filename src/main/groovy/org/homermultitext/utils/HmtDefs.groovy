@@ -16,6 +16,6 @@ class HmtDefs {
   static int doubledagger = 8225
 
   /** Punctuation characters defined in this class. */
-  static ArrayList puncChars = [highstop,doubledagger, anotherHighStop]
+  static ArrayList puncChars = [highstop,doubledagger,anotherHighStop]
 
 }

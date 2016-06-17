@@ -3,8 +3,7 @@ package org.homermultitext.utils
 import java.text.Normalizer
 import java.text.Normalizer.Form
 
-/** XmlNode:  A class representing a well-formed XML node of text in Greek following HMT project markukp 
-conventions.
+/** XmlNode:  A class representing a well-formed XML node of text in Greek following markup conventions of the HMT project.
 */
 class XmlNode {
 
@@ -37,7 +36,7 @@ class XmlNode {
    * and collects the content of text nodes. In handling white space,
    * XML elements are taken to mark new, white-space delimited tokens
    * except where markup identified by the magicNode() method
-   * groups together a token with mixed content model. 
+   * groups together a token with mixed content model.
    * @param n The parsed node from which text will be extracted.
    * @param allText The String of previously accumulated text content,
    * to which the content of any further text nodes will be added.
@@ -55,14 +54,14 @@ class XmlNode {
       }
       n.children().each { child ->
 	if (!inWord) {
-	  allText += " "     
+	  allText += " "
 	}
 	allText = collectText(child, allText,inWord)
       }
       if (magicNode(n)) {
 	inWord = false
       }
-      
+
       // normalize to NFC:
       return Normalizer.normalize(allText, Form.NFC)
     }
@@ -93,7 +92,5 @@ class XmlNode {
     }
   }
 
-  
-}
 
-  
+}

@@ -12,6 +12,9 @@ import edu.holycross.shot.orthography.MilesianString
 */
 class HmtEditorialTokenization {
 
+  /** Debugging level, can be set dynamically for more
+  * verbose spewing to stdout.
+  */
   Integer debug = 0
 
   /** Empty constructor.
