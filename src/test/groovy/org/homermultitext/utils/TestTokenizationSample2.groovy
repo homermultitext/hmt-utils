@@ -23,7 +23,7 @@ class TestTokenizationSample2 extends GroovyTestCase {
 
     // test size of output:
     Integer expectedTokens = 70
-    assert tokenizationResults.size() == expectedTokens
+    assert analyses.size() == expectedTokens
 
     String expectedNs = "hmt"
     def expectedCollections = ["tokentypes", "pers", "peoples"]
