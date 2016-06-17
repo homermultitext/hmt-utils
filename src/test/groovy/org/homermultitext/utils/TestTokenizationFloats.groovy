@@ -5,8 +5,8 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 
-class TestFloatTokens extends GroovyTestCase {
-  
+class TestTokenizationFloats extends GroovyTestCase {
+
   void testBreve (){
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     toker.debug = 0
@@ -23,6 +23,6 @@ class TestFloatTokens extends GroovyTestCase {
     tokensFile.setText(tokens.toString(), "UTF-8")
   }
 
-  
-  
+
+
 }

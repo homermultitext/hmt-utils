@@ -7,15 +7,15 @@ import org.junit.Test
 import edu.harvard.chs.cite.CtsUrn
 
 
-class TestChoiceTokens extends GroovyTestCase {
+class TestTokenizationChoice extends GroovyTestCase {
 
 
   String urnBase = "urn:cts:greekLit:tlg5026.msA.hmt:18.185"
 
   // Source XML:
   String abbrExpanChoice = """<div  type='lemma'>
-<p>τεῖχος μέν ρ' ἄλοχοι τε φίλαι καὶ 
-<choice> <abbr>νηπ</abbr><expan>νήπια</expan></choice> 
+<p>τεῖχος μέν ρ' ἄλοχοι τε φίλαι καὶ
+<choice> <abbr>νηπ</abbr><expan>νήπια</expan></choice>
 τέκνα ῥύατ' ἐφεσταῶτος\u0387</p>
 </div>
 """
@@ -34,7 +34,7 @@ class TestChoiceTokens extends GroovyTestCase {
 
     def trailingPunct = tokens[11]
     assert trailingPunct[1] == "urn:cite:hmt:tokentypes.punctuation"
-    
+
     def lextokens = []
     tokens.each { t ->
       if (t[1] == "urn:cite:hmt:tokentypes.lexical") {
@@ -46,8 +46,8 @@ class TestChoiceTokens extends GroovyTestCase {
     lextokens.eachWithIndex { t, i ->
       assert t == expectedLexTokens[i]
     }
-    
-    
+
+
   }
-  
+
 }

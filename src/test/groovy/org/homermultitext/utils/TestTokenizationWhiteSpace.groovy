@@ -5,12 +5,12 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 
-class TestWhiteSpaceTokens extends GroovyTestCase {
-  
+class TestTokenizationWhiteSpace extends GroovyTestCase {
+
   void testWhiteSpace (){
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     toker.debug = 0
-    
+
 
     File tab2 = new File("testdata/tokens/main-18-8.txt")
     ArrayList analyses2 = toker.tokenizeTabFile(tab2, "#", false)
@@ -20,9 +20,9 @@ class TestWhiteSpaceTokens extends GroovyTestCase {
       println it
     }
 
-    
+
   }
 
-  
-  
+
+
 }

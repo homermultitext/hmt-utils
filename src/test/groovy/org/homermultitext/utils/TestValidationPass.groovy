@@ -4,7 +4,7 @@ package org.homermultitext.utils
 import static org.junit.Assert.*
 import org.junit.Test
 
-class TestPassByValidator extends GroovyTestCase {
+class TestValidationPass extends GroovyTestCase {
 
   File tabsDir = new File("testdata/tabs")
   File tabSrc = new File(tabsDir, "tiniest.tab")

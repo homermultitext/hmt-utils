@@ -5,8 +5,8 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 
-class TestTokens extends GroovyTestCase {
-  
+class TestTokenizationSingleTokens extends GroovyTestCase {
+
 
 
   void testTokenizeName() {
@@ -14,16 +14,16 @@ class TestTokens extends GroovyTestCase {
     String urn = "urn:cts:greekLit:tlg0012.tlg001.msA:11.3"
     String context = "urn:cite:hmt:pers.pers8"
 
-    
+
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(pn, urn, context)
-    //println "Analyses for ${pn} == " + analyses 
+    //println "Analyses for ${pn} == " + analyses
     // only 1 analysis:
     assert  analyses.size() == 1
     ArrayList analysis  = analyses[0]
     assert analysis[0] == "${urn}@${pn}"
     assert analysis[1] == context
-    
+
   }
 
   void testSigmaElide() {
@@ -31,10 +31,10 @@ class TestTokens extends GroovyTestCase {
     String str = "ὑψόσ'"
     String context = ""
     String expectedContext = "urn:cite:hmt:tokentypes.lexical"
-    
+
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(str, urn, context)
-    //println "Analyses for ${str} == " + analyses 
+    //println "Analyses for ${str} == " + analyses
     ArrayList analysis  = analyses[0]
     assert analysis[0] == "${urn}@${str}"
     assert analysis[1] == expectedContext
@@ -45,7 +45,7 @@ class TestTokens extends GroovyTestCase {
     String urn = "urn:cts:greekLit:tlg0012.tlg001.msA:18.257"
     String context = ""
 
-    
+
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList analyses = toker.tokenizeString(str, urn, context, false)
 
@@ -83,9 +83,9 @@ class TestTokens extends GroovyTestCase {
       println it
     }
 
-    
+
   }
 
-  
-  
+
+
 }

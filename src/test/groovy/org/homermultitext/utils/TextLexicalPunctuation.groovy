@@ -5,12 +5,12 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 
-class TestPunctTokens extends GroovyTestCase {
-  
+class TextLexicalPunctuation extends GroovyTestCase {
+
   void testDoubleCross (){
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     toker.debug = 0
-    
+
 
     File tab = new File("testdata/tokens/doublecross.txt")
     ArrayList analyses = toker.tokenizeTabFile(tab, "#", false)
@@ -26,7 +26,7 @@ class TestPunctTokens extends GroovyTestCase {
     File byz = new File("testdata/authlists/orthoequivs.csv")
     String morphCmd = "../morpheus/bin/morpheus"
     File log = new File("highstop-log.txt")
-    
+
     File tokensFile = new File("testdata/tokens/250-punct.tokens")
 
     LexicalValidation lexicalv = new LexicalValidation(tokensFile, byz, lexMap, morphCmd, log)
@@ -39,9 +39,9 @@ class TestPunctTokens extends GroovyTestCase {
     occMap.keySet().each { k ->
       println "For ${k} -> " + occMap[k].size() + " occurrences"
     }
-    
+
   }
 
-  
-  
+
+
 }

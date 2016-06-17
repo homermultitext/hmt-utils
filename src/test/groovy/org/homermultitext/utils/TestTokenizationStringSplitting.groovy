@@ -8,11 +8,11 @@ import edu.holycross.shot.orthography.GreekMsString
 
 import edu.unc.epidoc.transcoder.TransCoder
 
-class TestSplits extends GroovyTestCase {
+class TestTokenizationStringSplitting extends GroovyTestCase {
 
   void testHighStops() {
     String str  = "δίῳ·"
-    String dot2 =    "πυκίλαι·"
+    String dot2 = "πυκίλαι·"
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     ArrayList splits =  toker.splitString(str)
     assert splits.size() == 2

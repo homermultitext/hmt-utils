@@ -4,14 +4,14 @@ package org.homermultitext.utils
 import static org.junit.Assert.*
 import org.junit.Test
 
-class TestTokenizerPass extends GroovyTestCase {
+class TestTokenizationFilePass extends GroovyTestCase {
 
   File tabsDir = new File("testdata/tabs")
   File tabSrc = new File(tabsDir, "three-lines.tab")
 
   File tabSrc2 = new File(tabsDir, "Iliad-small.txt")
 
-  
+
   File outputFile = new File("build/three-lines-tokens.txt")
   String separatorStr = "#"
 
@@ -37,5 +37,5 @@ class TestTokenizerPass extends GroovyTestCase {
     boolean continueOnException = true
     def tokenizationResults = toker.tokenizeTabFile(tabSrc2,separatorStr,continueOnException )
   }
-  
+
 }

@@ -5,7 +5,7 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 
-class TestTinyTokens extends GroovyTestCase {
+class TestTokenizationSample extends GroovyTestCase {
 
 
 
@@ -26,7 +26,7 @@ class TestTinyTokens extends GroovyTestCase {
 
 
   void testTinyTab() {
-    
+
     String tabLine =  """<l xmlns="http://www.tei-c.org/ns/1.0" n="2"><persName n="urn:cite:hmt:pers.pers712">Ἀντίλοχος</persName> δ' <persName n="urn:cite:hmt:pers.pers1">Ἀχιλῆϊ</persName> πόδας ταχὺς ἄγγελος ἦλθε·</l>"""
 
     def lineRoot = new XmlParser().parseText(tabLine)

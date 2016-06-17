@@ -4,12 +4,12 @@ package org.homermultitext.utils
 import static org.junit.Assert.*
 import org.junit.Test
 
-class TestTokenizeTypes extends GroovyTestCase {
+class TestTokenizationTypes extends GroovyTestCase {
 
   File ethnicSrc = new File("specs/resources/data/ethnic.txt")
   File placeSrc = new File("specs/resources/data/place.txt")
   String separatorStr = "#"
-  
+
   void testEditorialTokenizer() {
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     boolean continueOnException = true
@@ -25,5 +25,5 @@ class TestTokenizeTypes extends GroovyTestCase {
 
 
   }
-  
+
 }
