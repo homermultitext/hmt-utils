@@ -42,8 +42,7 @@ class HmtEditorialTokenization {
 	CiteUrn analysisObject = new CiteUrn(t[1])
 	CiteUrn analysisRecord = new CiteUrn("${orcaCollectionStr}.${i}.${versionStamp}")
 	String textDeformation = psgAnalyzed.getSubref()
-	Orca orca = new Orca(analysisRecord, psgAnalyzed, analysisRecord,textDeformation)
-	println "Adding orca " + orca
+	Orca orca = new Orca(analysisRecord, psgAnalyzed, analysisObject, textDeformation)
 	orcaList.add(orca)
 	
       } catch (Exception e) {
