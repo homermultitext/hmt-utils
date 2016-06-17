@@ -1,15 +1,15 @@
 ext {
-    //groovyVersion = "2.0.6"
+
     groovyVersion = '[2.0,)'
     junitVersion = "4.10"
 
 
     versionMap = [
-      "cite" : "0.98j7.0",
-      "citemgr" : "0.6.1",
-      "greeklang" : "0.0.23",
-      "hocuspocus": "0.12.5",
-      "safecsv": "0.0.2j7",
-      "opencsv": "2.3"
+      "greekcommon" : "2.+",
+      "cite" : "1.+",
+      "citemgr" : "2.+",
+      "hocuspocus": "1.+",
+      "safecsv": "1.+"
+
     ]
 }
