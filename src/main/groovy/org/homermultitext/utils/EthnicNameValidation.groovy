@@ -2,7 +2,7 @@ package org.homermultitext.utils
 
 import edu.harvard.chs.cite.CiteUrn
 import edu.holycross.shot.safecsv.SafeCsvReader
-import edu.holycross.shot.greekutils.GreekMsString
+import edu.holycross.shot.orthography.GreekMsString
 
 
 class EthnicNameValidation implements HmtValidation {
@@ -32,7 +32,7 @@ class EthnicNameValidation implements HmtValidation {
 
 
 
-  /** Constructor with parameters for tokens to validate and 
+  /** Constructor with parameters for tokens to validate and
    * authority list to use in validation.
    * Useful for batch validation of tokens in a file.
    * @param tokensFile Tokens to validate.
@@ -48,7 +48,7 @@ class EthnicNameValidation implements HmtValidation {
   // ********* methods required to implement interface *** //
   //
 
-  
+
   /** Validates a single token.
    * @param token CITE URN of token to validate, as a String.
    * @returns Either the string "true" or the string "false".
@@ -70,11 +70,11 @@ class EthnicNameValidation implements HmtValidation {
     }
   }
 
-  
+
   String label() {
    return "Validation of identifiers for ethnic names"
   }
-  
+
   boolean validates() {
     return (total == successes)
   }
@@ -102,11 +102,11 @@ class EthnicNameValidation implements HmtValidation {
 
 
   /// methods doing the validation work:
-  
+
   void computeScores() {
     // check for existence of tokensMap ...
     this.total = tokensMap.size()
-    
+
     Integer good = 0
     Integer bad = 0
     def scoreMap = [:]
@@ -134,13 +134,13 @@ class EthnicNameValidation implements HmtValidation {
     return validList
   }
   */
-  
+
   // add error checking: file must exist, be nonempty,
   // keys must be valid urns
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
     Integer count = 0
-    
+
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { tokenLine ->
       // skip headerline:
@@ -160,7 +160,7 @@ class EthnicNameValidation implements HmtValidation {
     }
     return validList
   }
-  
+
 
 
     // read file, return contents as a map
@@ -205,5 +205,5 @@ class EthnicNameValidation implements HmtValidation {
      return occurrences
   }
   */
-  
+
 }

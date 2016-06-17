@@ -2,7 +2,7 @@ package org.homermultitext.utils
 
 import edu.harvard.chs.cite.CiteUrn
 import edu.holycross.shot.safecsv.SafeCsvReader
-import edu.holycross.shot.greekutils.GreekMsString
+import edu.holycross.shot.orthography.GreekMsString
 
 /**
  * Implementation of the Validation interface to
@@ -66,7 +66,7 @@ class PlaceNameValidation implements HmtValidation {
   /// methods required to implement HmtValidation interface:
 
 
-  
+
   String validateToken(String token) {
     String decision = "false"
     if (authorityList.contains(token)) {
@@ -78,23 +78,23 @@ class PlaceNameValidation implements HmtValidation {
   boolean isValid(String token) {
     return (validateToken(token) == "true")
   }
-  
-  /** 
-   * @returns A label for the validation class. 
+
+  /**
+   * @returns A label for the validation class.
    */
   String label() {
     return "Validation of place name identifiers"
   }
 
-  /** 
-   * @returns True is all tokens have valid identifiers. 
+  /**
+   * @returns True is all tokens have valid identifiers.
    */
   boolean validates() {
     return (total == successes)
   }
 
 
-  /** 
+  /**
    * @returns Number of tokens that have valid identifiers.
    */
   Integer successCount() {
@@ -102,7 +102,7 @@ class PlaceNameValidation implements HmtValidation {
   }
 
 
-  /** 
+  /**
    * @returns Number of tokens that do not have valid identifiers.
    */
   Integer failureCount() {
@@ -110,7 +110,7 @@ class PlaceNameValidation implements HmtValidation {
   }
 
 
-  /** 
+  /**
    * @returns Total number of tokens analyzed.
    */
     Integer tokensCount() {
@@ -127,7 +127,7 @@ class PlaceNameValidation implements HmtValidation {
     return validationMap
   }
 
-  /** Gets a mapping of all tokens to a CTS URN 
+  /** Gets a mapping of all tokens to a CTS URN
    * identifying the occurrence of this token.
    * @returns A map keyed by token URNs, mapping to text passages.
    */
@@ -135,23 +135,23 @@ class PlaceNameValidation implements HmtValidation {
     return tokensMap
   }
   //
-  /* ********************************************************** */  
+  /* ********************************************************** */
 
 
 
 
 
 
-  /* ********************************************************** */  
+  /* ********************************************************** */
   /// methods that actually do the validation work:
-  
+
   LinkedHashMap computeScores() {
     LinkedHashMap scoreMap = [:]
 
-    
+
     // check for existence of tokensMap ...
     this.total = tokensMap.size()
-    
+
     Integer good = 0
     Integer bad = 0
 
@@ -162,7 +162,7 @@ class PlaceNameValidation implements HmtValidation {
       if (debug > 0) {
 	System.err.println "PlaceNameValidation: ${k} in list? ${authorityList.contains(k)}"
       }
-	
+
       if (authorityList.contains(k)) {
 	this.successes++;
 	scoreMap[k] = true
@@ -176,13 +176,13 @@ class PlaceNameValidation implements HmtValidation {
 
 
 
-  
+
   // add error checking: file must exist, be nonempty,
   // keys must be valid urns
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
     Integer count = 0
-    
+
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { tokenLine ->
       // skip headerline:
@@ -202,8 +202,8 @@ class PlaceNameValidation implements HmtValidation {
     }
     return validList
   }
-  
-  
+
+
   // read file, return contents as a map
   LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
@@ -224,6 +224,6 @@ class PlaceNameValidation implements HmtValidation {
      }
      return occurrences
   }
-  /* ********************************************************** */  
-  
+  /* ********************************************************** */
+
 }

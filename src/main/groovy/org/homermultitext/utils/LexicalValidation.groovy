@@ -9,7 +9,7 @@ import edu.holycross.shot.safecsv.SafeCsvReader
 import edu.harvard.chs.cite.CtsUrn
 import edu.unc.epidoc.transcoder.TransCoder
 
-import edu.holycross.shot.greekutils.GreekMsString
+import edu.holycross.shot.orthography.GreekMsString
 
 class LexicalValidation implements HmtValidation {
 
@@ -19,16 +19,16 @@ class LexicalValidation implements HmtValidation {
   boolean log = false
   File dbLog
 
-  
+
 
   /** Map of token values to occurrences expressed as CTS URNs with subreferences.
    */
   LinkedHashMap tokensMap = [:]
-  
+
 
   /** Map of the same token values to classification.  Classification is
    * one of the strings "success", "fail", "alt" or "byz".
-   */ 
+   */
   LinkedHashMap validationMap = [:]
 
   /** Number of tokens classified as either "success", "alt" or "byz".  */
@@ -44,17 +44,17 @@ class LexicalValidation implements HmtValidation {
    */
   LinkedHashMap byzOrthoAuthority = [:]
 
-  
+
 
   /** Map with authority list for valid alternate modern orthographies.
-   * Valid forms are keys; URNs in alternate orthography collection are 
+   * Valid forms are keys; URNs in alternate orthography collection are
    * the values.
    */
   LinkedHashMap modernOrthoAuthority = [:]
 
-  
+
   String parserCommandPath = ""
-  
+
 
 
   /** Constructor with all required data sources and boolean parameter for verbose setting.
@@ -71,11 +71,11 @@ class LexicalValidation implements HmtValidation {
    */
   LexicalValidation(File tokensFile, File byzOrthoAuthListFile, File lexMappingFile, String morphCmd, boolean chatty) {
     verbose = chatty
-    
+
     tokensMap = populateTokensMap(tokensFile)
     if (verbose) { System.err.println "5-arg constructor: Lexical validation got " + tokensMap.size() + " tokens"}
     parserCommandPath = morphCmd
-    
+
     byzOrthoAuthority = populateByzAuthorityList(byzOrthoAuthListFile)
     modernOrthoAuthority = populateLexMap(lexMappingFile)
 
@@ -107,8 +107,8 @@ class LexicalValidation implements HmtValidation {
     verbose = false
     dbLog = logFile
     log = true
-    
-    parserCommandPath = morphCmd    
+
+    parserCommandPath = morphCmd
     tokensMap = populateTokensMap(tokensFile)
     if (verbose) { System.err.println "Lexical validation got " + tokensMap.size() + " tokens"}
 
@@ -116,10 +116,10 @@ class LexicalValidation implements HmtValidation {
 
     modernOrthoAuthority = populateLexMap(lexMappingFile)
 
-    
+
     validationMap = computeScores(tokensFile, morphCmd)
     if (verbose) {System.err.println "Validated " + validationMap.size() + " entries"}
-    
+
   }
 
 
@@ -133,12 +133,12 @@ class LexicalValidation implements HmtValidation {
     parserCommandPath = morphCmd
   }
 
-  /** Constructor with all required data sources. 
+  /** Constructor with all required data sources.
    */
   LexicalValidation(File tokensFile, File byzOrthoAuthListFile, File lexMappingFile, String morphCmd) {
     verbose = true
     parserCommandPath = morphCmd
-    
+
     tokensMap = populateTokensMap(tokensFile)
     System.err.println "Lexical validation got " + tokensMap.size() + " tokens"
 
@@ -187,9 +187,9 @@ class LexicalValidation implements HmtValidation {
     }
   }
 
-  
-  // ///////////////////////////////////////////////////////// 
-  // 
+
+  // /////////////////////////////////////////////////////////
+  //
   /// methods required to implement HmtValidation interface
 
 
@@ -198,7 +198,7 @@ class LexicalValidation implements HmtValidation {
     try {
       tokenUrn = new CtsUrn(tokenString)
       return validateToken(tokenUrn)
-      
+
     } catch (Exception e) {
       String errMsg = "LexicalValidation: ${tokenString} not a valid CTS URN"
       System.err.println errMsg
@@ -206,13 +206,13 @@ class LexicalValidation implements HmtValidation {
       return "fail"
     }
   }
-  
+
   String validateToken(CtsUrn tokenUrn) {
     String result = ""
-    
+
     boolean continueAnalysis = true
     String subrefString
-    
+
     if (tokenUrn.hasSubref()) {
       subrefString = tokenUrn.getSubref()
     } else {
@@ -243,20 +243,20 @@ class LexicalValidation implements HmtValidation {
       }
     }
 
-	
+
     if (continueAnalysis) {
       String asciiToken = token.toString(false)
       if (debug > 1) {
 	System.err.println "LexicalValidation: token ${token}, ascii ${asciiToken}"
       }
-      
+
       if (byzOrthoAuthority.keySet().contains(token.toString(true))) {
 	result = "byz"
 
       } else if (modernOrthoAuthority.keySet().contains(token.toString())) {
 	result = "alt"
 
-	
+
       } else {
 	// NS WORK HERE
 	/*
@@ -283,24 +283,24 @@ class LexicalValidation implements HmtValidation {
     return result
   }
 
-  
-  /** 
-   * Gets a human-readable label for the validation class. 
-   * @returns 
+
+  /**
+   * Gets a human-readable label for the validation class.
+   * @returns
    */
   String label() {
     return "Validation of lexical tokens"
   }
 
-  /** 
+  /**
    * Determines if validation was successful.
-   * @returns True if all tokens are valid. 
+   * @returns True if all tokens are valid.
    */
     boolean validates() {
     return (total == successes)
   }
 
-  /** 
+  /**
    * Counts valid tokens.
    * @returns Number of valid tokens.
    */
@@ -308,7 +308,7 @@ class LexicalValidation implements HmtValidation {
     return successes
   }
 
-  /** 
+  /**
    * Counts invalid tokens.
    * @returns Number of invalid tokens.
    */
@@ -316,7 +316,7 @@ class LexicalValidation implements HmtValidation {
     return failures
   }
 
-  /** 
+  /**
    * Counts all tokens.
    * @returns Total number of lexical tokens analyzed.
    */
@@ -333,7 +333,7 @@ class LexicalValidation implements HmtValidation {
   }
 
 
-  /** Maps all tokens to a CTS URN identifying the occurrence of this 
+  /** Maps all tokens to a CTS URN identifying the occurrence of this
    * token in a passage of text.
    * @returns A map keyed by token URNs, mapping to text passages.
    */
@@ -345,14 +345,14 @@ class LexicalValidation implements HmtValidation {
 
   /**
    * Subjects all lexical tokens in a source data set to second-tier
-   * analysis, and records the results in a map. 
-   * @param srcFile A comma-delimited file pairing occurrences of tokens 
-   * to a classification of the token. The file should give a CTS URN with 
-   * subreference in the first column, and a CITE URN for the classification 
+   * analysis, and records the results in a map.
+   * @param srcFile A comma-delimited file pairing occurrences of tokens
+   * to a classification of the token. The file should give a CTS URN with
+   * subreference in the first column, and a CITE URN for the classification
    * in the second column. If the classification is "urn:cite:hmt:tokentypes.lexical",
    * then the subreference value is subjected to second-tier analysis.
    * @param parserCmd Path to execute morpheus parser with a system call.
-   * @returns A map of lexical tokens to one of the String values 
+   * @returns A map of lexical tokens to one of the String values
    * "success", "fail", "alt", or "byz".
    */
   LinkedHashMap computeScores(File srcFile, String parserCmd)
@@ -370,7 +370,7 @@ class LexicalValidation implements HmtValidation {
       // normalize before doing any string comparisons:
       String psgUrnString = Normalizer.normalize(lexLine[0], Form.NFC)
       String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)
-      
+
       if (tokenType == "urn:cite:hmt:tokentypes.lexical" ) {
 	lexCount++;
 
@@ -392,7 +392,7 @@ class LexicalValidation implements HmtValidation {
 	System.err.println altMsg
 	if (log) {dbLog.append(altMsg + "\n")}
 	break
-	
+
 	case "byz":
 	successes = successes + 1
 	String byzMsg = "Alternate Byzantine orthography OK"
@@ -403,7 +403,7 @@ class LexicalValidation implements HmtValidation {
 	case "success":
 	successes = successes + 1
 	break
-	
+
 	default:
 	System.err.println "UNKNOWN ANALYSIS FOR ${psgUrnString}: ${evaulation}"
 	break
@@ -414,12 +414,12 @@ class LexicalValidation implements HmtValidation {
     return scoreBoard
   }
 
-  
+
   /** Loads date from a .csv source file mapping
    * modern orthography not recognized by morpheus
    * to an equivalent modern orthography.  The mapping
    * should give a URN for the mapping in the first column,
-   * the valid but unrecognized form in the second column, 
+   * the valid but unrecognized form in the second column,
    * and the parseable equivalent in the third column.
    * @param srcFile .csv File with mapping data.
    * @returns A list of valid forms morpheus cannot parse.
@@ -436,13 +436,13 @@ class LexicalValidation implements HmtValidation {
   }
 
 
-  
+
 
   /** Loads date from a .csv source file mapping
    * Byzantine orthography not recognized by morpheus
    * to an equivalent modern orthography.  The mapping
    * should give a URN for the mapping in the first column,
-   * the valid but unrecognized form in the second column, 
+   * the valid but unrecognized form in the second column,
    * and the parseable equivalent in the third column.
    * @param srcFile .csv File with mapping data.
    * @returns A list of valid forms morpheus cannot parse.
@@ -467,9 +467,9 @@ class LexicalValidation implements HmtValidation {
 
 
   /** Maps tokens to occurrences. First loads data
-   * a from a .csv source file pairing occurrences of tokens 
+   * a from a .csv source file pairing occurrences of tokens
    * to a classification of the token. The .csv file
-   * should give a CTS URN with subreference in the first column, 
+   * should give a CTS URN with subreference in the first column,
    * and a CITE URN for the classification in the second column.
    * If the classification is "urn:cite:hmt:tokentypes.lexical",
    * then the subreference value is used as a key to a list of passages
@@ -490,8 +490,8 @@ class LexicalValidation implements HmtValidation {
 	System.err.println "Wrong number of columns (${lexLine.size()}) in line ${lexLine}"
       } else {
 	// normalize before counting on string comparisons:
-	String psgUrnString = Normalizer.normalize(lexLine[0], Form.NFC)      
-	String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)      
+	String psgUrnString = Normalizer.normalize(lexLine[0], Form.NFC)
+	String tokenType = Normalizer.normalize(lexLine[1], Form.NFC)
 	psgUrnString = psgUrnString.replaceAll("\u00B7"," \u0387")
 	psgUrnString = psgUrnString.replaceAll(/^[ ]+/,'')
 	psgUrnString = psgUrnString.replaceAll(/[ ]+$/,'')
@@ -517,7 +517,7 @@ class LexicalValidation implements HmtValidation {
 	    // check that urn has a subref?
 	    lex = urn.getSubref()
 	  }
-	    
+
 	  if (occurrences[lex]) {
 	    def psgs = occurrences[lex]
 	    psgs.add(psgUrnString)
@@ -530,5 +530,5 @@ class LexicalValidation implements HmtValidation {
     }
     return occurrences
   }
-    
+
 }

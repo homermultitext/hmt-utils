@@ -3,8 +3,8 @@ package org.homermultitext.utils
 import org.apache.commons.io.FilenameUtils
 
 
-import edu.holycross.shot.greekutils.GreekMsString
-import edu.holycross.shot.greekutils.MilesianString
+import edu.holycross.shot.orthography.GreekMsString
+import edu.holycross.shot.orthography.MilesianString
 
 
 /** Class to tokenize text following Homer Multitext project conventions for
@@ -34,7 +34,7 @@ class HmtEditorialTokenization {
   // Still a problem here with/without white space following markup such
   // as named entities??
   //
-  /** Closure splits a String on white space, 
+  /** Closure splits a String on white space,
    * and checks for trailing punctuation.
    * @param str The String to tokenize.
    * @returns An ArrayList of Strings.
@@ -58,7 +58,7 @@ class HmtEditorialTokenization {
 	int codePoint = s.codePointAt(max)
 	if (debug > 1 ) {println "Last code point in ${s} is " + codePoint}
 	String cpStr =  new String(Character.toChars(codePoint))
-	
+
 	if (GreekMsString.isMsPunctuation(cpStr)) {
 	  if (debug > 1) {println "== punctuation"}
 
@@ -100,20 +100,20 @@ class HmtEditorialTokenization {
 	  }
 	}
       }
-    }    
+    }
     return tokes
   }
 
 
-  
+
   /** Tokenizes a string of text taking account of the context given by tokenType.
    * @str String to tokenize
    * @urnBase The CTS URN value, as a String, of the citable node this string
    * belongs to.
-   * @tokenType A String, possibly empty, classifying the tokens belonging to this 
+   * @tokenType A String, possibly empty, classifying the tokens belonging to this
    * node.
    * @returns A List of URN pairs.  Each pairing is an ArrayList containing two
-   * identifiers.  The first is the String value of a CTS URN including subreference, 
+   * identifiers.  The first is the String value of a CTS URN including subreference,
    * identifying the token; the second is a CITE URN from one of the following
    * collections:
    * urn:cite:hmt:tokenclasses
@@ -134,7 +134,7 @@ class HmtEditorialTokenization {
       System.err.println "continue? ${continueOnException} while tokenizing " + str
     }
 
-    
+
     ArrayList classifiedTokens = []
 
     if (debug > 2) { System.err.println "Editorial:tokenizeString: tokenizing " + str + " and split it to " + splitString(str)}
@@ -151,7 +151,7 @@ class HmtEditorialTokenization {
 	case "urn:cite:hmt:tokentypes.sic":
 	pairing = ["${urnBase}@${t}", tokenType]
 	break
-	    
+
 	case "urn:cite:hmt:tokentypes.numeric":
 	MilesianString ms
 	try {
@@ -163,7 +163,7 @@ class HmtEditorialTokenization {
 	  } else {
 	    throw e
 	  }
-	} 
+	}
 	break
 
 	default:
@@ -172,9 +172,9 @@ class HmtEditorialTokenization {
 	if (GreekMsString.isMsPunctuation(t)) {
 	  pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.punctuation"]
 	  classifiedTokens.add(pairing)
-	
+
 	} else if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
-	  
+
 	  try {
 	    gs = new GreekMsString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", tokenType]
@@ -189,7 +189,7 @@ class HmtEditorialTokenization {
 
 	} else {
 	  try {
-	    gs = new GreekMsString(t, "Unicode")	
+	    gs = new GreekMsString(t, "Unicode")
 	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
 	  } catch (Exception e) {
 	    if (continueOnException) {
@@ -206,17 +206,17 @@ class HmtEditorialTokenization {
     }
     return(classifiedTokens)
   }
-  
-  
+
+
   /** Recursively tokenizes a well-formed fragment of a document following HMT project
    * editorial conventions.  Tokenization considers both markup and type of characters.
    * @param node The root node of the fragment to tokenize.
    * @urnBase The CTS URN value, as a String, of the citable node this XML fragment
    * belongs to.
-   * @tokenType A String, possibly empty, classifying the tokens belonging to this 
+   * @tokenType A String, possibly empty, classifying the tokens belonging to this
    * node.
    * @returns A List of URN pairs.  Each pairing is an ArrayList containing two
-   * identifiers.  The first is the String value of a CTS URN including subreference, 
+   * identifiers.  The first is the String value of a CTS URN including subreference,
    * identifying the token; the second is a CITE URN from one of the following
    * collections:
    * urn:cite:hmt:tokenclasses
@@ -228,7 +228,7 @@ class HmtEditorialTokenization {
   ArrayList tokenizeElement(Object node, String urnBase, String tokenType, boolean continueOnException)
   throws Exception {
     ArrayList classifiedTokens = []
-    
+
     if (node instanceof java.lang.String) {
       if (debug > 2) { System.err.println "\ttokenizeElement: RAW STRING: "  + node }
       classifiedTokens = classifiedTokens +  tokenizeString(node, urnBase, tokenType)
@@ -255,7 +255,7 @@ class HmtEditorialTokenization {
 
 
       case "div":
-      if (node.'@type' == "ref") { 	
+      if (node.'@type' == "ref") {
 	// omit
       } else {
 	node.children().each { child ->
@@ -279,7 +279,7 @@ class HmtEditorialTokenization {
       wd = wd.replaceAll(~/\s/, "") // generalize to all white space
       if (tokenType.size() > 0) {
 	classifiedTokens.add(["${urnBase}@${wd}", "urn:cite:hmt:tokentypes.sic"])
-      } 
+      }
       break
 
 
@@ -301,29 +301,29 @@ class HmtEditorialTokenization {
 	//	String nameText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	String nameText1 = wd.replaceFirst(/^[\s]+/, "")
 	String nameText = nameText1.replaceFirst(/[\s]+$/, "")
-	
+
 	if (debug > 0) { System.err.println "tokenizeElement: Trying to make GreekMsString from persname " + nameText }
-	
+
 	gs = new GreekMsString(nameText, "Unicode")
 	classifiedTokens.add(["${urnBase}@${nameText}", "${node.'@n'}"])
-	
+
       } catch (Exception e) {
 	System.err.println "tokenizeElement: FAILED to classify personal name " + node.'@n'
-	System.err.println "Continue?  " + continueOnException	
+	System.err.println "Continue?  " + continueOnException
 	if (continueOnException) {
 	  System.err.println " So pairing as error"
 	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekMsString"]
 	  classifiedTokens.add(pairing)
-	  
+
 	} else {
-	  
+
 	  System.err.println "Since continueOnException = ${continueOnException}, QUITTING on exception"
 	  throw e
 	}
       }
       break
 
-      
+
       case "placeName":
       String wd = XmlNode.collectText(node)
       GreekMsString gs
@@ -340,7 +340,7 @@ class HmtEditorialTokenization {
 	if (continueOnException) {
 	  System.err.println " So pairing as error"
 	  def pairing = ["${urnBase}@${node.text()}", "urn:cite:hmt:error.badGreekMsString"]
-	  
+
 	  classifiedTokens.add(pairing)
 	} else {
 	  System.err.println "QUITTING on exception"
@@ -356,7 +356,7 @@ class HmtEditorialTokenization {
 	  tokenizeElement(child, urnBase, "urn:cite:hmt:tokentypes.waw",continueOnException).each { tokenList ->
 	    classifiedTokens.add(tokenList)
 	  }
-	} 
+	}
       } else if (node.'@type' == "ethnic") {
 	String wd = XmlNode.collectText(node)
 	GreekMsString gs
@@ -369,7 +369,7 @@ class HmtEditorialTokenization {
 	  classifiedTokens.add(["${urnBase}@${placeText}", urn])
 
 	  if (debug > 2) { System.err.println "\ttokenizeElement: ETHNIC NODE: "  + node.text() }
-	  
+
 	} catch (Exception e) {
 	  //println "FAILED to classify " + node
 	  if (continueOnException) {
@@ -392,29 +392,29 @@ class HmtEditorialTokenization {
       }
       break
       }
-      
+
     }
     return classifiedTokens
   }
 
-  
+
   /** Tokenizes the tabular representation of a text
-   * following HMT project editorial conventions.  
+   * following HMT project editorial conventions.
    * Tokenization considers both markup and type of characters.
    * @param inputFile A document in tabular format to tokenize.
    * @param separatorStr The String value used to separate columns of
    * the tabular file.  Default value is "#".
    * @returns A List of URN pairs.  Each pairing is an ArrayList containing two
-   * identifiers.  The first is the String value of a CTS URN including subreference, 
+   * identifiers.  The first is the String value of a CTS URN including subreference,
    * identifying the token; the second is a CITE URN from one of the following
    * collections:
    * urn:cite:hmt:tokenclasses
    * urn:cite:hmt:place
    * urn:cite:hmt:pers
-   * @throws Exception if last column of each row of the tabular file cannot be 
+   * @throws Exception if last column of each row of the tabular file cannot be
    * parsed as a well-formed XML fragment.
    */
-  ArrayList tokenizeTabFile(File inputFile, String separatorStr) 
+  ArrayList tokenizeTabFile(File inputFile, String separatorStr)
   throws Exception {
     return tokenizeTabString(inputFile.getText("UTF-8"), separatorStr, true)
   }
@@ -446,29 +446,29 @@ class HmtEditorialTokenization {
   }
 
 
-  /** Tokenizes following HMT project editorial conventions a String of data in 
+  /** Tokenizes following HMT project editorial conventions a String of data in
    * the CITE architecture tabular format.
    * Tokenization considers both markup and type of characters.
    * @param tabData A String of data in CITE tabular format..
    * @param separatorStr The String value used to separate columns of
    * the tabular file.  Default value is "#".
    * @returns A List of URN pairs.  Each pairing is an ArrayList containing two
-   * identifiers.  The first is the String value of a CTS URN including subreference, 
+   * identifiers.  The first is the String value of a CTS URN including subreference,
    * identifying the token; the second is a CITE URN from one of the following
    * collections:
    * urn:cite:hmt:tokenclasses
    * urn:cite:hmt:place
    * urn:cite:hmt:pers
-   * @throws Exception if last column of each row of the tabular file cannot be 
+   * @throws Exception if last column of each row of the tabular file cannot be
    * parsed as a well-formed XML fragment.
    */
   ArrayList tokenizeTabString(String tabData, String separatorStr) {
     return tokenizeTabString(tabData, separatorStr, true)
   }
-  ArrayList tokenizeTabString(String tabData, String separatorStr, boolean continueOnException) 
+  ArrayList tokenizeTabString(String tabData, String separatorStr, boolean continueOnException)
   throws Exception {
 
-    
+
     def replyList = []
     tabData.readLines().each { l ->
       def cols = l.split(/${separatorStr}/)
@@ -507,5 +507,3 @@ class HmtEditorialTokenization {
 
 
 }
-
-  

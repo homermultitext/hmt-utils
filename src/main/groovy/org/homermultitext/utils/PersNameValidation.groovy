@@ -3,7 +3,7 @@ package org.homermultitext.utils
 
 import edu.harvard.chs.cite.CiteUrn
 import edu.holycross.shot.safecsv.SafeCsvReader
-import edu.holycross.shot.greekutils.GreekMsString
+import edu.holycross.shot.orthography.GreekMsString
 
 
 
@@ -28,7 +28,7 @@ class PersNameValidation implements HmtValidation {
 
   ArrayList authList = []
 
-  
+
   PersNameValidation(File tokensFile, File authListFile) {
     tokensMap = populateTokensMap(tokensFile)
     authList = populateAuthorityList(authListFile)
@@ -54,11 +54,11 @@ class PersNameValidation implements HmtValidation {
   }
 
 
-  
+
   String label () {
     return "Validation of personal name identifiers"
   }
-  
+
   boolean validates() {
     return (total == successes)
   }
@@ -85,11 +85,11 @@ class PersNameValidation implements HmtValidation {
 
 
   /// methods doing the validation work:
-  
+
   void computeScores() {
     // check for existence of tokensMap ...
     this.total = tokensMap.size()
-    
+
     Integer good = 0
     Integer bad = 0
     def scoreMap = [:]
@@ -120,7 +120,7 @@ class PersNameValidation implements HmtValidation {
   ArrayList populateAuthorityList(File srcFile) {
     ArrayList validList = []
     Integer count = 0
-    
+
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
     srcReader.readAll().each { tokenLine ->
       // skip headerline:
@@ -140,8 +140,8 @@ class PersNameValidation implements HmtValidation {
     }
     return validList
   }
-  
-  /*  
+
+  /*
   // read file, return contents as a map
   LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
@@ -163,7 +163,7 @@ class PersNameValidation implements HmtValidation {
   }
   */
 
-  
+
     LinkedHashMap populateTokensMap(File srcFile) {
     LinkedHashMap occurrences = [:]
     SafeCsvReader srcReader = new SafeCsvReader(srcFile)
@@ -183,5 +183,5 @@ class PersNameValidation implements HmtValidation {
      }
      return occurrences
   }
-  
+
 }
