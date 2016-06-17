@@ -7,13 +7,13 @@ import org.homermultitext.utils.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.SortedSet;
-import edu.holycross.shot.greekutils.GreekWord;
+import edu.holycross.shot.orthography.GreekWord;
 
 import java.io.File;
 
 public class EditorialTest extends ConcordionTestCase {
 
-    
+
     String docPath = "/build/concordion-results/hmtUtils/tokenization/";
     String separatorStr = "#";
 
@@ -32,7 +32,7 @@ public class EditorialTest extends ConcordionTestCase {
     }
 
 
-    
+
     public String echoTab(String src)
     throws Exception {
 	String buildPath = new java.io.File( "." ).getCanonicalPath() + docPath;
@@ -58,7 +58,5 @@ public class EditorialTest extends ConcordionTestCase {
 	return ("Something did not go well.");
     }
 
-    
+
 }
-
-

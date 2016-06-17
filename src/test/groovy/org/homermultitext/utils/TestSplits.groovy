@@ -4,12 +4,12 @@ package org.homermultitext.utils
 import static org.junit.Assert.*
 import org.junit.Test
 
-import edu.holycross.shot.greekutils.GreekMsString
+import edu.holycross.shot.orthography.GreekMsString
 
 import edu.unc.epidoc.transcoder.TransCoder
 
 class TestSplits extends GroovyTestCase {
-  
+
   void testHighStops() {
     String str  = "δίῳ·"
     String dot2 =    "πυκίλαι·"
@@ -22,7 +22,7 @@ class TestSplits extends GroovyTestCase {
     toker.debug = 5
     ArrayList splits2 = toker.splitString(dot2)
     println "For ${dot2}, got ${splits2}"
-    
+
     boolean needViz = false
     if (needViz) {
       TransCoder tobeta = new TransCoder()
@@ -45,7 +45,7 @@ class TestSplits extends GroovyTestCase {
     Integer expectedTokens = 5
     ArrayList splits =  toker.splitString(phrase)
 
-    
+
     System.err.println "${phrase} yields ${splits.size()} tokens:"
     System.err.println splits
 
