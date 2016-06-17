@@ -4,6 +4,8 @@ package org.homermultitext.utils
 import static org.junit.Assert.*
 import org.junit.Test
 
+import edu.harvard.chs.cite.CtsUrn
+import edu.harvard.chs.cite.CiteUrn
 
 class TestTokenizationSingleTokens extends GroovyTestCase {
 
@@ -63,25 +65,32 @@ class TestTokenizationSingleTokens extends GroovyTestCase {
     assert lastAnalysis[1]  == "urn:cite:hmt:tokentypes.punctuation"
   }
 
-  void testWhiteSpace (){
+  void testHighDot (){
     HmtEditorialTokenization toker = new HmtEditorialTokenization()
     toker.debug = 0
 
     // test file with impostor high dot:
     File tabFile = new File("testdata/tokens/main-18-6.txt")
     ArrayList analyses = toker.tokenizeTabFile(tabFile, "#", false)
-    //    println "W white space in 18.6:" +  analyses
-    analyses.each {
-      //println it
+    Integer expectedCount = 26
+    assert analyses.size() == expectedCount
+
+    String expectedNs = "hmt"
+    String expectedCollection = "tokentypes"
+    analyses.each { toke ->
+      try {
+        CtsUrn urn = new CtsUrn(toke[0])
+        CiteUrn analysisUrn = new CiteUrn(toke[1])
+        assert analysisUrn.getNs() == expectedNs
+        assert analysisUrn.getCollection() == expectedCollection
+
+      } catch (Exception e) {
+        System.err.println("Failed on URN " + toke[0])
+        println e.toString()
+      }
     }
 
-    File tab2 = new File("testdata/tokens/main-18-8.txt")
-    ArrayList analyses2 = toker.tokenizeTabFile(tab2, "#", false)
 
-    println "W white space in 18.8:" +  analyses2
-    analyses2.each {
-      println it
-    }
 
 
   }
