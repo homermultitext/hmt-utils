@@ -155,7 +155,7 @@ class HmtEditorialTokenization {
 	case "urn:cite:hmt:tokentypes.numeric":
 	MilesianString ms
 	try {
-	  ms = new MilesianString(t, "Unicode")
+	  ms = new MilesianString(t, true)
 	  pairing = ["${urnBase}@${t}", tokenType]
 	} catch (Exception e) {
 	  if (continueOnException) {
@@ -176,7 +176,7 @@ class HmtEditorialTokenization {
 	} else if ((tokenType ==~ /urn:cite:hmt:place.+/) || ( tokenType ==~ /urn:cite:hmt:pers.+/) ) {
 
 	  try {
-	    gs = new GreekMsString(t, "Unicode")
+	    gs = new GreekMsString(t, true)
 	    pairing = ["${urnBase}@${t}", tokenType]
 	  } catch (Exception e) {
 	    if (continueOnException) {
@@ -189,7 +189,7 @@ class HmtEditorialTokenization {
 
 	} else {
 	  try {
-	    gs = new GreekMsString(t, "Unicode")
+	    gs = new GreekMsString(t, true)
 	    pairing = ["${urnBase}@${t}", "urn:cite:hmt:tokentypes.lexical"]
 	  } catch (Exception e) {
 	    if (continueOnException) {
@@ -304,7 +304,7 @@ class HmtEditorialTokenization {
 
 	if (debug > 0) { System.err.println "tokenizeElement: Trying to make GreekMsString from persname " + nameText }
 
-	gs = new GreekMsString(nameText, "Unicode")
+	gs = new GreekMsString(nameText, true)
 	classifiedTokens.add(["${urnBase}@${nameText}", "${node.'@n'}"])
 
       } catch (Exception e) {
@@ -332,7 +332,7 @@ class HmtEditorialTokenization {
 	//String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	String placeText1 = wd.replaceFirst(/^[\s]+/, "")
 	String placeText = placeText1.replaceFirst(/[\s]+$/, "")
-	gs = new GreekMsString(placeText, "Unicode")
+	gs = new GreekMsString(placeText, true)
 	classifiedTokens.add(["${urnBase}@${placeText}", "${node.'@n'}"])
 
       } catch (Exception e) {
@@ -364,7 +364,7 @@ class HmtEditorialTokenization {
 	  //String placeText1 = n.collectText().replaceFirst(/^[\s]+/, "")
 	  String placeText1 = wd.replaceFirst(/^[\s]+/, "")
 	  String placeText = placeText1.replaceFirst(/[\s]+$/, "")
-	  gs = new GreekMsString(placeText, "Unicode")
+	  gs = new GreekMsString(placeText, true)
 	  String urn = node.'@n'.replace("hmt:place", "hmt:peoples")
 	  classifiedTokens.add(["${urnBase}@${placeText}", urn])
 
